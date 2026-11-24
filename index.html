@@ -84,7 +84,9 @@ h1 .nb{white-space:nowrap}
 .hl.r{color:var(--em-2)}
 .ck{display:inline-block}                       /* a chunk that stays in one piece */
 .sn{display:inline-block}                       /* a sentence; lines break at sentence ends first, in both languages */
-.stats{margin-top:34px;border-top:1px solid var(--ink)}
+.exp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:26px}
+.exp .seg button{padding:7px 14px;font-size:14px}
+.stats{margin-top:18px;border-top:1px solid var(--ink)}
 .stat{padding:14px 20px 4px 0;min-width:0}
 .stat + .stat{padding-left:20px;border-left:1px solid var(--rule)}
 .stat dt{font-size:13.5px;color:var(--ink-2)}
@@ -399,6 +401,12 @@ tbody th small{text-wrap:balance}
     <video id="v-hero" muted loop playsinline autoplay preload="metadata" poster="media/concept.jpg?v=04bbb109" src="media/concept.mp4?v=ac9b94fe" aria-label="Concept animation: a launch platform holding its elevation on a ship in waves" data-i18n-aria="hero.aria"></video>
   </figure>
   </div>
+  <div class="exp">
+    <div class="seg" role="group" aria-label="Experiment" data-i18n-aria="exp.aria">
+      <button type="button" data-exp="base" aria-pressed="true" data-i18n="exp.base">Cam disturbance</button>
+      <button type="button" data-exp="dis" aria-pressed="false" data-i18n="exp.dis">Added disturbance</button>
+    </div>
+  </div>
   <dl class="stats">
     <div class="stat lead">
       <dt data-i18n="stat.rms">RMS tracking error while the cam runs</dt>
@@ -430,7 +438,7 @@ tbody th small{text-wrap:balance}
     <div class="clips">
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=2eb6e410" src="media/dob_off.mp4?v=796efbf8" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
+          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=de3a1503" src="media/dob_off.mp4?v=37da02fc" data-dis-poster="media/dob_off_dis.jpg?v=2eb6e410" data-dis-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
           <div class="chip tag"><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
           <svg class="marks" data-marks-for="off" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
@@ -444,7 +452,7 @@ tbody th small{text-wrap:balance}
       </figure>
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg?v=7e4bc917" src="media/dob_on.mp4?v=7b05c5c4" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
+          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg?v=ca712ed6" src="media/dob_on.mp4?v=80b69f18" data-dis-poster="media/dob_on_dis.jpg?v=7e4bc917" data-dis-src="media/dob_on_dis.mp4?v=7b05c5c4" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
           <div class="chip tag"><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
           <svg class="marks" data-marks-for="on" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
@@ -634,7 +642,7 @@ tbody th small{text-wrap:balance}
     </div>
     <div class="rig">
       <figure class="photo">
-        <img src="media/dob_on.jpg?v=7e4bc917" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
+        <img src="media/dob_on.jpg?v=ca712ed6" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
         <span class="pin" style="left:54%;top:24%">2</span>
         <span class="pin" style="left:33%;top:35%">3</span>
@@ -678,16 +686,37 @@ tbody th small{text-wrap:balance}
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="data.js?v=3f708277"></script>
+<script src="data.js?v=2eb71e58"></script>
+<script src="data_dis.js?v=cca333b8"></script>
 <script src="model.js?v=d9333bed"></script>
-<script src="track.js?v=841ddea6"></script>
-<script src="i18n.js?v=dde685c5"></script>
+<script src="track.js?v=14947aa6"></script>
+<script src="track_dis.js?v=94efab52"></script>
+<script src="i18n.js?v=40408166"></script>
 <script>
 (function () {
   'use strict';
-  var R = window.ISP_RUNS;
+  // Which experiment: the base runs (cam disturbance) or the runs with a disturbance added (?exp=dis in the address).
+  var EXP = /[?&]exp=dis(&|$)/.test(location.search) && window.ISP_RUNS_DIS ? 'dis' : 'base';
+  var R = EXP === 'dis' ? window.ISP_RUNS_DIS : window.ISP_RUNS;
   if (!R) return;
-  var TR = window.ISP_TRACK || null;        // per-frame tracking of the two clips
+  var TR = (EXP === 'dis' ? window.ISP_TRACK_DIS : window.ISP_TRACK) || null;        // per-frame tracking of the two clips
+  if (EXP === 'dis') {
+    ['#v-off', '#v-on'].forEach(function (sel) {
+      var v = document.querySelector(sel);
+      v.setAttribute('poster', v.getAttribute('data-dis-poster'));
+      v.setAttribute('src', v.getAttribute('data-dis-src'));
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-exp]'), function (b) {
+    var mine = b.getAttribute('data-exp') === EXP;
+    b.setAttribute('aria-pressed', mine ? 'true' : 'false');
+    b.addEventListener('click', function () {
+      if (mine) return;
+      var q = location.search.replace(/^\?/, '').split('&').filter(function (x) { return x && !/^exp=/.test(x); });
+      if (b.getAttribute('data-exp') === 'dis') q.push('exp=dis');
+      location.href = location.pathname + (q.length ? '?' + q.join('&') : '') + location.hash;      // an absolute path, so the /ko/ page's <base> does not move it
+    });
+  });
 
   /* ---------- language ---------- */
   // English static text is read from the DOM; i18n.js supplies Korean and the strings built in script.
