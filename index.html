@@ -643,6 +643,7 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="dis.title">Added disturbance</h2>
+        <p class="sub" data-i18n-html="dis.sub">On top of the cam disturbance, <em class="hl">a 9 g mass was added at the end of the axis for the whole run.</em></p>
       </div>
     </div>
     <iframe class="embed-frame" id="dis-frame" scrolling="no" title="Clips and results of the run with the added disturbance" data-i18n-aria="dis.frame" loading="lazy"></iframe>
@@ -707,16 +708,21 @@ tbody th small{text-wrap:balance}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=31354b3d"></script>
+<script src="i18n.js?v=0acc95c5"></script>
 <script>
 (function () {
   'use strict';
   // Which experiment: the base runs (cam disturbance) or the runs with a disturbance added (?exp=dis in the address).
-  var EXP = /[?&]exp=dis(&|$)/.test(location.search) && window.ISP_RUNS_DIS ? 'dis' : 'base';
+  var EMBED = /[?&]embed=1(&|$)/.test(location.search) && window.parent !== window;     // shown inside the page's own frame
+  // The added-disturbance run is shown only in its section's frame; a direct ?exp=dis address gives the normal page.
+  var EXP = EMBED && /[?&]exp=dis(&|$)/.test(location.search) && window.ISP_RUNS_DIS ? 'dis' : 'base';
+  if (!EMBED && /[?&](exp|embed)=/.test(location.search) && window.history && history.replaceState) {
+    var keep = location.search.replace(/^\?/, '').split('&').filter(function (x) { return x && !/^(exp|embed)=/.test(x); });
+    try { history.replaceState(null, '', location.pathname + (keep.length ? '?' + keep.join('&') : '') + location.hash); } catch (err) {}
+  }
   var R = EXP === 'dis' ? window.ISP_RUNS_DIS : window.ISP_RUNS;
   if (!R) return;
   var TR = (EXP === 'dis' ? window.ISP_TRACK_DIS : window.ISP_TRACK) || null;        // per-frame tracking of the two clips
-  var EMBED = /[?&]embed=1(&|$)/.test(location.search) && window.parent !== window;     // shown inside the page's own frame
   if (EMBED) document.documentElement.classList.add('embed');
   if (EXP === 'dis') {
     ['#v-off', '#v-on'].forEach(function (sel) {
