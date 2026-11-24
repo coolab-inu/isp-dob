@@ -1441,7 +1441,7 @@ tbody th small{text-wrap:balance}
       controls.minZoom = 0.6; controls.maxZoom = 8; controls.maxPolarAngle = Math.PI * 0.62;
       controls.addEventListener('change', function () { dirty = true; });
       controls.addEventListener('start', function () { moved = true; });
-      canvas.style.touchAction = 'pan-y';
+      canvas.style.touchAction = 'none';       // a finger on the model turns the model only; the page scrolls from anywhere outside it
     }
 
     function tok(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
