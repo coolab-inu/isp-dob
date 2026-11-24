@@ -84,9 +84,7 @@ h1 .nb{white-space:nowrap}
 .hl.r{color:var(--em-2)}
 .ck{display:inline-block}                       /* a chunk that stays in one piece */
 .sn{display:inline-block}                       /* a sentence; lines break at sentence ends first, in both languages */
-.exp{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:26px}
-.exp .seg button{padding:7px 14px;font-size:14px}
-.stats{margin-top:18px;border-top:1px solid var(--ink)}
+.stats{margin-top:34px;border-top:1px solid var(--ink)}
 .stat{padding:14px 20px 4px 0;min-width:0}
 .stat + .stat{padding-left:20px;border-left:1px solid var(--rule)}
 .stat dt{font-size:13.5px;color:var(--ink-2)}
@@ -97,6 +95,15 @@ h1 .nb{white-space:nowrap}
 
 /* ---------- sections ---------- */
 section{padding-block:38px;scroll-margin-top:56px}
+.embed-frame{display:block;width:100%;height:1300px;border:0;background:transparent}
+/* inside the frame (?embed=1): only the clips, their chart and the metrics */
+html.embed .nav,html.embed header.head,html.embed #signals,html.embed #replay,html.embed #dis,html.embed #rig,html.embed footer,html.embed .dock{display:none!important}
+html.embed #runs .sec-head h2,html.embed #runs .sec-head .sub{display:none}
+html.embed #runs .sec-head{justify-content:flex-end}
+html.embed section{padding-block:0 28px;border-top:0}
+html.embed,html.embed body{overflow:hidden}
+html.embed .wrap{max-width:none;padding-left:0;padding-right:0}      /* the page around the frame already has the margins */
+html.embed #metrics h2{font-size:1.2rem}
 section + section{border-top:1px solid var(--rule)}
 h2{font-family:var(--font-display);font-stretch:110%;font-weight:650;font-size:clamp(1.45rem,2.6vw,1.9rem);line-height:1.12;letter-spacing:-.008em;text-wrap:balance}
 .sub{color:var(--ink-2);max-width:66ch;margin-top:10px}
@@ -300,14 +307,17 @@ footer{height:96px}      /* room for the fixed play bar */
   .pick .seg button + button{border-left:1px solid var(--rule)}
   .pick .seg button[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
 }
+@media (max-width:780px){
+  /* the nav goes to two rows: name and language on top, the six section links under them */
+  .nav .wrap{flex-wrap:wrap;padding-block:8px 4px;gap:4px 12px}
+  .links{order:3;flex-basis:100%;margin-left:0;justify-content:space-between;overflow-x:auto;scrollbar-width:none}      /* six links: they shrink with the screen, and scroll sideways rather than push the page wider */
+  .links a{padding:5px 2px;font-size:clamp(10.5px,3.3vw,13px)}
+  .seg.lang{margin-left:auto}
+  section{scroll-margin-top:92px}
+}
 @media (max-width:640px){
   /* phones: one text face for everything, numbers included (tabular figures keep them from jumping) */
   :root{--font-data:"IBM Plex Sans","IBM Plex Sans KR",system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
-  .nav .wrap{flex-wrap:wrap;padding-block:8px 4px;gap:4px 12px}
-  .links{order:3;flex-basis:100%;margin-left:0;justify-content:space-between;overflow:visible}
-  .links a{padding:5px 4px;font-size:13px}
-  .seg.lang{margin-left:auto}
-  section{scroll-margin-top:92px}
   .head{padding-block:30px 22px}
   /* clips one above the other at full width; the angles move from the picture to a line under it */
   .clips{grid-template-columns:1fr;gap:14px}
@@ -355,7 +365,7 @@ footer{height:96px}      /* room for the fixed play bar */
   .seg button{padding:6px 8px;font-size:12.5px}
   .seg.mono button{padding:6px 7px;font-size:12px}
   .clock{font-size:13px;min-width:0}
-  .links a{padding:5px 1px;font-size:12px}
+  .links a{padding:5px 1px}
 }
 /* Korean: break lines between words, and drop the wide tracking meant for Latin capitals */
 :lang(ko) body{word-break:keep-all;line-height:1.62}
@@ -381,6 +391,7 @@ tbody th small{text-wrap:balance}
       <a href="#signals" data-i18n="nav.signals">Signals</a>
       <a href="#replay" data-i18n="nav.replay">3D replay</a>
       <a href="#metrics" data-i18n="nav.metrics">Metrics</a>
+      <a href="#dis" data-i18n="nav.dis">Disturbance+</a>
       <a href="#rig" data-i18n="nav.rig">Rig</a>
     </div>
     <div class="seg lang" role="group" aria-label="Language" data-i18n-aria="lang.aria">
@@ -400,12 +411,6 @@ tbody th small{text-wrap:balance}
   <figure class="head-fig">
     <video id="v-hero" muted loop playsinline autoplay preload="metadata" poster="media/concept.jpg?v=04bbb109" src="media/concept.mp4?v=ac9b94fe" aria-label="Concept animation: a launch platform holding its elevation on a ship in waves" data-i18n-aria="hero.aria"></video>
   </figure>
-  </div>
-  <div class="exp">
-    <div class="seg" role="group" aria-label="Experiment" data-i18n-aria="exp.aria">
-      <button type="button" data-exp="base" aria-pressed="true" data-i18n="exp.base">Cam disturbance</button>
-      <button type="button" data-exp="dis" aria-pressed="false" data-i18n="exp.dis">Added disturbance</button>
-    </div>
   </div>
   <dl class="stats">
     <div class="stat lead">
@@ -633,6 +638,17 @@ tbody th small{text-wrap:balance}
   </div>
 </section>
 
+<section id="dis">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2 data-i18n="dis.title">Added disturbance</h2>
+      </div>
+    </div>
+    <iframe class="embed-frame" id="dis-frame" scrolling="no" title="Clips and results of the run with the added disturbance" data-i18n-aria="dis.frame" loading="lazy"></iframe>
+  </div>
+</section>
+
 <section id="rig">
   <div class="wrap">
     <div class="sec-head">
@@ -691,7 +707,7 @@ tbody th small{text-wrap:balance}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=40408166"></script>
+<script src="i18n.js?v=31354b3d"></script>
 <script>
 (function () {
   'use strict';
@@ -700,6 +716,8 @@ tbody th small{text-wrap:balance}
   var R = EXP === 'dis' ? window.ISP_RUNS_DIS : window.ISP_RUNS;
   if (!R) return;
   var TR = (EXP === 'dis' ? window.ISP_TRACK_DIS : window.ISP_TRACK) || null;        // per-frame tracking of the two clips
+  var EMBED = /[?&]embed=1(&|$)/.test(location.search) && window.parent !== window;     // shown inside the page's own frame
+  if (EMBED) document.documentElement.classList.add('embed');
   if (EXP === 'dis') {
     ['#v-off', '#v-on'].forEach(function (sel) {
       var v = document.querySelector(sel);
@@ -707,16 +725,6 @@ tbody th small{text-wrap:balance}
       v.setAttribute('src', v.getAttribute('data-dis-src'));
     });
   }
-  Array.prototype.forEach.call(document.querySelectorAll('[data-exp]'), function (b) {
-    var mine = b.getAttribute('data-exp') === EXP;
-    b.setAttribute('aria-pressed', mine ? 'true' : 'false');
-    b.addEventListener('click', function () {
-      if (mine) return;
-      var q = location.search.replace(/^\?/, '').split('&').filter(function (x) { return x && !/^exp=/.test(x); });
-      if (b.getAttribute('data-exp') === 'dis') q.push('exp=dis');
-      location.href = location.pathname + (q.length ? '?' + q.join('&') : '') + location.hash;      // an absolute path, so the /ko/ page's <base> does not move it
-    });
-  });
 
   /* ---------- language ---------- */
   // English static text is read from the DOM; i18n.js supplies Korean and the strings built in script.
@@ -1666,6 +1674,8 @@ tbody th small{text-wrap:balance}
     charts.forEach(function (c) { c.relabel(); });
     paint();
     if (announce) { try { location.hash = LANG; } catch (err) {} }               // #ko / #en makes the choice a shareable link
+    var df = !EMBED && document.getElementById('dis-frame');                       // the framed section follows the page's language
+    if (df && df.contentWindow) { try { df.contentWindow.postMessage({ isp: 'lang', lang: LANG }, location.origin); } catch (err) {} }
   }
   $$('[data-lang]').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang'), true); }); });
   window.addEventListener('hashchange', function () {
@@ -1691,22 +1701,49 @@ tbody th small{text-wrap:balance}
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
     $$('main section').forEach(function (s) { spy.observe(s); });
-    var dock = $('#dock'), tr = $('#transport');
+    // the bar at the bottom plays the clips at the top; it is hidden while those are on screen, above them,
+    // and while the added-disturbance section (which has its own controls) is on screen
+    var dock = $('#dock'), tr = $('#transport'), disSec = $('#dis'), trShown = true, trBelow = true, disShown = false;
+    var setDock = function () { dock.hidden = trShown || trBelow || disShown; };
     new IntersectionObserver(function (es) {
       var en = es[0];
-      dock.hidden = en.isIntersecting || en.boundingClientRect.top > 0;
+      trShown = en.isIntersecting; trBelow = en.boundingClientRect.top > 0; setDock();
     }).observe(tr);
+    if (disSec) new IntersectionObserver(function (es) { disShown = es[0].isIntersecting; setDock(); }).observe(disSec);
   }
 
   /* ---------- boot ---------- */
   $$('[data-chart]').forEach(function (el) { var c = Chart(el); charts.push(c); if (el.getAttribute('data-chart') === 'main') mainChart = c; });
   charts.forEach(function (c) { c.render(); });
   applyStatic();                                   // before anything else rewrites tagged text
-  replay = Replay();
+  replay = EMBED ? null : Replay();                // the frame shows no 3D view
   setLang(LANG, false);
   ready();
-  if (!reduced) { S.t = T_MIN; play(); }           // does not wait for the clips to load; see play()
+  if (!reduced && !EMBED) { S.t = T_MIN; play(); }   // does not wait for the clips to load; see play(). The framed copy waits for a press.
   requestAnimationFrame(frame);
+
+  /* ---------- the added-disturbance section: this page again, in a frame ---------- */
+  if (EMBED) {
+    var lastH = 0;
+    var report = function () {
+      var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      if (h !== lastH) { lastH = h; window.parent.postMessage({ isp: 'height', h: h }, location.origin); }
+    };
+    if (window.ResizeObserver) new ResizeObserver(report).observe(document.documentElement);
+    window.addEventListener('load', report); report();
+    window.addEventListener('message', function (e) {
+      if (e.origin === location.origin && e.data && e.data.isp === 'lang' && e.data.lang !== LANG) setLang(e.data.lang, false);
+    });
+  } else {
+    var disFrame = $('#dis-frame');
+    if (disFrame) {
+      disFrame.src = location.pathname + '?exp=dis&embed=1#' + LANG;      // an absolute path, so the /ko/ page's <base> does not move it
+      window.addEventListener('message', function (e) {
+        if (e.origin !== location.origin || e.source !== disFrame.contentWindow || !e.data || e.data.isp !== 'height') return;
+        disFrame.style.height = e.data.h + 'px';
+      });
+    }
+  }
 })();
 </script>
 </body>
