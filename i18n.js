@@ -130,7 +130,7 @@ window.ISP_I18N = {
     'st.deck.aria': '두 실험의 베이스 회전각 그래프',
     'st.dh.aria': '외란 추정치 그래프',
     'replay.title': '3D 모델',
-    'replay.sub': 'CAD 모델을 Blender에서 리깅하였다. 베이스는 엔코더와 IMU의 측정값을 통해 회전하고, 발사체는 기록된 고각 θ에 따라 회전한다. <em class="hl">점선은 목표 고각\u00a045°\u2060를 나타낸다.</em>',
+    'replay.sub': '<em class="hl">점선은 목표 고각\u00a045°\u2060를 나타낸다.</em>',
     'cam.aria': '카메라 시점',
     'cam.side': '영상 시점',
     'cam.iso': '등각 시점',
