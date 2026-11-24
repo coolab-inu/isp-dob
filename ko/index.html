@@ -17,7 +17,7 @@
   --plane:#f2f3f5; --surface:#fcfcfd; --ink:#101418; --ink-2:#474d56; --muted:#767d88;
   --rule:#dcdfe5; --grid:#e8eaee; --axis:#c3c7ce; --band:rgba(16,20,24,.05);
   --off:#eb6834; --on:#2a78d6;
-  --em:#1557d0; --em-2:#c9281a; --hero-dim:1; --lg-l:block; --lg-d:none;
+  --em:#1557d0; --em-2:#c9281a; --hero-dim:1; --lg-l:block; --lg-d:none; --tip-bg:rgba(16,20,24,.78);
   --btn:#101418; --btn-ink:#fcfcfd;
   --video-bg:#0b0d10; --chip-bg:rgba(10,12,15,.74); --chip-ink:#f4f5f7;
   --mk-off:#ff9457; --mk-on:#6fb4ff; --mk-ink:#ffffff;
@@ -30,7 +30,7 @@
   :root:not([data-theme="light"]){
     --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
     --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-    --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block;
+    --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
     --btn:#eceef1; --btn-ink:#0d0f12;
     --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
     color-scheme:dark;
@@ -39,7 +39,7 @@
 :root[data-theme="dark"]{
   --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
   --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-  --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block;
+  --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
   --btn:#eceef1; --btn-ink:#0d0f12;
   --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
   color-scheme:dark;
@@ -159,7 +159,7 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:6px 11px;font-size:13px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
 .btn[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
-.tip{position:absolute;right:0;top:calc(100% + 8px);z-index:7;width:max-content;max-width:min(320px,84vw);background:var(--btn);color:var(--btn-ink);border-radius:6px;padding:9px 12px;font-size:13px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.28)}
+.tip{position:absolute;right:0;top:calc(100% + 8px);z-index:7;width:max-content;max-width:min(320px,84vw);background:var(--tip-bg);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--btn-ink);border-radius:6px;padding:9px 12px;font-size:13px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.28)}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:20px}
 .pick-g{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%}
 .pick-l{font-family:var(--font-data);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
@@ -417,7 +417,7 @@ tbody th small{text-wrap:balance}
       <div class="tools">
         <div class="tip-host">
           <button class="btn" type="button" id="zoom-btn" aria-pressed="false" aria-describedby="zoom-tip"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
-          <div class="tip" id="zoom-tip" role="status" data-i18n="zoom.tip" hidden>Drag across a clip to zoom into that area, or pinch on a touch screen. Double-click to go back.</div>
+          <div class="tip" id="zoom-tip" role="status" data-i18n="zoom.tip" hidden>Drag across a clip to zoom into that area. On a phone, pinch with two fingers. Double-tap to go back.</div>
         </div>
         <div class="seg" role="group" aria-label="Tracked dots on the clips" data-i18n-aria="marks.aria">
           <button type="button" data-marks="on" aria-pressed="true" data-i18n="marks.on">Dots on</button>
@@ -680,7 +680,7 @@ tbody th small{text-wrap:balance}
 <script src="data.js?v=2eb71e58"></script>
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=a2bee38c"></script>
-<script src="i18n.js?v=0709face"></script>
+<script src="i18n.js?v=c062dcc3"></script>
 <script>
 (function () {
   'use strict';
@@ -1249,8 +1249,12 @@ tbody th small{text-wrap:balance}
     zoomTip.style.left = ''; zoomTip.style.right = '';
     zoomTip.hidden = false;
     if (zoomTip.getBoundingClientRect().left < 8) { zoomTip.style.left = '0'; zoomTip.style.right = 'auto'; }      // the button sits at the left when the heading wraps
-    tipTimer = setTimeout(function () { zoomTip.hidden = true; }, 5000);
+    tipTimer = setTimeout(function () { zoomTip.hidden = true; }, 2000);
   });
+  // the hint also goes away at the next touch or click anywhere but the button
+  document.addEventListener('pointerdown', function (e) {
+    if (zoomTip && !zoomTip.hidden && !(e.target.closest && e.target.closest('#zoom-btn'))) { clearTimeout(tipTimer); zoomTip.hidden = true; }
+  }, true);
   function zoomAbout(px, py, s) {            // keep the picture under (px, py) where it is
     var cu = Z.u + px / Z.s, cv = Z.v + py / Z.s;
     Z.s = clamp(s, 1, Z_MAX); Z.u = cu - px / Z.s; Z.v = cv - py / Z.s;
