@@ -554,13 +554,6 @@ tbody th small{text-wrap:balance}
         </div>
         <div class="plot"><svg role="img" aria-label="Base angle over time for both runs" data-i18n-aria="st.deck.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
-      <figure class="chart" data-chart="iq">
-        <div class="chart-head">
-          <div class="chart-title" data-i18n-html="st.iq">Motor current I<sub>q</sub><span>A</span></div>
-          <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
-        </div>
-        <div class="plot"><svg role="img" aria-label="Motor current over time for both runs" data-i18n-aria="st.iq.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
-      </figure>
       <figure class="chart" data-chart="dh">
         <div class="chart-head">
           <div class="chart-title" data-i18n-html="st.dh">Observer disturbance estimate d̂<span>rad/s², observer-on run</span></div>
@@ -687,7 +680,7 @@ tbody th small{text-wrap:balance}
 <script src="data.js?v=2eb71e58"></script>
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=a2bee38c"></script>
-<script src="i18n.js?v=2e9c3975"></script>
+<script src="i18n.js?v=0709face"></script>
 <script>
 (function () {
   'use strict';
@@ -835,7 +828,6 @@ tbody th small{text-wrap:balance}
     theta: { key: 'th', runs: ['off', 'on'], dp: 2, include: [REF], ref: REF },
     err: { key: 'err', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom' },
     deck: { key: 'deckc', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true },
-    iq: { key: 'iq', runs: ['off', 'on'], dp: 3 },
     dh: { key: 'dh', runs: ['on'], dp: 1, signed: true, include: [0], zero: true, xLabels: true }      // last in the stack, so it carries the time axis
   };
 
