@@ -139,7 +139,6 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .mk-lab b{font-weight:500}
 .marks-off .marks,.marks-off .mk-lab{display:none}
 /* zoom: the picture scales, the tracked marks keep their screen size */
-.frame.zoomed{touch-action:none}
 .zbox{position:absolute;border:1.5px solid #fff;background:rgba(255,255,255,.14);box-shadow:0 0 0 1px rgba(0,0,0,.75);pointer-events:none}
 .frame.need-tap::before{content:"";position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:var(--chip-bg);pointer-events:none}
 .frame.need-tap::after{content:"";position:absolute;left:50%;top:50%;width:20px;height:22px;margin:-11px 0 0 -7px;background:var(--chip-ink);clip-path:polygon(0 0,100% 50%,0 100%);pointer-events:none}
@@ -158,6 +157,8 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
 .btn[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
 .tip .sn{display:block}                         /* the hint: one sentence per line */
+.tip .for-mouse{display:block} .tip .for-touch{display:none}
+@media (pointer:coarse){.tip .for-mouse{display:none} .tip .for-touch{display:block}}
 .tip .sn + .sn{margin-top:2px}
 .tip{position:absolute;right:0;top:calc(100% + 8px);z-index:7;width:max-content;max-width:min(320px,84vw);background:var(--tip-bg);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--btn-ink);border-radius:6px;padding:9px 12px;font-size:13px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.28)}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:20px}
@@ -417,7 +418,7 @@ tbody th small{text-wrap:balance}
       <div class="tools">
         <div class="tip-host">
           <button class="btn" type="button" id="zoom-btn" aria-pressed="false" aria-describedby="zoom-tip"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
-          <div class="tip" id="zoom-tip" role="status" data-i18n="zoom.tip" hidden>Drag across a clip to zoom into that area. On a phone, pinch with two fingers. Double-tap to go back.</div>
+          <div class="tip" id="zoom-tip" role="status" hidden><span class="for-mouse" data-i18n="zoom.tip">Drag across a clip to zoom into that area. Double-click to go back.</span><span class="for-touch" data-i18n="zoom.tip.touch">Press Zoom again to go back.</span></div>
         </div>
         <div class="seg" role="group" aria-label="Tracked dots on the clips" data-i18n-aria="marks.aria">
           <button type="button" data-marks="on" aria-pressed="true" data-i18n="marks.on">Dots on</button>
@@ -680,7 +681,7 @@ tbody th small{text-wrap:balance}
 <script src="data.js?v=2eb71e58"></script>
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=a2bee38c"></script>
-<script src="i18n.js?v=c062dcc3"></script>
+<script src="i18n.js?v=cf2930cd"></script>
 <script>
 (function () {
   'use strict';
@@ -982,7 +983,9 @@ tbody th small{text-wrap:balance}
   function setVideoTime(t) {
     if (!vidReady) return;
     var ct = clamp(t + LEAD, 0, R.clipDur - 0.05);
-    vids.forEach(function (v) { try { v.currentTime = ct; } catch (err) {} });
+    // A seek to where the clip already is still throws away what a phone has buffered, and playback then hangs after
+    // pause -> play. So a clip is moved only when it is more than half a frame away.
+    vids.forEach(function (v) { if (Math.abs(v.currentTime - ct) > 0.017) { try { v.currentTime = ct; } catch (err) {} } });
   }
   function seek(t) { S.t = clamp(t, T_MIN, T_MAX); setVideoTime(S.t); paint(); }
   function setPlaying(on) {
@@ -1277,15 +1280,8 @@ tbody th small{text-wrap:balance}
         try { f.setPointerCapture(e.pointerId); } catch (err) {}
         return;
       }
-      pts[e.pointerId] = rel(e);
-      var k = ids();
-      if (k.length === 2) {
-        var a = pts[k[0]], b = pts[k[1]], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-        pinch = { d: Math.max(gap(a, b), 1), s: Z.s, cu: Z.u + mx / Z.s, cv: Z.v + my / Z.s };
-        pan = null; tap = null; zSkip();
-      } else if (k.length === 1) {
-        pan = Z.s > 1 ? { a: pts[e.pointerId], u: Z.u, v: Z.v, moved: false } : null;
-      }
+      // Touch: nothing. On a phone a tap plays or pauses and the Zoom button zooms; pinch and double tap got in the way
+      // of both (user's decision, 2026-11-24). The touch branches below are kept but no longer reached.
     });
     f.addEventListener('pointermove', function (e) {
       if (!pts[e.pointerId]) return;
@@ -1623,7 +1619,7 @@ tbody th small{text-wrap:balance}
     document.documentElement.lang = LANG;
     try { localStorage.setItem('isp-lang', LANG); } catch (err) {}
     applyStatic();
-    $$('.lede, .sub, .cap, .tip').forEach(wrapSentences);
+    $$('.lede, .sub, .cap, .tip > span').forEach(wrapSentences);
     renderMetrics();
     $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
     setPlaying(S.playing);
