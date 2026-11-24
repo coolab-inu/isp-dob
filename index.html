@@ -15,7 +15,7 @@
   --plane:#f2f3f5; --surface:#fcfcfd; --ink:#101418; --ink-2:#474d56; --muted:#767d88;
   --rule:#dcdfe5; --grid:#e8eaee; --axis:#c3c7ce; --band:rgba(16,20,24,.05);
   --off:#eb6834; --on:#2a78d6;
-  --em:#1557d0; --em-2:#c9281a; --hero-dim:1;
+  --em:#1557d0; --em-2:#c9281a; --hero-dim:1; --logo-bg:transparent;
   --btn:#101418; --btn-ink:#fcfcfd;
   --video-bg:#0b0d10; --chip-bg:rgba(10,12,15,.74); --chip-ink:#f4f5f7;
   --mk-off:#ff9457; --mk-on:#6fb4ff; --mk-ink:#ffffff;
@@ -28,7 +28,7 @@
   :root:not([data-theme="light"]){
     --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
     --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-    --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84;
+    --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --logo-bg:#f4f5f7;
     --btn:#eceef1; --btn-ink:#0d0f12;
     --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
     color-scheme:dark;
@@ -37,7 +37,7 @@
 :root[data-theme="dark"]{
   --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
   --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-  --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84;
+  --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --logo-bg:#f4f5f7;
   --btn:#eceef1; --btn-ink:#0d0f12;
   --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
   color-scheme:dark;
@@ -56,8 +56,8 @@ button{font:inherit;color:inherit}
 /* ---------- nav ---------- */
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--plane);border-bottom:1px solid var(--rule)}
 .nav .wrap{display:flex;align-items:center;gap:8px 18px;min-height:48px}
-.brand{font-family:var(--font-data);font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;color:var(--ink)}
-.brand b{font-weight:500;color:var(--muted)}
+.brand{display:flex;align-items:center;flex:none}
+.brand img{display:block;height:34px;width:auto;background:var(--logo-bg);border-radius:4px;padding:2px 5px}
 .links{display:flex;gap:4px;overflow-x:auto;min-width:0;margin-left:auto;scrollbar-width:none}
 .links::-webkit-scrollbar{display:none}
 .links a{font-size:13.5px;text-decoration:none;color:var(--ink-2);padding:6px 10px;border-radius:4px;white-space:nowrap}
@@ -80,7 +80,7 @@ h1 .nb{white-space:nowrap}
 /* the sentences that must be read */
 .hl{font-style:normal;font-weight:inherit;color:var(--em)}      /* colour only: a heavier weight clogged the Hangul strokes at text size */
 .hl.r{color:var(--em-2)}
-.stats{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:0;margin-top:34px;border-top:1px solid var(--ink)}
+.stats{margin-top:34px;border-top:1px solid var(--ink)}
 .stat{padding:14px 20px 4px 0;min-width:0}
 .stat + .stat{padding-left:20px;border-left:1px solid var(--rule)}
 .stat dt{font-size:13.5px;color:var(--ink-2)}
@@ -126,6 +126,9 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .mk-axis{stroke-width:1.75}
 .mk-ref{stroke:var(--mk-ink);stroke-width:1.1;stroke-dasharray:4 4}
 .mk-tgt{stroke:var(--mk-ink);stroke-width:1.6;stroke-dasharray:10 6}
+.mk-ground{stroke:var(--mk-ink);stroke-width:1.2;opacity:.85}
+.mk-ring{stroke:var(--mk-ink);stroke-width:1.7}
+.mk-tip{stroke-width:6.5}
 .mk-arc{stroke:var(--mk-ink);stroke-width:1.25}
 .marks .off{stroke:var(--mk-off)} .marks .on{stroke:var(--mk-on)}
 .mk-lab{position:absolute;transform:translate(-50%,-50%);background:var(--chip-bg);color:var(--chip-ink);font:500 12px/1.35 var(--font-data);font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:3px;white-space:nowrap;pointer-events:none}
@@ -142,7 +145,15 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .key li{display:flex;align-items:center;gap:7px;min-width:0}
 .key b{font-family:var(--font-data);font-weight:500;color:var(--ink);white-space:nowrap}
 .kl{flex:none;width:28px;height:2px;background:repeating-linear-gradient(90deg,var(--ink) 0 9px,transparent 9px 14px)}
-.kl.zero{height:1px;background:repeating-linear-gradient(90deg,var(--ink-2) 0 4px,transparent 4px 8px)}
+.kl.ground{height:1px;background:var(--ink-2)}
+.kring{flex:none;width:13px;height:13px;border:1.5px solid var(--ink);border-radius:50%}
+/* tools beside a section title: a plain button, and a hint that shows for a few seconds when it is pressed */
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tip-host{position:relative}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:6px 11px;font-size:13px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
+.btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.btn[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.tip{position:absolute;right:0;top:calc(100% + 8px);z-index:7;width:max-content;max-width:min(320px,84vw);background:var(--btn);color:var(--btn-ink);border-radius:6px;padding:9px 12px;font-size:13px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.28)}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:20px}
 .pick-g{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%}
 .pick-l{font-family:var(--font-data);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
@@ -211,7 +222,8 @@ thead th{font-size:12.5px;font-weight:500;color:var(--muted);border-bottom:1px s
 td.n,th.n{text-align:right;font-family:var(--font-data);font-variant-numeric:tabular-nums;white-space:nowrap;padding-right:0;padding-left:18px}
 tbody th{font-weight:500}
 tbody th small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
-tr.grp th{font-family:var(--font-data);font-size:11.5px;letter-spacing:.04em;color:var(--muted);padding-top:20px;border-bottom:1px solid var(--rule)}
+tr.grp th{font-size:13.5px;font-weight:600;color:var(--ink);background:var(--grid);padding:9px 10px;border-bottom:0}
+tr.grp:not(:first-child) th{border-top:14px solid var(--plane)}
 
 /* ---------- rig ---------- */
 .rig{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start}
@@ -251,7 +263,7 @@ tr.grp th{font-family:var(--font-data);font-size:11.5px;letter-spacing:.04em;col
 .how b{color:var(--ink);font-weight:600}
 .how code{font-family:var(--font-data);font-size:13px;color:var(--ink)}
 
-footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;color:var(--muted)}
+footer{height:96px}      /* room for the fixed play bar */
 
 /* ---------- dock ---------- */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--rule);padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -288,9 +300,6 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   .seg.lang{margin-left:auto}
   section{scroll-margin-top:92px}
   .head{padding-block:30px 22px}
-  .stats{grid-template-columns:1fr 1fr}
-  .stat.lead{grid-column:1/-1;border-bottom:1px solid var(--rule);padding-bottom:14px}
-  .stat.lead + .stat{padding-left:0;border-left:0}
   /* clips one above the other at full width; the angles move from the picture to a line under it */
   .clips{grid-template-columns:1fr;gap:14px}
   .chip{font-size:11px;padding:3px 6px}
@@ -298,7 +307,11 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   .chip.read,.mk-lab{display:none}
   .zreset{right:6px;bottom:6px;font-size:11px;padding:4px 7px}
   /* under each clip: symbol, its name, its value */
-  .vals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 10px;margin-top:8px}
+  .vals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;margin-top:8px}
+  .brand img{height:30px}
+  .tip{left:0;right:auto}
+  .mk-ring{stroke-width:1.4}
+  .mk-tip{stroke-width:5.5}
   .vals > span{display:grid;gap:1px;min-width:0}
   .vals .vk{font-size:11.5px;line-height:1.3;color:var(--muted)}
   .vals .vk i{font-style:normal;font-family:var(--font-data);color:var(--ink-2);margin-right:4px}
@@ -353,7 +366,7 @@ tbody th small{text-wrap:balance}
 <body>
 <nav class="nav" aria-label="Sections" data-i18n-aria="nav.aria">
   <div class="wrap">
-    <span class="brand" data-i18n-html="nav.brand">ISP <b>/</b> DOB validation</span>
+    <a class="brand" href="https://coolab-inu.github.io/" aria-label="COOL Lab"><img src="media/cool_lab.png?v=616990cc" alt="COOL Lab, Control &amp; Observer Optimization Lab" width="325" height="120"></a>
     <div class="links" id="links">
       <a href="#runs" data-i18n="nav.runs">Runs</a>
       <a href="#signals" data-i18n="nav.signals">Signals</a>
@@ -384,14 +397,6 @@ tbody th small{text-wrap:balance}
       <dt data-i18n="stat.rms">RMS tracking error while the cam runs</dt>
       <dd><span class="fig" id="k-rms">−65%</span><span class="from" id="k-rms-d">0.81° → 0.28°</span></dd>
     </div>
-    <div class="stat">
-      <dt data-i18n="stat.settle">Settling time after the step</dt>
-      <dd><span class="fig" id="k-set">0.49 s</span><span class="from" id="k-set-d">from 1.55 s</span></dd>
-    </div>
-    <div class="stat">
-      <dt data-i18n="stat.over">Overshoot on the step</dt>
-      <dd><span class="fig" id="k-ov">0.31°</span><span class="from" id="k-ov-d">from 2.65°</span></dd>
-    </div>
   </dl>
 </header>
 
@@ -401,11 +406,17 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="runs.title">The clips, on the test clock</h2>
-        <p class="sub" data-i18n-html="runs.sub">The dots, lines and angles on the clips are tracked from the video itself, and the faint line behind each dot is the path it has taken. <em class="hl">The clips and the logs are the same two runs</em> on one clock: step at 0 s, cam on at 5.0 s. <em class="hl">The long dashed line is the 45° target.</em> Click or drag a plot to scrub. Drag across a clip to zoom into that area, or pinch on a touch screen; double-click to go back.</p>
+        <p class="sub" data-i18n-html="runs.sub">The 45° target is applied at 0 s and the cam runs from 5.0 s. <em class="hl">The long dashed line is the 45° target.</em></p>
       </div>
-      <div class="seg" role="group" aria-label="Tracked dots on the clips" data-i18n-aria="marks.aria">
-        <button type="button" data-marks="on" aria-pressed="true" data-i18n="marks.on">Dots on</button>
-        <button type="button" data-marks="off" aria-pressed="false" data-i18n="marks.off">Off</button>
+      <div class="tools">
+        <div class="tip-host">
+          <button class="btn" type="button" id="zoom-btn" aria-pressed="false" aria-describedby="zoom-tip"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
+          <div class="tip" id="zoom-tip" role="status" data-i18n="zoom.tip" hidden>Drag across a clip to zoom into that area, or pinch on a touch screen. Double-click to go back.</div>
+        </div>
+        <div class="seg" role="group" aria-label="Tracked dots on the clips" data-i18n-aria="marks.aria">
+          <button type="button" data-marks="on" aria-pressed="true" data-i18n="marks.on">Dots on</button>
+          <button type="button" data-marks="off" aria-pressed="false" data-i18n="marks.off">Off</button>
+        </div>
       </div>
     </div>
 
@@ -418,13 +429,11 @@ tbody th small{text-wrap:balance}
           <svg class="marks" data-marks-for="off" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
-          <div class="mk-lab" data-lab="rel" hidden></div>
-          <div class="mk-lab" data-lab="tgt" hidden></div>
           <div class="zbox" hidden></div>
           <button class="zreset" type="button" data-zreset hidden></button>
           <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-off-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">φ</span> <b id="r-off-deck">–</b></span></div>
         </div>
-        <figcaption class="vals"><span><span class="vk"><i>θ</i><span data-i18n="key.th">elevation</span></span><b data-v="th">–</b></span><span><span class="vk"><i>φ</i><span data-i18n="key.deck">base angle</span></span><b data-v="deck">–</b></span><span><span class="vk"><i>θ+φ</i><span data-i18n="key.rel">plate vs base</span></span><b data-v="rel">–</b></span></figcaption>
+        <figcaption class="vals"><span><span class="vk"><i>θ</i><span data-i18n="key.th">elevation</span></span><b data-v="th">–</b></span><span><span class="vk"><i>φ</i><span data-i18n="key.deck">base angle</span></span><b data-v="deck">–</b></span></figcaption>
       </figure>
       <figure class="clip">
         <div class="frame" data-toggle>
@@ -434,22 +443,20 @@ tbody th small{text-wrap:balance}
           <svg class="marks" data-marks-for="on" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
-          <div class="mk-lab" data-lab="rel" hidden></div>
-          <div class="mk-lab" data-lab="tgt" hidden></div>
           <div class="zbox" hidden></div>
           <button class="zreset" type="button" data-zreset hidden></button>
           <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-on-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">φ</span> <b id="r-on-deck">–</b></span></div>
         </div>
-        <figcaption class="vals"><span><span class="vk"><i>θ</i><span data-i18n="key.th">elevation</span></span><b data-v="th">–</b></span><span><span class="vk"><i>φ</i><span data-i18n="key.deck">base angle</span></span><b data-v="deck">–</b></span><span><span class="vk"><i>θ+φ</i><span data-i18n="key.rel">plate vs base</span></span><b data-v="rel">–</b></span></figcaption>
+        <figcaption class="vals"><span><span class="vk"><i>θ</i><span data-i18n="key.th">elevation</span></span><b data-v="th">–</b></span><span><span class="vk"><i>φ</i><span data-i18n="key.deck">base angle</span></span><b data-v="deck">–</b></span></figcaption>
       </figure>
     </div>
 
     <ul class="key" id="marks-key">
       <li><i class="kl"></i><span data-i18n="key.tgt">Target elevation, 45°</span></li>
-      <li><i class="kl zero"></i><span data-i18n="key.zero">θ = 0° and the base at its lowest</span></li>
+      <li><i class="kl ground"></i><span data-i18n="key.ground">Ground reference line (fixed)</span></li>
+      <li><i class="kring"></i><span data-i18n-html="key.ring">In the circle, <em class="hl r">the gap between the solid tip and the dashed tip is the tilt error.</em></span></li>
       <li class="sym"><b>θ</b><span data-i18n="key.th.long">elevation of the payload plate</span></li>
-      <li class="sym"><b>φ</b><span data-i18n="key.deck.long">base angle above its lowest position</span></li>
-      <li class="sym"><b>θ+φ</b><span data-i18n="key.rel.long">plate relative to the base</span></li>
+      <li class="sym"><b>φ</b><span data-i18n="key.deck.long">base angle from mid-stroke</span></li>
     </ul>
 
     <div class="transport" id="transport">
@@ -472,15 +479,12 @@ tbody th small{text-wrap:balance}
       </div>
     </div>
 
-    <p class="cap" id="dots-cap" hidden></p>
-
     <div class="pick" id="pick">
       <div class="pick-g" data-pick="clips">
         <span class="pick-l" data-i18n="pick.clips">In the clips</span>
         <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
           <button type="button" data-sig="tiltv" aria-pressed="true" data-i18n="sig.tiltv">Tilt error</button>
           <button type="button" data-sig="deckv" aria-pressed="false" data-i18n="sig.deckv">Base φ</button>
-          <button type="button" data-sig="relv" aria-pressed="false" data-i18n="sig.relv">θ + φ</button>
         </div>
       </div>
       <div class="pick-g">
@@ -489,9 +493,7 @@ tbody th small{text-wrap:balance}
           <button type="button" data-sig="theta" aria-pressed="false" data-i18n="sig.theta">Angle θ</button>
           <button type="button" data-sig="err" aria-pressed="false" data-i18n="sig.err">Error</button>
           <button type="button" data-sig="deck" aria-pressed="false" data-i18n="sig.deck">Base φ</button>
-          <button type="button" data-sig="iq" aria-pressed="false" data-i18n="sig.iq">Current</button>
           <button type="button" data-sig="dh" aria-pressed="false" data-i18n="sig.dh">Observer d̂</button>
-          <button type="button" data-sig="rpm" aria-pressed="false" data-i18n="sig.rpm">Cam speed</button>
         </div>
       </div>
     </div>
@@ -510,7 +512,7 @@ tbody th small{text-wrap:balance}
       </figure>
     </div>
     <div class="sec-head" style="margin:12px 0 0;align-items:flex-start">
-      <p class="cap" style="margin-top:0" data-i18n="runs.cap2">Signals marked “in the clips” are measured from the video. “Logged runs” are what the controller recorded in the same runs. The shaded span is the 10 s in which the cam motor runs, and the vertical line is the playhead.</p>
+      <p class="cap" style="margin-top:0" data-i18n="runs.cap2">Signals marked “in the clips” are measured from the video. “Logged runs” are what the controller recorded in the same runs.</p>
       <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
         <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
         <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
@@ -525,7 +527,6 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="signals.title">What the controller was doing</h2>
-        <p class="sub" data-i18n-html="signals.sub">These are the signals the controller logged in the two runs. The encoder measures θ<sub>e</sub>, the change of the payload angle relative to the base, so the base angle is φ = −(θ + θ<sub>e</sub>). It swings about 8° peak to peak in both runs, the same swing the clips show, so <em class="hl">both runs faced the same disturbance.</em> Both runs start with the cam parked near the bottom of its stroke.</p>
       </div>
       <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
         <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
@@ -543,7 +544,7 @@ tbody th small{text-wrap:balance}
       </figure>
       <figure class="chart" data-chart="deck">
         <div class="chart-head">
-          <div class="chart-title" data-i18n-html="st.deck">Base angle φ = −(θ + θ<sub>e</sub>)<span>deg above the bottom of the cam stroke</span></div>
+          <div class="chart-title" data-i18n-html="st.deck">Base angle φ = −(θ + θ<sub>e</sub>)<span>deg from the middle of the cam stroke</span></div>
           <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
         <div class="plot"><svg role="img" aria-label="Base angle over time for both runs" data-i18n-aria="st.deck.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
@@ -562,13 +563,6 @@ tbody th small{text-wrap:balance}
         </div>
         <div class="plot"><svg role="img" aria-label="Observer disturbance estimate over time" data-i18n-aria="st.dh.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
-      <figure class="chart" data-chart="rpm">
-        <div class="chart-head">
-          <div class="chart-title" data-i18n-html="st.rpm">Cam motor speed<span>rpm</span></div>
-          <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
-        </div>
-        <div class="plot"><svg role="img" aria-label="Cam motor speed over time for both runs" data-i18n-aria="st.rpm.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
-      </figure>
     </div>
   </div>
 </section>
@@ -578,7 +572,7 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="replay.title">3D replay</h2>
-        <p class="sub" data-i18n-html="replay.sub">The CAD model replays the two logged runs on the same playhead. Each base rocks as its encoder and IMU saw it, and each payload sits at its logged θ. <em class="hl">The dashed line is the 45° target.</em></p>
+        <p class="sub" data-i18n-html="replay.sub">The CAD model is rigged in Blender. Each base turns from its encoder and IMU measurements, and each payload follows its logged θ. <em class="hl">The dashed line is the 45° target.</em></p>
       </div>
       <div class="seg" role="group" aria-label="Camera" data-i18n-aria="cam.aria">
         <button type="button" data-cam="side" aria-pressed="true" data-i18n="cam.side">Video angle</button>
@@ -612,12 +606,6 @@ tbody th small{text-wrap:balance}
         </div>
       </figure>
     </div>
-    <ul class="how">
-      <li><b data-i18n="how.payload.k">Payload</b><span data-i18n-html="how.payload.v">The absolute angle is the elevation θ measured by the IMU. The CAD pose, with the payload envelope lying flat, is θ = 0, and positive θ raises its hinge-side end. That is the direction the plate turns in the clips.</span></li>
-      <li><b data-i18n="how.deck.k">Base</b><span data-i18n-html="how.deck.v">The angle about the hinge pin is φ = −(θ + θ<sub>e</sub>), where θ<sub>e</sub> is the angle change read by the encoder. It is measured from its lowest level while the cam runs and held at the parked level before 5.0 s.</span></li>
-      <li><b data-i18n="how.cam.k">Cam</b><span data-i18n-html="how.cam.v">Not instrumented. Its angle is reconstructed from the base: lobe down at each trough, lobe up at each peak. The direction of rotation is a guess.</span></li>
-      <li><b data-i18n="how.model.k">Model</b><span data-i18n-html="how.model.v">Read from the Fusion 360 design and rigged in Blender. The CAD frame is one solid, so the base is cut out of it and left free to pivot. The rig in the videos carries a small plate where the CAD has an 8 × 19 × 6 cm envelope.</span></li>
-    </ul>
   </div>
 </section>
 
@@ -626,7 +614,6 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="metrics.title">The numbers</h2>
-        <p class="sub" data-i18n="metrics.sub">Logged values are computed in this page from the two logs. Clip values come from the video tracking.</p>
         <p class="sub" id="metrics-key" hidden></p>
       </div>
     </div>
@@ -643,7 +630,7 @@ tbody th small{text-wrap:balance}
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2 data-i18n="rig.title">The rig and the test</h2>
+        <h2 data-i18n="rig.title">The rig</h2>
         <p class="sub" data-i18n-html="rig.sub">A 3D-printed frame carries a base that pivots on a pin. A cam under the base lifts and drops it to imitate wave motion. <em class="hl">The elevation motor on the base has to keep the payload plate at the commanded inertial angle.</em></p>
       </div>
     </div>
@@ -659,20 +646,13 @@ tbody th small{text-wrap:balance}
       </figure>
       <div>
         <ol class="parts">
-          <li><span data-i18n-html="part.1"><b>Payload plate with IMU.</b> Held at 45° in this frame.</span></li>
-          <li><span data-i18n-html="part.2"><b>Elevation axis.</b> Motor and encoder between base and payload.</span></li>
-          <li><span data-i18n-html="part.3"><b>Base.</b> Rocks about the pin when the cam turns.</span></li>
-          <li><span data-i18n-html="part.4"><b>Hinge pin.</b> The base rotates about it.</span></li>
-          <li><span data-i18n-html="part.5"><b>Cam disc.</b> Driven by the second motor, target 300 rpm.</span></li>
-          <li><span data-i18n-html="part.6"><b>Frame.</b> Fixed to the bench.</span></li>
+          <li><span data-i18n-html="part.1"><b>Payload plate with IMU</b></span></li>
+          <li><span data-i18n-html="part.2"><b>Elevation axis</b></span></li>
+          <li><span data-i18n-html="part.3"><b>Base</b></span></li>
+          <li><span data-i18n-html="part.4"><b>Hinge pin</b></span></li>
+          <li><span data-i18n-html="part.5"><b>Cam disc</b></span></li>
+          <li><span data-i18n-html="part.6"><b>Frame</b></span></li>
         </ol>
-        <ol class="proto">
-          <li><time data-i18n="proto.t0">pre-run</time><span data-i18n="proto.1">1 s angle stability check (±2°) and gyro bias calibration.</span></li>
-          <li><time>0.0 s</time><span data-i18n="proto.2">Target of 45° applied. The payload starts at about −3°.</span></li>
-          <li><time>5.0 s</time><span data-i18n="proto.3">Cam motor starts. The base begins to rock.</span></li>
-          <li><time>15.0 s</time><span data-i18n="proto.4">Logging stops after 1,500 samples of 12 channels.</span></li>
-        </ol>
-        <p class="cap" id="log-facts"></p>
       </div>
     </div>
   </div>
@@ -680,9 +660,7 @@ tbody th small{text-wrap:balance}
 
 </main>
 
-<footer>
-  <div class="wrap" data-i18n="footer">Draft for review. Figures are computed in the browser from the two run logs; the 3D model comes from the rig’s CAD design.</div>
-</footer>
+<footer></footer>
 
 <div class="dock" id="dock" hidden>
   <div class="wrap">
@@ -705,7 +683,7 @@ tbody th small{text-wrap:balance}
 <script src="data.js?v=2eb71e58"></script>
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=a2bee38c"></script>
-<script src="i18n.js?v=e14e6ed5"></script>
+<script src="i18n.js?v=16876b10"></script>
 <script>
 (function () {
   'use strict';
@@ -750,7 +728,10 @@ tbody th small{text-wrap:balance}
     r.encz = r.enc.map(function (v) { return v - m; });
     r.tiltv = TR ? TR[k].tilt100 : [];      // measured in the clip, on the log's 100 Hz grid; null where the plate was not locked
     r.deckv = TR ? TR[k].deck100 : [];
-    r.relv = r.tiltv.map(function (v, i) { return v == null ? null : REF + v + r.deckv[i]; });      // plate against deck
+    // The base angle is shown from the middle of its stroke (about -4 to +4 deg). r.deck, from the lowest level, still drives the 3D model.
+    var sw = stats(r.deck, T_DIST + 0.5, T_END), vmid = TR ? TR[k].info.deckSwing / 2 : 0;
+    r.deckc = r.deck.map(function (v) { return v - (sw.min + sw.max) / 2; });
+    r.deckvc = r.deckv.map(function (v) { return v - vmid; });
   });
 
   /* ---------- metrics ---------- */
@@ -808,16 +789,15 @@ tbody th small{text-wrap:balance}
     );
   }
   function renderMetrics() {                       // everything here is text, so it is rebuilt when the language changes
-    var body = $('#metrics-body'), cap = $('#dots-cap');
+    var body = $('#metrics-body');
     body.textContent = '';
     ROWS.forEach(function (row) {
       var tr = document.createElement('tr'), th = document.createElement('th');
       if (row.grp) {
         tr.className = 'grp'; th.colSpan = 4; th.scope = 'colgroup'; th.textContent = t(row.grp); tr.appendChild(th);
       } else {
-        var def = t('m.' + row.id + '.d'), a = row.v ? row.v[0] : M.off[row.id], b = row.v ? row.v[1] : M.on[row.id];
+        var a = row.v ? row.v[0] : M.off[row.id], b = row.v ? row.v[1] : M.on[row.id];
         th.scope = 'row'; th.textContent = t('m.' + row.id + '.n');
-        if (def) { var sm = document.createElement('small'); sm.textContent = def; th.appendChild(sm); }
         tr.appendChild(th);
         [num(a, row.dp) + row.u, num(b, row.dp) + row.u, row.plain ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b)].forEach(function (txt) {
           var td = document.createElement('td'); td.className = 'n'; td.textContent = txt; tr.appendChild(td);
@@ -825,10 +805,6 @@ tbody th small{text-wrap:balance}
       }
       body.appendChild(tr);
     });
-    if (TR) {
-      cap.hidden = false;
-      cap.innerHTML = t('cap.dots', { a: num(TR.off.info.pathWidthTop, 1), b: num(TR.on.info.pathWidthTop, 1) });      // the page's own text, with emphasis markup
-    }
     // the one-sentence result, from the same numbers as the table; shown only when both measurements agree that the error fell
     var keyEl = $('#metrics-key'), kv = TR ? [TR.off.info.tiltRms, TR.on.info.tiltRms] : null;
     if (keyEl) {
@@ -843,15 +819,6 @@ tbody th small{text-wrap:balance}
 
     $('#k-rms').textContent = pct(M.off.rms, M.on.rms);
     $('#k-rms-d').textContent = num(M.off.rms, 2) + '° → ' + num(M.on.rms, 2) + '°';
-    $('#k-set').textContent = num(M.on.settle, 2) + ' s';
-    $('#k-set-d').textContent = t('k.from', { v: num(M.off.settle, 2) + ' s' });
-    $('#k-ov').textContent = num(M.on.overshoot, 2) + '°';
-    $('#k-ov-d').textContent = t('k.from', { v: num(M.off.overshoot, 2) + '°' });
-
-    function period(f) { var m = /control_max_period_us=(\d+)/.exec(f || ''); return m ? (m[1] / 1000).toFixed(2) + ' ms' : 'n/a'; }
-    function missed(f) { var m = /control_missed_ticks=(\d+)/.exec(f || ''); return m ? +m[1] : null; }
-    var mo = missed(R.off.footer), mn = missed(R.on.footer);
-    $('#log-facts').textContent = t('log.facts', { a: mo === 0 && mn === 0 ? t('log.ok') : t('log.missed', { a: mo, b: mn }), b: period(R.off.footer), c: period(R.on.footer) });
   }
 
   /* ---------- shared state ---------- */
@@ -860,14 +827,12 @@ tbody th small{text-wrap:balance}
 
   var CH = {                                       // titles and units are 'ch.<name>.t' / 'ch.<name>.u' in the dictionary
     tiltv: { key: 'tiltv', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom' },
-    deckv: { key: 'deckv', runs: ['off', 'on'], dp: 2, include: [0], zero: true },
-    relv: { key: 'relv', runs: ['off', 'on'], dp: 2, robust: 'bottom' },
+    deckv: { key: 'deckvc', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true },
     theta: { key: 'th', runs: ['off', 'on'], dp: 2, include: [REF], ref: REF },
     err: { key: 'err', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom' },
-    deck: { key: 'deck', runs: ['off', 'on'], dp: 2, include: [0], zero: true },
+    deck: { key: 'deckc', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true },
     iq: { key: 'iq', runs: ['off', 'on'], dp: 3 },
-    dh: { key: 'dh', runs: ['on'], dp: 1, signed: true, include: [0], zero: true },
-    rpm: { key: 'rpm', runs: ['off', 'on'], dp: 0, include: [0], xLabels: true }
+    dh: { key: 'dh', runs: ['on'], dp: 1, signed: true, include: [0], zero: true, xLabels: true }      // last in the stack, so it carries the time axis
   };
 
   function niceTicks(a, b, target) {
@@ -1014,7 +979,7 @@ tbody th small{text-wrap:balance}
     var txt = 't = ' + num(S.t, 2) + ' s', i = idx(S.t);
     clocks.forEach(function (c) { c.textContent = txt; });
     scrubs.forEach(function (s) { if (document.activeElement !== s || S.playing) s.value = S.t.toFixed(2); });
-    ['off', 'on'].forEach(function (k) { setDial(k, R[k].th[i], R[k].deck[i]); });
+    ['off', 'on'].forEach(function (k) { setDial(k, R[k].th[i], R[k].deckc[i]); });
     drawMarks();
     if (replay) replay.update(i);
   }
@@ -1141,8 +1106,8 @@ tbody th small{text-wrap:balance}
   }
   function Marks(svg, k) {
     var T = TR[k], NS = 'http://www.w3.org/2000/svg', n = T.deck.length, RECENT = Math.round(1.5 * TR.fps), D2R = Math.PI / 180;
-    var host = svg.parentNode, labTh = $('[data-lab="th"]', host), labDeck = $('[data-lab="deck"]', host), labTgt = $('[data-lab="tgt"]', host);
-    var fig = host.parentNode, vTh = $('[data-v="th"]', fig), vDeck = $('[data-v="deck"]', fig), vRel = $('[data-v="rel"]', fig);      // the same values as text under the clip (phones)
+    var host = svg.parentNode, labTh = $('[data-lab="th"]', host), labDeck = $('[data-lab="deck"]', host);
+    var fig = host.parentNode, vTh = $('[data-v="th"]', fig), vDeck = $('[data-v="deck"]', fig);      // the same values as text under the clip (phones)
     function el(name, cls) { var e = document.createElementNS(NS, name); e.setAttribute('class', cls); svg.appendChild(e); return e; }
     function r1(v) { return v.toFixed(1); }
     function dir(deg) { var a = deg * D2R; return [Math.cos(a), -Math.sin(a)]; }          // screen y points down
@@ -1158,16 +1123,22 @@ tbody th small{text-wrap:balance}
     }
     function show(parts, on) { parts.forEach(function (e) { if (on) e.removeAttribute('display'); else e.setAttribute('display', 'none'); }); }
 
-    // deck: a line from the hinge pin to the tracked point on its free end, against its lowest position
-    var hx = TR.hinge[0], hy = TR.hinge[1];
-    var deckLow = el('line', 'mk-ref'), deckLine = el('line', 'mk-line ' + k), deckArc = el('path', 'mk-arc');
-    // plate: a line through its two tracked corners, against the direction that edge has at theta = 0
-    // and against the direction it has at the target: a long dashed line through the same corner, as in the 3D replay
-    var REF0 = T.info.holdUpper + REF, r0 = dir(REF0), r45 = dir(T.info.holdUpper);
-    var plateRef = el('line', 'mk-ref'), plateTgt = el('line', 'mk-tgt'), plateLine = el('line', 'mk-line ' + k), plateArc = el('path', 'mk-arc'), plateParts = [plateRef, plateTgt, plateLine, plateArc];
-    // plate against deck: the plate's axis (square to the line through its corners) carried down to the deck line
-    var axisLine = el('line', 'mk-axis ' + k), relArc = el('path', 'mk-arc'), labRel = $('[data-lab="rel"]', host);
-    plateParts.push(axisLine, relArc);
+    // Reference line: fixed in the picture, through the hinge pin, along the direction the base has at the middle of its stroke.
+    // It does not move when the base rocks. The base angle is measured from it (about -4 to +4 deg).
+    var hx = TR.hinge[0], hy = TR.hinge[1], MID = T.info.deckSwing / 2;
+    var g0x = T.mx[0] - hx, g0y = T.my[0] - hy, a0 = -(T.deck[0] - MID) * D2R;
+    var gX = g0x * Math.cos(a0) + g0y * Math.sin(a0), gY = -g0x * Math.sin(a0) + g0y * Math.cos(a0), gLen = Math.sqrt(gX * gX + gY * gY);
+    gX /= gLen; gY /= gLen;
+    var ground = el('line', 'mk-ground');
+    seg(ground, hx - gX * 70, hy - gY * 70, hx + gX * (gLen + 110), hy + gY * (gLen + 110));
+    var deckLine = el('line', 'mk-line ' + k), deckArc = el('path', 'mk-arc');
+
+    // Launcher: the plate's axis, square to its tracked edge, drawn from where it meets the reference line up past the plate.
+    // The dashed line from the same point is the 45 deg target (the direction the axis had at the hold). The two lines are equally
+    // long, so the gap between their far ends is the tilt error; a ring around the target's end shows where to look.
+    var A0 = T.info.holdUpper + 90, dT = dir(A0), EXT = 110, RING = 32;
+    var tgtLine = el('line', 'mk-tgt'), axisLine = el('line', 'mk-line ' + k), thArc = el('path', 'mk-arc'), ring = el('circle', 'mk-ring'), tip = el('path', 'mk-tip ' + k);
+    var plateLine = el('line', 'mk-axis ' + k), aim = [tgtLine, axisLine, thArc, ring, tip], focus = null;
 
     // the three tracked points and the paths they have drawn
     var dots = [[T.mx, T.my], [T.cx, T.cy], [T.tx, T.ty]].map(function (xy) {
@@ -1181,8 +1152,9 @@ tbody th small{text-wrap:balance}
     dots.forEach(function (d) { d.bg = el('path', 'mk-dotbg'); d.dot = el('path', 'mk-dot ' + k); });     // dots sit above everything
 
     return {
+      focus: function () { return focus; },          // centre of the ring, for the zoom button
       update: function () {
-        var f = clipFrame(k), tilt = T.tilt[f], deck = T.deck[f];
+        var f = clipFrame(k), tilt = T.tilt[f], deck = T.deck[f] - MID;
         dots.forEach(function (d) {
           var on = f >= d.first && f <= d.last, m;
           show([d.path, d.recent, d.bg, d.dot], on);
@@ -1193,39 +1165,39 @@ tbody th small{text-wrap:balance}
           d.bg.setAttribute('d', m); d.dot.setAttribute('d', m);
         });
 
-        // deck angle: turn the tracked point back down by the measured angle to get the lowest position
-        var mx = T.mx[f], my = T.my[f], vx = mx - hx, vy = my - hy, a = -deck * D2R, len = Math.sqrt(vx * vx + vy * vy);
-        var lx = vx * Math.cos(a) + vy * Math.sin(a), ly = -vx * Math.sin(a) + vy * Math.cos(a);
+        // base: from the hinge pin to the tracked point on its free end, against the reference line
+        var mx = T.mx[f], my = T.my[f], vx = mx - hx, vy = my - hy, len = Math.sqrt(vx * vx + vy * vy);
         seg(deckLine, hx, hy, mx, my);
-        seg(deckLow, hx, hy, hx + lx, hy + ly);
-        arc(deckArc, hx, hy, Math.round(len * 0.9), lx / len, ly / len, vx / len, vy / len, deck >= 0 ? 0 : 1);
+        arc(deckArc, hx, hy, Math.round(len * 0.9), gX, gY, vx / len, vy / len, deck >= 0 ? 0 : 1);
         place(labDeck, mx + 52, my - 22, t('lab.deck') + ' ' + num(deck, 1) + '°');
         vDeck.textContent = num(deck, 1) + '°';
 
-        // plate angle: 45 deg at the hold, plus the rotation measured since
+        // launcher angle: 45 deg at the hold, plus the rotation measured since
+        focus = null;
         if (T.cx[f] == null || tilt == null) {
-          show(plateParts, false); labTh.hidden = true; labRel.hidden = true; labTgt.hidden = true;
-          vTh.textContent = vRel.textContent = '–';
+          show(aim, false); show([plateLine], false); labTh.hidden = true;
+          vTh.textContent = '–';
         } else {
-          var cx = T.cx[f], cy = T.cy[f], ex = T.tx[f] - cx, ey = T.ty[f] - cy, L = Math.sqrt(ex * ex + ey * ey), ux = ex / L, uy = ey / L;
-          var cur = Math.atan2(-uy, ux) / D2R;
-          show(plateParts, true);
-          // both lines pass through the tracked corner and run well past the plate, so the angle between them opens into a visible gap
-          seg(plateLine, cx - ux * 120, cy - uy * 120, cx + ex + ux * 40, cy + ey + uy * 40);
-          seg(plateTgt, cx - r45[0] * 160, cy - r45[1] * 160, cx + r45[0] * (L + 50), cy + r45[1] * (L + 50));      // longer than the plate's line, so it shows even where the two coincide
-          place(labTgt, cx - r45[0] * 160 - 8, cy - r45[1] * 160 + 16, t('lab.tgt'));
-          seg(plateRef, cx, cy, cx + r0[0] * 74, cy + r0[1] * 74);
-          arc(plateArc, cx, cy, 44, r0[0], r0[1], ux, uy, cur <= REF0 ? 1 : 0);
-          place(labTh, cx - 80, Math.max(cy + 6, 128), 'θ ' + num(REF + tilt, 1) + '°');      // left of the plate, clear of the name tag
-
-          // axis: from the midpoint of the two corners, square to the line between them, down to the deck line (M + s n = H + r d)
-          var mpx = cx + ex / 2, mpy = cy + ey / 2, nx = -uy, ny = ux, dx = vx / len, dy = vy / len;
-          var det = dx * ny - nx * dy, sA = (dx * (hy - mpy) - dy * (hx - mpx)) / det, Vx = mpx + sA * nx, Vy = mpy + sA * ny;
-          var bx = -dx - nx, by = -dy - ny, bl = Math.sqrt(bx * bx + by * by);
-          seg(axisLine, mpx - nx * 78, mpy - ny * 78, Vx, Vy);
-          arc(relArc, Vx, Vy, 58, -dx, -dy, -nx, -ny, 1);
-          place(labRel, Vx + bx / bl * 108, Vy + by / bl * 108, t('lab.rel') + ' ' + num(REF + tilt + deck, 1) + '°');
-          vTh.textContent = num(REF + tilt, 1) + '°'; vRel.textContent = num(REF + tilt + deck, 1) + '°';
+          var cx = T.cx[f], cy = T.cy[f], tx = T.tx[f], ty = T.ty[f], mpx = (cx + tx) / 2, mpy = (cy + ty) / 2;
+          var dA = dir(A0 - tilt), den = dA[0] * gY - dA[1] * gX;                     // theta rises as the plate turns clockwise on screen
+          var sV = Math.abs(den) > 0.2 ? ((hx - mpx) * gY - (hy - mpy) * gX) / den : 0;      // M + sV dA lies on the reference line
+          show([plateLine], true); seg(plateLine, cx, cy, tx, ty);
+          if (sV > -60 || sV < -560) {               // early in the step the axis is too flat to meet the reference line inside the picture
+            show(aim, false);
+            place(labTh, cx - 76, cy + 4, 'θ ' + num(REF + tilt, 1) + '°');
+          } else {
+            var Vx = mpx + sV * dA[0], Vy = mpy + sV * dA[1], reach = EXT - sV;
+            var Px = Vx + dA[0] * reach, Py = Vy + dA[1] * reach, Qx = Vx + dT[0] * reach, Qy = Vy + dT[1] * reach;
+            show(aim, true);
+            seg(axisLine, Vx, Vy, Px, Py);
+            seg(tgtLine, Vx, Vy, Qx + dT[0] * 18, Qy + dT[1] * 18);
+            arc(thArc, Vx, Vy, 52, -gX, -gY, dA[0], dA[1], 1);
+            ring.setAttribute('cx', r1(Qx)); ring.setAttribute('cy', r1(Qy)); ring.setAttribute('r', RING);
+            tip.setAttribute('d', 'M' + r1(Px) + ' ' + r1(Py) + 'h0.01');
+            place(labTh, Qx - RING - 52, Qy, 'θ ' + num(REF + tilt, 1) + '°');      // the angle is read at the top, beside the ring
+            focus = [Qx, Qy];
+          }
+          vTh.textContent = num(REF + tilt, 1) + '°';
         }
         var txt = tilt == null ? '–' : signed(tilt, 2) + '°';
         read[k].tilt.textContent = txt; read[k].d.textContent = txt;
@@ -1246,6 +1218,7 @@ tbody th small{text-wrap:balance}
   /* ---------- zoom on the clips: drag a box with a mouse, pinch on a touch screen ---------- */
   var Z_MAX = 8, zFrames = $$('.frame[data-toggle]'), zSkipClick = false, zSkipTimer = 0;
   function zSkip() { zSkipClick = true; clearTimeout(zSkipTimer); zSkipTimer = setTimeout(function () { zSkipClick = false; }, 400); }
+  var zoomBtn = $('#zoom-btn'), zoomTip = $('#zoom-tip'), tipTimer = 0;
   function applyZoom() {
     Z.s = clamp(Z.s, 1, Z_MAX);
     if (Z.s < 1.03) Z.s = 1;
@@ -1258,8 +1231,21 @@ tbody th small{text-wrap:balance}
       f.classList.toggle('zoomed', on);
       btn.hidden = !on; btn.textContent = t('zoom.reset', { x: Z.s.toFixed(1) + '×' });
     });
+    if (zoomBtn) zoomBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     drawMarks();
   }
+  // The button zooms both clips onto the ring (or back out) and shows, for a few seconds, how to zoom by hand.
+  if (zoomBtn) zoomBtn.addEventListener('click', function () {
+    clearTimeout(tipTimer);
+    if (Z.s > 1) { Z.s = 1; applyZoom(); zoomTip.hidden = true; return; }
+    var fo = marks.off && marks.off.focus ? marks.off.focus() : null, vw = TR ? TR.w : 960, vh = TR ? TR.h : 800, zs = 2.6;
+    Z.s = zs; Z.u = (fo ? fo[0] : 400) / vw - 0.5 / zs; Z.v = (fo ? fo[1] : 150) / vh - 0.5 / zs;
+    applyZoom();
+    zoomTip.style.left = ''; zoomTip.style.right = '';
+    zoomTip.hidden = false;
+    if (zoomTip.getBoundingClientRect().left < 8) { zoomTip.style.left = '0'; zoomTip.style.right = 'auto'; }      // the button sits at the left when the heading wraps
+    tipTimer = setTimeout(function () { zoomTip.hidden = true; }, 5000);
+  });
   function zoomAbout(px, py, s) {            // keep the picture under (px, py) where it is
     var cu = Z.u + px / Z.s, cv = Z.v + py / Z.s;
     Z.s = clamp(s, 1, Z_MAX); Z.u = cu - px / Z.s; Z.v = cv - py / Z.s;
