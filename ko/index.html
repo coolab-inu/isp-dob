@@ -432,7 +432,7 @@ tbody th small{text-wrap:balance}
     <div class="clips">
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=de3a1503" src="media/dob_off.mp4?v=37da02fc" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
+          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=2eb6e410" src="media/dob_off.mp4?v=796efbf8" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
           <div class="chip tag"><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
           <svg class="marks" data-marks-for="off" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
@@ -446,7 +446,7 @@ tbody th small{text-wrap:balance}
       </figure>
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg?v=ca712ed6" src="media/dob_on.mp4?v=80b69f18" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
+          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg?v=7e4bc917" src="media/dob_on.mp4?v=7b05c5c4" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
           <div class="chip tag"><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
           <svg class="marks" data-marks-for="on" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
@@ -636,7 +636,7 @@ tbody th small{text-wrap:balance}
     </div>
     <div class="rig">
       <figure class="photo">
-        <img src="media/dob_on.jpg?v=ca712ed6" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
+        <img src="media/dob_on.jpg?v=7e4bc917" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
         <span class="pin" style="left:54%;top:24%">2</span>
         <span class="pin" style="left:33%;top:35%">3</span>
@@ -680,9 +680,9 @@ tbody th small{text-wrap:balance}
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
-<script src="data.js?v=2eb71e58"></script>
+<script src="data.js?v=3f708277"></script>
 <script src="model.js?v=d9333bed"></script>
-<script src="track.js?v=a2bee38c"></script>
+<script src="track.js?v=841ddea6"></script>
 <script src="i18n.js?v=dde685c5"></script>
 <script>
 (function () {
@@ -748,7 +748,15 @@ tbody th small{text-wrap:balance}
       if (th[i] > peak) peak = th[i];
       if (Math.abs(th[i] - REF) > 0.9) last = i;
     }
-    return { start: a, rise: (iHi - iLo) * DT, overshoot: peak - REF, settle: (last + 1) * DT };
+    // Undefined cases are null and shown as a dash: no rise time if 90 % of the step is not reached before the cam starts,
+    // no overshoot if the target is not reached (within the 0.9 deg band), no settling time if the run is outside the band at 5 s.
+    var reached = peak >= REF - 0.9;
+    return {
+      start: a,
+      rise: iLo >= 0 && iHi >= 0 ? (iHi - iLo) * DT : null,
+      overshoot: reached ? Math.max(0, peak - REF) : null,
+      settle: last < end ? (last + 1) * DT : null
+    };
   }
   var M = {};
   ['off', 'on'].forEach(function (k) {
@@ -765,7 +773,8 @@ tbody th small{text-wrap:balance}
     };
   });
 
-  function pct(a, b) { var p = (b - a) / a * 100; return signed(p, 0) + '%'; }
+  function pct(a, b) { if (a == null || b == null || !a) return '–'; var p = (b - a) / a * 100; return signed(p, 0) + '%'; }
+  function cell(v, row) { return v == null || isNaN(v) ? '–' : num(v, row.dp) + row.u; }
   function clipVsLog(r) {                          // the clips and the logs are the same runs: RMS of (tilt seen in the clip - logged error)
     var a = idx(5.5), b = idx(14.9), s = 0, n = 0, i, d;
     for (i = a; i <= b; i++) { if (r.tiltv[i] == null) continue; d = r.tiltv[i] - r.err[i]; s += d * d; n++; }
@@ -799,7 +808,7 @@ tbody th small{text-wrap:balance}
         var a = row.v ? row.v[0] : M.off[row.id], b = row.v ? row.v[1] : M.on[row.id];
         th.scope = 'row'; th.textContent = t('m.' + row.id + '.n');
         tr.appendChild(th);
-        [num(a, row.dp) + row.u, num(b, row.dp) + row.u, row.plain ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b)].forEach(function (txt) {
+        [cell(a, row), cell(b, row), row.plain ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b)].forEach(function (txt) {
           var td = document.createElement('td'); td.className = 'n'; td.textContent = txt; tr.appendChild(td);
         });
       }
@@ -1142,7 +1151,7 @@ tbody th small{text-wrap:balance}
     // Launcher: the plate's axis, square to its tracked edge, drawn from where it meets the reference line up past the plate.
     // The dashed line from the same point is the 45 deg target (the direction the axis had at the hold). The two lines are equally
     // long, so the gap between their far ends is the tilt error; a ring around the target's end shows where to look.
-    var A0 = T.info.holdUpper + 90, dT = dir(A0), EXT = 110, RING = 32;
+    var A0 = (T.info.upper45 != null ? T.info.upper45 : T.info.holdUpper) + 90, dT = dir(A0), EXT = 110, RING = 32;      // axis direction at theta = 45
     var tgtLine = el('line', 'mk-tgt'), axisLine = el('line', 'mk-line ' + k), thArc = el('path', 'mk-arc'), ring = el('circle', 'mk-ring'), tip = el('circle', 'mk-tip ' + k);
     var plateLine = el('line', 'mk-axis ' + k), aim = [tgtLine, axisLine, thArc, ring, tip], focus = null;
 
@@ -1200,7 +1209,7 @@ tbody th small{text-wrap:balance}
             arc(thArc, Vx, Vy, 52, -gX, -gY, dA[0], dA[1], 1);
             ring.setAttribute('cx', r1(Qx)); ring.setAttribute('cy', r1(Qy)); ring.setAttribute('r', RING);
             disc(tip, r1(Px), r1(Py), small ? 2.75 : 3.25);
-            place(labTh, Qx - RING - (small ? 30 : 52), Qy, 'θ', num(REF + tilt, 1) + '°');      // the angle is read at the top, beside the ring
+            place(labTh, Qx + RING + (small ? 16 : 46), Qy - 6, 'θ', num(REF + tilt, 1) + '°');      // the angle is read at the top, right of the ring (the run's name tag sits top left)
             focus = [Qx, Qy];
           }
           vTh.textContent = num(REF + tilt, 1) + '°';
