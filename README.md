@@ -1,6 +1,8 @@
-# ISP DOB Validation
+# Disturbance Observer-based Elevation Control System for a Launch Platform in a Wave Simulation Environment
 
-Hardware validation page for a disturbance observer (DOB) on a single-axis inertially stabilized platform: tracked rig videos, logged signals and a 3D replay, observer off against on.
+파도 외란 환경에서 외란 관측기 기반 발사체 고각 제어
+
+Hardware validation page for disturbance observer (DOB) based elevation control on a wave simulation platform: tracked rig videos, logged signals and a 3D replay, observer off against on.
 
 - English: https://coolab-inu.github.io/isp-dob/
 - 한국어: https://coolab-inu.github.io/isp-dob/ko/

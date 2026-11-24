@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="관성 안정화 플랫폼의 외란 관측기(DOB) 하드웨어 검증: 추적 표시가 있는 장치 영상, 로그 신호, 3D 재생으로 DOB OFF와 ON을 비교합니다.">
+<meta name="description" content="파도 모사 플랫폼에서 외란 관측기(DOB) 기반 발사체 고각 제어를 하드웨어 실험으로 검증하였다. 추적 표시를 넣은 실험 영상, 로그 신호, 3D 모델 재생으로 DOB 적용 전후를 비교한다.">
 <link rel="alternate" hreflang="en" href="https://coolab-inu.github.io/isp-dob/">
 <link rel="alternate" hreflang="ko" href="https://coolab-inu.github.io/isp-dob/ko/">
 <base href="../">
 <script>window.ISP_LANG="ko";</script>
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>ISP DOB 검증</title>
+<title>파도 외란 환경에서 외란 관측기 기반 발사체 고각 제어</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one clock. Two clips and every trace hang off a single playhead; the page reads top to bottom as video, response, signals, numbers, rig. */
@@ -70,7 +70,8 @@ button{font:inherit;color:inherit}
 /* ---------- header ---------- */
 .head{padding-block:44px 30px}
 .eyebrow{font-family:var(--font-data);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-h1{font-family:var(--font-display);font-stretch:114%;font-weight:700;font-size:clamp(2rem,4.9vw,3.5rem);line-height:1.03;letter-spacing:-.012em;text-wrap:balance;margin-top:14px;max-width:17ch}
+h1{font-family:var(--font-display);font-stretch:112%;font-weight:700;font-size:clamp(1.35rem,3.3vw,2.5rem);line-height:1.1;letter-spacing:-.012em;text-wrap:balance;margin-top:14px;max-width:31ch}
+h1 .nb{white-space:nowrap}
 .lede{font-size:clamp(1.02rem,1.5vw,1.16rem);color:var(--ink-2);max-width:62ch;margin-top:18px}
 .stats{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:0;margin-top:34px;border-top:1px solid var(--ink)}
 .stat{padding:14px 20px 4px 0;min-width:0}
@@ -191,9 +192,6 @@ td.n,th.n{text-align:right;font-family:var(--font-data);font-variant-numeric:tab
 tbody th{font-weight:500}
 tbody th small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
 tr.grp th{font-family:var(--font-data);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding-top:20px;border-bottom:1px solid var(--rule)}
-.notes{margin-top:26px;display:grid;gap:8px;max-width:78ch}
-.notes li{position:relative;padding-left:18px;color:var(--ink-2);font-size:14.5px}
-.notes li::before{content:"";position:absolute;left:0;top:.72em;width:8px;border-top:1px solid var(--muted)}
 
 /* ---------- rig ---------- */
 .rig{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start}
@@ -244,6 +242,11 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 .dock .err{display:flex;gap:14px;font-family:var(--font-data);font-size:12.5px;color:var(--ink-2);white-space:nowrap}
 .dock .err b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;display:inline-block;min-width:6ch;text-align:right;margin-left:6px}
 
+@media (max-width:900px){
+  /* dial above its numbers, so the numbers never run out of a narrow card */
+  .dial{grid-template-columns:1fr}
+  .dial svg{max-width:280px;margin-inline:auto}
+}
 @media (max-width:820px){
   .rig{grid-template-columns:1fr}
   /* signal buttons become separate pills that wrap, so none runs off the screen */
@@ -293,9 +296,17 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   thead th.n{white-space:normal}
   tbody th small{font-size:11.5px}
 }
+@media (max-width:370px){
+  /* very narrow phones: the play row and the button groups still fit */
+  .transport{gap:8px 10px}
+  .seg button{padding:6px 8px;font-size:12.5px}
+  .seg.mono button{padding:6px 7px;font-size:12px}
+  .clock{font-size:13px;min-width:0}
+  .links a{padding:5px 1px;font-size:12px}
+}
 /* Korean: break lines between words, and drop the wide tracking meant for Latin capitals */
 :lang(ko) body{word-break:keep-all;line-height:1.62}
-:lang(ko) h1{font-stretch:100%;letter-spacing:-.02em;line-height:1.16;max-width:13em}
+:lang(ko) h1{font-stretch:100%;font-size:clamp(1.85rem,4.4vw,3rem);letter-spacing:-.02em;line-height:1.2;max-width:9.6em}
 :lang(ko) h2{font-stretch:100%;letter-spacing:-.015em;line-height:1.25}
 :lang(ko) .eyebrow,:lang(ko) .brand,:lang(ko) .pick-l,:lang(ko) tr.grp th{letter-spacing:.02em}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
@@ -320,9 +331,9 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 </nav>
 
 <header class="head wrap">
-  <p class="eyebrow" data-i18n="head.eyebrow">Hardware validation · elevation axis</p>
-  <h1 data-i18n="head.title">Disturbance Observer on an Inertially Stabilized Platform</h1>
-  <p class="lede" data-i18n="head.lede">The elevation axis steps to 45° and holds that angle while a cam rocks the deck underneath it. Both runs use the same controller and the same cam speed. Only the disturbance observer (DOB) changes.</p>
+  <p class="eyebrow" data-i18n="head.eyebrow">Hardware validation · wave simulation platform</p>
+  <h1 data-i18n-html="head.title">Disturbance <span class="nb">Observer-based</span> Elevation Control System for a Launch Platform in a Wave Simulation Environment</h1>
+  <p class="lede" data-i18n="head.lede">The elevation axis steps to 45° and holds that angle while a cam rocks the base underneath it, imitating wave motion. Both runs use the same controller and the same cam speed. Only the disturbance observer (DOB) changes.</p>
   <dl class="stats">
     <div class="stat lead">
       <dt data-i18n="stat.rms">RMS tracking error while the cam runs</dt>
@@ -363,9 +374,9 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
-          <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-off-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">deck</span> <b id="r-off-deck">–</b></span></div>
+          <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-off-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">φ</span> <b id="r-off-deck">–</b></span></div>
         </div>
-        <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">deck</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">plate–deck</span> <b data-v="rel">–</b></span></figcaption>
+        <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">φ</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">θ+φ</span> <b data-v="rel">–</b></span></figcaption>
       </figure>
       <figure class="clip">
         <div class="frame" data-toggle>
@@ -376,9 +387,9 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
-          <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-on-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">deck</span> <b id="r-on-deck">–</b></span></div>
+          <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-on-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">φ</span> <b id="r-on-deck">–</b></span></div>
         </div>
-        <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">deck</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">plate–deck</span> <b data-v="rel">–</b></span></figcaption>
+        <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">φ</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">θ+φ</span> <b data-v="rel">–</b></span></figcaption>
       </figure>
     </div>
 
@@ -409,8 +420,8 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
         <span class="pick-l" data-i18n="pick.clips">In the clips</span>
         <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
           <button type="button" data-sig="tiltv" aria-pressed="true" data-i18n="sig.tiltv">Tilt error</button>
-          <button type="button" data-sig="deckv" aria-pressed="false" data-i18n="sig.deckv">Deck angle</button>
-          <button type="button" data-sig="relv" aria-pressed="false" data-i18n="sig.relv">Plate–deck</button>
+          <button type="button" data-sig="deckv" aria-pressed="false" data-i18n="sig.deckv">Base φ</button>
+          <button type="button" data-sig="relv" aria-pressed="false" data-i18n="sig.relv">θ + φ</button>
         </div>
       </div>
       <div class="pick-g">
@@ -418,7 +429,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
         <div class="seg" role="group" aria-label="Signals from the logged runs" data-i18n-aria="pick.logs.aria">
           <button type="button" data-sig="theta" aria-pressed="false" data-i18n="sig.theta">Angle θ</button>
           <button type="button" data-sig="err" aria-pressed="false" data-i18n="sig.err">Error</button>
-          <button type="button" data-sig="deck" aria-pressed="false" data-i18n="sig.deck">Deck</button>
+          <button type="button" data-sig="deck" aria-pressed="false" data-i18n="sig.deck">Base φ</button>
           <button type="button" data-sig="iq" aria-pressed="false" data-i18n="sig.iq">Current</button>
           <button type="button" data-sig="dh" aria-pressed="false" data-i18n="sig.dh">Observer d̂</button>
           <button type="button" data-sig="rpm" aria-pressed="false" data-i18n="sig.rpm">Cam speed</button>
@@ -455,7 +466,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     <div class="sec-head">
       <div>
         <h2 data-i18n="signals.title">What the controller was doing</h2>
-        <p class="sub" data-i18n="signals.sub">These are the logged runs. The encoder measures the payload relative to the deck, so −(θ + encoder) is the deck's own angle. It swings about 8° peak to peak in both runs, the same swing the clips show, so every run faced the same disturbance. Both logged runs start with the cam parked high in its stroke.</p>
+        <p class="sub" data-i18n="signals.sub">These are the logged runs. The encoder measures the payload relative to the base, so −(θ + encoder) is the base angle φ. It swings about 8° peak to peak in both runs, the same swing the clips show, so every run faced the same disturbance. Both logged runs start with the cam parked high in its stroke.</p>
       </div>
       <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
         <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
@@ -473,10 +484,10 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       </figure>
       <figure class="chart" data-chart="deck">
         <div class="chart-head">
-          <div class="chart-title" data-i18n-html="st.deck">Deck angle, from −(θ + encoder)<span>deg above the bottom of the cam stroke</span></div>
+          <div class="chart-title" data-i18n-html="st.deck">Base angle φ, from −(θ + encoder)<span>deg above the bottom of the cam stroke</span></div>
           <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
-        <div class="plot"><svg role="img" aria-label="Deck angle over time for both runs" data-i18n-aria="st.deck.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot"><svg role="img" aria-label="Base angle over time for both runs" data-i18n-aria="st.deck.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
       <figure class="chart" data-chart="iq">
         <div class="chart-head">
@@ -508,7 +519,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     <div class="sec-head">
       <div>
         <h2 data-i18n="replay.title">3D replay</h2>
-        <p class="sub" data-i18n="replay.sub">The CAD model replays the two logged runs on the same playhead. Each deck rocks as its encoder and IMU saw it, and each payload sits at its logged θ. The dashed line is the 45° target.</p>
+        <p class="sub" data-i18n="replay.sub">The CAD model replays the two logged runs on the same playhead. Each base rocks as its encoder and IMU saw it, and each payload sits at its logged θ. The dashed line is the 45° target.</p>
       </div>
       <div class="seg" role="group" aria-label="Camera" data-i18n-aria="cam.aria">
         <button type="button" data-cam="side" aria-pressed="true" data-i18n="cam.side">Video angle</button>
@@ -529,7 +540,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           <div class="who"><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
           <div><span>θ</span><b data-n="th">–</b></div>
           <div><span data-i18n="dial.err">Error</span><b data-n="err">–</b></div>
-          <div><span data-i18n="dial.deck">Deck</span><b data-n="deck">–</b></div>
+          <div><span data-i18n="dial.deck">Base</span><b data-n="deck">–</b></div>
         </div>
       </figure>
       <figure class="card dial" data-dial="on">
@@ -538,16 +549,16 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           <div class="who"><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
           <div><span>θ</span><b data-n="th">–</b></div>
           <div><span data-i18n="dial.err">Error</span><b data-n="err">–</b></div>
-          <div><span data-i18n="dial.deck">Deck</span><b data-n="deck">–</b></div>
+          <div><span data-i18n="dial.deck">Base</span><b data-n="deck">–</b></div>
         </div>
       </figure>
     </div>
     <p class="cap" data-i18n="replay.cap">The model moves at true scale, so a 1° error is small on screen. The dials show the same error on a ±3° scale.</p>
     <ul class="how">
       <li><b data-i18n="how.payload.k">Payload</b><span data-i18n-html="how.payload.v">Absolute angle is <code>theta_deg</code>. The CAD pose, with the payload envelope lying flat, is θ = 0, and positive θ raises its hinge-side end. That is the direction the plate turns in the clips.</span></li>
-      <li><b data-i18n="how.deck.k">Deck</b><span data-i18n-html="how.deck.v">Angle about the hinge pin is <code>−(theta_deg + encoder_delta_deg)</code>, measured from its lowest level while the cam runs and held at the parked level before 5.0 s.</span></li>
-      <li><b data-i18n="how.cam.k">Cam</b><span data-i18n-html="how.cam.v">Not instrumented. Its angle is reconstructed from the deck: lobe down at each trough, lobe up at each peak. The direction of rotation is a guess.</span></li>
-      <li><b data-i18n="how.model.k">Model</b><span data-i18n-html="how.model.v">Read from the Fusion 360 design “ISP_final” and rigged in Blender. The CAD frame is one solid, so it is split at the deck to let the deck pivot. The rig in the videos carries a small plate where the CAD has an 8 × 19 × 6 cm envelope.</span></li>
+      <li><b data-i18n="how.deck.k">Base</b><span data-i18n-html="how.deck.v">Angle about the hinge pin is <code>−(theta_deg + encoder_delta_deg)</code>, measured from its lowest level while the cam runs and held at the parked level before 5.0 s.</span></li>
+      <li><b data-i18n="how.cam.k">Cam</b><span data-i18n-html="how.cam.v">Not instrumented. Its angle is reconstructed from the base: lobe down at each trough, lobe up at each peak. The direction of rotation is a guess.</span></li>
+      <li><b data-i18n="how.model.k">Model</b><span data-i18n-html="how.model.v">Read from the Fusion 360 design and rigged in Blender. The CAD frame is one solid, so the base is cut out of it and left free to pivot. The rig in the videos carries a small plate where the CAD has an 8 × 19 × 6 cm envelope.</span></li>
     </ul>
   </div>
 </section>
@@ -557,7 +568,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     <div class="sec-head">
       <div>
         <h2 data-i18n="metrics.title">The numbers</h2>
-        <p class="sub" data-i18n="metrics.sub">Logged values are computed in this page from the two logs, 1,500 samples each at 100 Hz. Clip values come from the video tracking.</p>
+        <p class="sub" data-i18n="metrics.sub">Logged values are computed in this page from the two logs. Clip values come from the video tracking.</p>
       </div>
     </div>
     <div class="tbl-wrap">
@@ -566,7 +577,6 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
         <tbody id="metrics-body"></tbody>
       </table>
     </div>
-    <ul class="notes" id="notes"></ul>
   </div>
 </section>
 
@@ -575,12 +585,12 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     <div class="sec-head">
       <div>
         <h2 data-i18n="rig.title">The rig and the test</h2>
-        <p class="sub" data-i18n="rig.sub">A 3D-printed frame carries a deck that pivots on a pin. A cam under the deck lifts and drops it. The elevation motor on the deck has to keep the payload plate at the commanded inertial angle.</p>
+        <p class="sub" data-i18n="rig.sub">A 3D-printed frame carries a base that pivots on a pin. A cam under the base lifts and drops it to imitate wave motion. The elevation motor on the base has to keep the payload plate at the commanded inertial angle.</p>
       </div>
     </div>
     <div class="rig">
       <figure class="photo">
-        <img src="media/dob_on.jpg" alt="The test rig: white printed frame, pivoting deck, cam disc under the deck, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
+        <img src="media/dob_on.jpg" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
         <span class="pin" style="left:54%;top:24%">2</span>
         <span class="pin" style="left:33%;top:35%">3</span>
@@ -591,16 +601,16 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       <div>
         <ol class="parts">
           <li><span data-i18n-html="part.1"><b>Payload plate with IMU.</b> Held at 45° in this frame.</span></li>
-          <li><span data-i18n-html="part.2"><b>Elevation axis.</b> Motor and encoder between deck and payload.</span></li>
-          <li><span data-i18n-html="part.3"><b>Deck.</b> Rocks when the cam turns.</span></li>
-          <li><span data-i18n-html="part.4"><b>Pivot pin.</b> The deck rotates about it.</span></li>
+          <li><span data-i18n-html="part.2"><b>Elevation axis.</b> Motor and encoder between base and payload.</span></li>
+          <li><span data-i18n-html="part.3"><b>Base.</b> Rocks about the pin when the cam turns.</span></li>
+          <li><span data-i18n-html="part.4"><b>Hinge pin.</b> The base rotates about it.</span></li>
           <li><span data-i18n-html="part.5"><b>Cam disc.</b> Driven by the second motor, target 300 rpm.</span></li>
-          <li><span data-i18n-html="part.6"><b>Base tray.</b> Fixed to the bench.</span></li>
+          <li><span data-i18n-html="part.6"><b>Frame.</b> Fixed to the bench.</span></li>
         </ol>
         <ol class="proto">
           <li><time data-i18n="proto.t0">pre-run</time><span data-i18n="proto.1">1 s angle stability check (±2°) and gyro bias calibration.</span></li>
           <li><time>0.0 s</time><span data-i18n="proto.2">Target of 45° applied. The payload starts between −2° and −11°, depending on the run.</span></li>
-          <li><time>5.0 s</time><span data-i18n="proto.3">Cam motor starts. The deck begins to rock.</span></li>
+          <li><time>5.0 s</time><span data-i18n="proto.3">Cam motor starts. The base begins to rock.</span></li>
           <li><time>15.0 s</time><span data-i18n="proto.4">Logging stops after 1,500 samples of 12 channels.</span></li>
         </ol>
         <p class="cap" id="log-facts"></p>
@@ -612,7 +622,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 </main>
 
 <footer>
-  <div class="wrap" data-i18n="footer">Draft for review. Figures are computed in the browser from DOB_OFF_RESULT.xlsx and DOB_ON_RESULT.xlsx; the 3D model comes from ISP_3DMODELING.f3d.</div>
+  <div class="wrap" data-i18n="footer">Draft for review. Figures are computed in the browser from the two run logs; the 3D model comes from the rig’s CAD design.</div>
 </footer>
 
 <div class="dock" id="dock" hidden>
@@ -663,6 +673,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   var LEAD = R.clipLead, T_MIN = -LEAD, T_MAX = R.clipDur - LEAD;
   var MINUS = '−';
   var reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var compact = window.matchMedia ? window.matchMedia('(max-width:900px)') : null;      // phones and narrow tablets
 
   function $(s, el) { return (el || document).querySelector(s); }
   function $$(s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); }
@@ -733,8 +744,8 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     );
   }
   function renderMetrics() {                       // everything here is text, so it is rebuilt when the language changes
-    var body = $('#metrics-body'), ul = $('#notes'), notes = [], cap = $('#dots-cap');
-    body.textContent = ''; ul.textContent = '';
+    var body = $('#metrics-body'), cap = $('#dots-cap');
+    body.textContent = '';
     ROWS.forEach(function (row) {
       var tr = document.createElement('tr'), th = document.createElement('th');
       if (row.grp) {
@@ -751,21 +762,9 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       body.appendChild(tr);
     });
     if (TR) {
-      notes.push(
-        t('n.runs', { a: num(TR.off.info.startAngle, 1), b: num(TR.on.info.startAngle, 1), c: num(M.off.start, 1), d: num(M.on.start, 1) }),
-        t('n.tilt', { a: num(TR.off.info.tiltRms, 2), b: num(TR.on.info.tiltRms, 2), c: num(M.off.rms, 2), d: num(M.on.rms, 2), e: num(TR.off.info.noiseHold, 2), f: num(TR.on.info.noiseHold, 2) }),
-        t('n.hinge')
-      );
       cap.hidden = false;
       cap.textContent = t('cap.dots', { a: num(TR.off.info.pathWidthTop, 1), b: num(TR.on.info.pathWidthTop, 1) });
     }
-    notes.push(
-      t('n.single'),
-      t('n.limit', { a: num(M.on.lim, 1), b: num(M.off.lim, 1) }),
-      t('n.gyro', { a: num(M.on.thdMax, 1), b: M.on.sat }),
-      t('n.rest', { a: num(M.on.rest, 3), b: num(M.off.rest, 3) })
-    );
-    notes.forEach(function (txt) { var li = document.createElement('li'); li.textContent = txt; ul.appendChild(li); });
 
     $('#k-rms').textContent = pct(M.off.rms, M.on.rms);
     $('#k-rms-d').textContent = num(M.off.rms, 2) + '° → ' + num(M.on.rms, 2) + '°';
@@ -1166,9 +1165,10 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     var e = th - REF, shown = clamp(e, -3.3, 3.3);
     d.needle.setAttribute('transform', 'rotate(' + (shown * 20).toFixed(2) + ' ' + d.cx + ' ' + d.cy + ')');
     d.over.textContent = shown !== e ? t('dial.offscale') : '';
-    d.th.textContent = num(th, 2) + '°';
-    d.err.textContent = signed(e, 2) + '°';
-    d.deck.textContent = num(deck, 2) + '°';
+    var nd = compact && compact.matches ? 1 : 2;                 // one decimal fewer where the dial cards are narrow
+    d.th.textContent = num(th, nd) + '°';
+    d.err.textContent = signed(e, nd) + '°';
+    d.deck.textContent = num(deck, nd) + '°';
   }
 
   /* ---------- 3D replay ---------- */
