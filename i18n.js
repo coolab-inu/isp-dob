@@ -8,6 +8,7 @@ window.ISP_I18N = {
   en: {
     'k.from': 'from {v}',
     'rate': '{x} real time',
+    'zoom.reset': '{x} · reset',
     'cap.dots': 'Three points are tracked in each clip: two corners of the payload plate and the free end of the base. The line through the plate’s corners gives the elevation θ, set to 45° at the hold. The line from the hinge pin to the base’s free end gives the base angle φ above its lowest position; dashed lines mark θ = 0 and that lowest position. The third angle, θ + φ, is the plate relative to the base, which is what the motor has to turn through. The path of the plate’s top corner is {a} px wide with the observer off and {b} px with it on (RMS across the path, in a 960 px frame).',
     'ch.tiltv.t': 'Tilt error, measured in the clips', 'ch.tiltv.u': 'deg, plate edges tracked in the video',
     'ch.deckv.t': 'Base angle φ, measured in the clips', 'ch.deckv.u': 'deg above the bottom of the cam stroke',
@@ -65,10 +66,11 @@ window.ISP_I18N = {
 
     /* clips */
     'runs.title': '실험 영상',
-    'runs.sub': '영상 위의 점, 선, 각도는 영상에서 직접 추적한 결과이며, 점 뒤의 옅은 선은 해당 점의 이동 경로를 나타낸다. 영상과 로그는 동일한 조건에서 따로 수행한 실험이므로, 시간 기준(0초에 목표 고각 인가, 5.0초부터 외란 인가)은 같으나 캠의 위상은 서로 다르다. 그래프를 누르거나 끌면 해당 시점으로 이동한다.',
+    'runs.sub': '영상 위의 점, 선, 각도는 영상에서 직접 추적한 결과이며, 점 뒤의 옅은 선은 해당 점의 이동 경로를 나타낸다. 영상과 로그는 동일한 조건에서 따로 수행한 실험이므로, 시간 기준(0초에 목표 고각 인가, 5.0초부터 외란 인가)은 같으나 캠의 위상은 서로 다르다. 그래프를 누르거나 끌면 해당 시점으로 이동한다. 영상을 드래그하면 해당 영역이 확대되며(터치 화면에서는 두 손가락으로 확대), 두 번 누르면 원래 크기로 돌아간다.',
     'marks.aria': '영상 위 추적 표시', 'marks.on': '추적 표시 켜기', 'marks.off': '끄기',
     'video.off.aria': '실험 장치 영상, DOB 적용 전', 'video.on.aria': '실험 장치 영상, DOB 적용 후',
     'rate': '재생 속도 {x}',
+    'zoom.reset': '{x} · 원래 크기',
     'chip.tilt': '오차', 'chip.deck': 'φ',
     'lab.deck': 'φ', 'lab.rel': 'θ+φ',
     'scrub.aria': '실험 시간(초)', 'speed.aria': '재생 속도',

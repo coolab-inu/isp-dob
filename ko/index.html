@@ -101,8 +101,8 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 
 /* ---------- clips ---------- */
 .clips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.frame{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--video-bg);border-radius:6px;overflow:hidden;cursor:pointer}
-.frame video{display:block;width:100%;height:100%;object-fit:cover}
+.frame{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--video-bg);border-radius:6px;overflow:hidden;cursor:zoom-in;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.frame video{display:block;width:100%;height:100%;object-fit:cover;transform-origin:0 0}
 .chip{position:absolute;background:var(--chip-bg);color:var(--chip-ink);border-radius:4px;padding:4px 8px;font-size:12.5px;line-height:1.3;pointer-events:none}
 .chip.tag{left:10px;top:10px;font-weight:500}
 .chip.rate{right:10px;top:10px;font-family:var(--font-data);font-size:12px}
@@ -122,6 +122,12 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .marks .off{stroke:var(--mk-off)} .marks .on{stroke:var(--mk-on)}
 .mk-lab{position:absolute;transform:translate(-50%,-50%);background:var(--chip-bg);color:var(--chip-ink);font:500 12px/1.35 var(--font-data);font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:3px;white-space:nowrap;pointer-events:none}
 .marks-off .marks,.marks-off .mk-lab{display:none}
+/* zoom: the picture scales, the tracked marks keep their screen size */
+.frame.zoomed{touch-action:none}
+.zbox{position:absolute;border:1.5px solid #fff;background:rgba(255,255,255,.14);box-shadow:0 0 0 1px rgba(0,0,0,.75);pointer-events:none}
+.frame.need-tap::before{content:"";position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:var(--chip-bg);pointer-events:none}
+.frame.need-tap::after{content:"";position:absolute;left:50%;top:50%;width:20px;height:22px;margin:-11px 0 0 -7px;background:var(--chip-ink);clip-path:polygon(0 0,100% 50%,0 100%);pointer-events:none}
+.zreset{position:absolute;right:10px;bottom:10px;border:0;border-radius:4px;background:var(--chip-bg);color:var(--chip-ink);padding:5px 9px;font:500 12px/1.3 var(--font-data);cursor:pointer}
 .vals{display:none}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:20px}
 .pick-g{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%}
@@ -272,6 +278,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   .chip{font-size:11px;padding:3px 6px}
   .chip.tag{left:6px;top:6px} .chip.rate{right:6px;top:6px;font-size:10.5px}
   .chip.read,.mk-lab{display:none}
+  .zreset{right:6px;bottom:6px;font-size:11px;padding:4px 7px}
   .vals{display:flex;flex-wrap:wrap;gap:2px 14px;margin-top:6px;font-family:var(--font-data);font-size:12px;color:var(--ink-2)}
   .vals b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
   .mk-dotbg{stroke-width:9}
@@ -356,7 +363,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     <div class="sec-head">
       <div>
         <h2 data-i18n="runs.title">The clips, on the test clock</h2>
-        <p class="sub" data-i18n="runs.sub">The dots, lines and angles on the clips are tracked from the video itself, and the faint line behind each dot is the path it has taken. The clips and the logs are separate runs of the same test, so they share its clock (step at 0 s, cam on at 5.0 s) but not the phase of the cam. Click or drag a plot to scrub.</p>
+        <p class="sub" data-i18n="runs.sub">The dots, lines and angles on the clips are tracked from the video itself, and the faint line behind each dot is the path it has taken. The clips and the logs are separate runs of the same test, so they share its clock (step at 0 s, cam on at 5.0 s) but not the phase of the cam. Click or drag a plot to scrub. Drag across a clip to zoom into that area, or pinch on a touch screen; double-click to go back.</p>
       </div>
       <div class="seg" role="group" aria-label="Tracked dots on the clips" data-i18n-aria="marks.aria">
         <button type="button" data-marks="on" aria-pressed="true" data-i18n="marks.on">Dots on</button>
@@ -374,6 +381,8 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
+          <div class="zbox" hidden></div>
+          <button class="zreset" type="button" data-zreset hidden></button>
           <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-off-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">φ</span> <b id="r-off-deck">–</b></span></div>
         </div>
         <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">φ</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">θ+φ</span> <b data-v="rel">–</b></span></figcaption>
@@ -387,6 +396,8 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
+          <div class="zbox" hidden></div>
+          <button class="zreset" type="button" data-zreset hidden></button>
           <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-on-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">φ</span> <b id="r-on-deck">–</b></span></div>
         </div>
         <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">φ</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">θ+φ</span> <b data-v="rel">–</b></span></figcaption>
@@ -956,10 +967,39 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   function play() {
     if (S.t >= T_MAX - 0.1) S.t = T_MIN;
     setPlaying(true);
-    if (vidReady) {
-      setVideoTime(S.t);
-      vids.forEach(function (v) { v.playbackRate = S.rate; var p = v.play(); if (p && p.catch) p.catch(function () { vidFailed = true; }); });
+    $$('.frame.need-tap').forEach(function (f) { f.classList.remove('need-tap'); });
+    if (vidFailed) {                                    // a press retries a load that failed
+      vidFailed = false; vidReady = false;
+      vids.forEach(function (v) { try { v.load(); } catch (err) {} });
     }
+    setVideoTime(S.t);
+    // Ask for playback even before anything has loaded: phones load a video only once it is asked to play.
+    vids.forEach(function (v) {
+      v.playbackRate = S.rate;
+      var p = v.play();
+      if (p && p.catch) p.catch(function (err) { if (err && err.name === 'NotAllowedError') needTap(); });
+    });
+  }
+  function needTap() {                                  // the browser will not start video without a tap (low-power mode, some in-app browsers)
+    if (!S.playing) return;
+    setPlaying(false);
+    vids.forEach(function (v) { v.pause(); });
+    $$('.frame[data-toggle]').forEach(function (f) { f.classList.add('need-tap'); });
+    paint();
+  }
+  // The first clip is the clock. The second follows it by playing slightly slower or faster; it is only
+  // re-seeked when far off, and never while a seek is still running, because seeks take long on phones.
+  var lastJump = 0;
+  function syncPair(ts) {
+    if (vOn.seeking || vOff.seeking || vOn.readyState < 2) return;
+    var d = vOn.currentTime - vOff.currentTime, rate = S.rate;         // d > 0: the second clip is ahead
+    if (Math.abs(d) > 0.4) {
+      if (ts - lastJump > 1000) { lastJump = ts; try { vOn.currentTime = vOff.currentTime; } catch (err) {} }
+    } else if (Math.abs(d) > 0.02) {
+      rate = Math.round(S.rate * clamp(1 - d * 1.5, 0.75, 1.25) * 20) / 20;
+    }
+    if (vOn.playbackRate !== rate) vOn.playbackRate = rate;
+    if (vOn.paused && !vOn.ended) { var p = vOn.play(); if (p && p.catch) p.catch(function () {}); }
   }
   function pause() { setPlaying(false); vids.forEach(function (v) { v.pause(); }); if (vidReady && !vidFailed) { S.t = vOff.currentTime - LEAD; setVideoTime(S.t); } paint(); }
   function toggle() { if (S.playing) pause(); else play(); }
@@ -970,10 +1010,10 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       var useVideo = vidReady && !vidFailed && !vOff.paused;
       if (useVideo) {
         S.t = vOff.currentTime - LEAD;
-        if (Math.abs(vOn.currentTime - vOff.currentTime) > 0.045) { try { vOn.currentTime = vOff.currentTime; } catch (err) {} }
-      } else if (last) {
-        S.t += Math.min(0.1, (ts - last) / 1000) * S.rate;
-      }
+        syncPair(ts);
+      } else if (vidFailed && last) {
+        S.t += Math.min(0.1, (ts - last) / 1000) * S.rate;      // no video at all: the page clock runs alone
+      }                                                           // otherwise the clips are still loading, and the clock waits for them
       if (S.t >= T_MAX - 0.03 || (vidReady && !vidFailed && vOff.ended)) {
         S.t = T_MIN;
         if (vidReady && !vidFailed) { setVideoTime(S.t); vids.forEach(function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }); }
@@ -1010,7 +1050,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     if (vidReady || vids.some(function (v) { return v.readyState < 1; })) return;
     vidReady = true;
     setVideoTime(S.t);
-    if (!reduced) { S.t = T_MIN; play(); }
+    vids.forEach(function (v) { v.playbackRate = S.rate; });
   }
   vids.forEach(function (v) {
     v.addEventListener('loadedmetadata', ready);
@@ -1019,6 +1059,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 
   /* ---------- dots, lines and angles on the clips, from video tracking ---------- */
   var shown = { off: null, on: null }, marks = {};
+  var Z = { s: 1, u: 0, v: 0 };          // zoom shared by both clips: scale, and the top-left of the visible part as a fraction of the frame
   function clipFrame(k) {
     var ct = vidReady && !vidFailed && shown[k] != null ? shown[k] : S.t + LEAD;
     return clamp(Math.round(ct * TR.fps), 0, TR[k].deck.length - 1);
@@ -1035,8 +1076,10 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       e.setAttribute('d', 'M' + r1(cx + ax * r) + ' ' + r1(cy + ay * r) + 'A' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + r1(cx + bx * r) + ' ' + r1(cy + by * r));
     }
     function place(lab, x, y, text) {
+      var px = (x / TR.w - Z.u) * Z.s, py = (y / TR.h - Z.v) * Z.s;      // through the zoom
+      if (Z.s > 1 && (px < 0.09 || px > 0.91 || py < 0.05 || py > 0.95)) { lab.hidden = true; return; }      // no half labels at the edge of a zoomed clip
       lab.hidden = false; lab.textContent = text;
-      lab.style.left = (x / TR.w * 100).toFixed(2) + '%'; lab.style.top = (y / TR.h * 100).toFixed(2) + '%';
+      lab.style.left = (px * 100).toFixed(2) + '%'; lab.style.top = (py * 100).toFixed(2) + '%';
     }
     function show(parts, on) { parts.forEach(function (e) { if (on) e.removeAttribute('display'); else e.setAttribute('display', 'none'); }); }
 
@@ -1121,6 +1164,138 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       v.requestVideoFrameCallback(cb);
     });
   }
+  /* ---------- zoom on the clips: drag a box with a mouse, pinch on a touch screen ---------- */
+  var Z_MAX = 8, zFrames = $$('.frame[data-toggle]'), zSkipClick = false, zSkipTimer = 0;
+  function zSkip() { zSkipClick = true; clearTimeout(zSkipTimer); zSkipTimer = setTimeout(function () { zSkipClick = false; }, 400); }
+  function applyZoom() {
+    Z.s = clamp(Z.s, 1, Z_MAX);
+    if (Z.s < 1.03) Z.s = 1;
+    Z.u = clamp(Z.u, 0, 1 - 1 / Z.s); Z.v = clamp(Z.v, 0, 1 - 1 / Z.s);
+    var on = Z.s > 1, vw = TR ? TR.w : 960, vh = TR ? TR.h : 720;
+    zFrames.forEach(function (f) {
+      var v = $('video', f), svg = $('.marks', f), btn = $('[data-zreset]', f);
+      v.style.transform = on ? 'scale(' + Z.s.toFixed(4) + ') translate(' + (-Z.u * 100).toFixed(3) + '%,' + (-Z.v * 100).toFixed(3) + '%)' : '';
+      svg.setAttribute('viewBox', (Z.u * vw).toFixed(2) + ' ' + (Z.v * vh).toFixed(2) + ' ' + (vw / Z.s).toFixed(2) + ' ' + (vh / Z.s).toFixed(2));   // strokes are non-scaling, so dots and lines stay thin
+      f.classList.toggle('zoomed', on);
+      btn.hidden = !on; btn.textContent = t('zoom.reset', { x: Z.s.toFixed(1) + '×' });
+    });
+    drawMarks();
+  }
+  function zoomAbout(px, py, s) {            // keep the picture under (px, py) where it is
+    var cu = Z.u + px / Z.s, cv = Z.v + py / Z.s;
+    Z.s = clamp(s, 1, Z_MAX); Z.u = cu - px / Z.s; Z.v = cv - py / Z.s;
+    applyZoom();
+  }
+  zFrames.forEach(function (f) {
+    var pts = {}, box = $('.zbox', f), drag = null, pinch = null, pan = null, tap = null, lastType = '';
+    function rel(e) { var r = f.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, w: r.width, h: r.height }; }
+    function gap(a, b) { var dx = (a.x - b.x) * a.w, dy = (a.y - b.y) * a.h; return Math.sqrt(dx * dx + dy * dy); }
+    function ids() { return Object.keys(pts); }
+
+    f.addEventListener('pointerdown', function (e) {
+      if (e.target.closest && e.target.closest('[data-zreset]')) return;
+      lastType = e.pointerType;
+      if (e.pointerType === 'mouse') {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        pts[e.pointerId] = rel(e);
+        drag = { a: pts[e.pointerId], moved: false, rect: null };
+        try { f.setPointerCapture(e.pointerId); } catch (err) {}
+        return;
+      }
+      pts[e.pointerId] = rel(e);
+      var k = ids();
+      if (k.length === 2) {
+        var a = pts[k[0]], b = pts[k[1]], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        pinch = { d: Math.max(gap(a, b), 1), s: Z.s, cu: Z.u + mx / Z.s, cv: Z.v + my / Z.s };
+        pan = null; tap = null; zSkip();
+      } else if (k.length === 1) {
+        pan = Z.s > 1 ? { a: pts[e.pointerId], u: Z.u, v: Z.v, moved: false } : null;
+      }
+    });
+    f.addEventListener('pointermove', function (e) {
+      if (!pts[e.pointerId]) return;
+      var p = rel(e);
+      if (e.pointerType === 'mouse') {
+        if (!drag) return;
+        if (!drag.moved && gap(p, drag.a) < 6) return;
+        drag.moved = true;
+        var x0 = clamp(Math.min(drag.a.x, p.x), 0, 1), x1 = clamp(Math.max(drag.a.x, p.x), 0, 1);
+        var y0 = clamp(Math.min(drag.a.y, p.y), 0, 1), y1 = clamp(Math.max(drag.a.y, p.y), 0, 1);
+        drag.rect = [x0, y0, x1, y1];
+        box.hidden = false;
+        box.style.left = (x0 * 100).toFixed(2) + '%'; box.style.top = (y0 * 100).toFixed(2) + '%';
+        box.style.width = ((x1 - x0) * 100).toFixed(2) + '%'; box.style.height = ((y1 - y0) * 100).toFixed(2) + '%';
+        return;
+      }
+      pts[e.pointerId] = p;
+      var k = ids();
+      if (pinch && k.length >= 2) {
+        var a = pts[k[0]], b = pts[k[1]], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        Z.s = clamp(pinch.s * gap(a, b) / pinch.d, 1, Z_MAX);
+        Z.u = pinch.cu - mx / Z.s; Z.v = pinch.cv - my / Z.s;       // the picture between the fingers stays between them
+        applyZoom(); zSkip();
+      } else if (pan && k.length === 1) {
+        if (!pan.moved && gap(p, pan.a) < 6) return;
+        pan.moved = true; zSkip();
+        Z.u = pan.u - (p.x - pan.a.x) / Z.s; Z.v = pan.v - (p.y - pan.a.y) / Z.s;
+        applyZoom();
+      }
+    });
+    function end(e) {
+      if (!pts[e.pointerId]) return;
+      var p = pts[e.pointerId];
+      delete pts[e.pointerId];
+      if (e.pointerType === 'mouse') {
+        if (drag && drag.moved) {
+          var r = drag.rect;
+          if (e.type === 'pointerup' && r && (r[2] - r[0]) * p.w > 12 && (r[3] - r[1]) * p.h > 12) {
+            var s2 = clamp(Z.s * Math.min(1 / (r[2] - r[0]), 1 / (r[3] - r[1])), 1, Z_MAX);
+            var cu = Z.u + (r[0] + r[2]) / 2 / Z.s, cv = Z.v + (r[1] + r[3]) / 2 / Z.s;
+            Z.s = s2; Z.u = cu - 0.5 / s2; Z.v = cv - 0.5 / s2;                    // the box fills the frame, centred
+            applyZoom();
+          }
+          zSkip();                                                                   // the click that ends a drag does not play or pause
+        }
+        box.hidden = true; drag = null;
+        return;
+      }
+      var left = ids();
+      if (pinch && left.length < 2) {
+        pinch = null;
+        pan = left.length === 1 && Z.s > 1 ? { a: pts[left[0]], u: Z.u, v: Z.v, moved: true } : null;
+      }
+      if (left.length === 0) {
+        var moved = pan && pan.moved;
+        pan = null;
+        if (e.type === 'pointerup' && !moved && !zSkipClick) {                       // a second tap in the same place: zoom in, or back out
+          var now = Date.now();
+          if (tap && now - tap.t < 320 && gap(p, tap.p) < 30) {
+            tap = null;
+            if (Z.s > 1) { Z.s = 1; applyZoom(); } else zoomAbout(p.x, p.y, 2.5);
+          } else tap = { t: now, p: p };
+        }
+      }
+    }
+    f.addEventListener('pointerup', end);
+    f.addEventListener('pointercancel', end);
+    f.addEventListener('dblclick', function (e) {
+      if (lastType !== 'mouse' || (e.target.closest && e.target.closest('[data-zreset]'))) return;
+      var p = rel(e);
+      if (Z.s > 1) { Z.s = 1; applyZoom(); } else zoomAbout(p.x, p.y, 2.5);
+    });
+    f.addEventListener('wheel', function (e) {                                       // ctrl + wheel, which is also what a trackpad pinch sends
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      var p = rel(e);
+      zoomAbout(p.x, p.y, Z.s * Math.exp(-e.deltaY * 0.01));
+    }, { passive: false });
+    f.addEventListener('click', function (e) {
+      if (zSkipClick && !(e.target.closest && e.target.closest('[data-zreset]'))) { zSkipClick = false; e.stopImmediatePropagation(); e.preventDefault(); }
+    }, true);
+    $('[data-zreset]', f).addEventListener('click', function (e) { e.stopPropagation(); Z.s = 1; applyZoom(); });
+  });
+
   $$('[data-marks]').forEach(function (b) {
     b.addEventListener('click', function () {
       var on = b.getAttribute('data-marks') === 'on';
@@ -1362,6 +1537,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
     setPlaying(S.playing);
     paintRate();
+    applyZoom();
     charts.forEach(function (c) { c.relabel(); });
     paint();
     if (announce) { try { location.hash = LANG; } catch (err) {} }               // #ko / #en makes the choice a shareable link
@@ -1404,6 +1580,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   replay = Replay();
   setLang(LANG, false);
   ready();
+  if (!reduced) { S.t = T_MIN; play(); }           // does not wait for the clips to load; see play()
   requestAnimationFrame(frame);
 })();
 </script>
