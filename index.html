@@ -80,8 +80,10 @@ h1 .nb{white-space:nowrap}
 .head-fig video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;filter:brightness(var(--hero-dim));
   -webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 56%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 56%,transparent 100%)}
 /* the sentences that must be read */
-.hl{font-style:normal;font-weight:inherit;color:var(--em)}      /* colour only: a heavier weight clogged the Hangul strokes at text size */
+.hl{display:inline-block;font-style:normal;font-weight:inherit;color:var(--em)}      /* colour only: a heavier weight clogged the Hangul strokes at text size */
 .hl.r{color:var(--em-2)}
+.ck{display:inline-block}                       /* a chunk that stays in one piece */
+.sn{display:inline-block}                       /* a sentence; lines break at sentence ends first, in both languages */
 .stats{margin-top:34px;border-top:1px solid var(--ink)}
 .stat{padding:14px 20px 4px 0;min-width:0}
 .stat + .stat{padding-left:20px;border-left:1px solid var(--rule)}
@@ -122,18 +124,19 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .marks *{vector-effect:non-scaling-stroke;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .mk-path{stroke-width:1.25;opacity:.55}
 .mk-recent{stroke-width:2.25}
-.mk-dotbg{stroke:var(--mk-ink);stroke-width:10.5}
-.mk-dot{stroke-width:7.5}
+.marks circle.mk-dotbg{fill:var(--mk-ink);stroke:none}
+.marks circle.mk-dot,.marks circle.mk-tip{stroke:none}
+.marks circle.off{fill:var(--mk-off)} .marks circle.on{fill:var(--mk-on)}
 .mk-line{stroke-width:2.25}
 .mk-axis{stroke-width:1.75}
 .mk-ref{stroke:var(--mk-ink);stroke-width:1.1;stroke-dasharray:4 4}
 .mk-tgt{stroke:var(--mk-ink);stroke-width:1.6;stroke-dasharray:10 6}
 .mk-ground{stroke:var(--mk-ink);stroke-width:1.2;opacity:.85}
 .mk-ring{stroke:var(--mk-ink);stroke-width:1.7}
-.mk-tip{stroke-width:6.5}
 .mk-arc{stroke:var(--mk-ink);stroke-width:1.25}
 .marks .off{stroke:var(--mk-off)} .marks .on{stroke:var(--mk-on)}
 .mk-lab{position:absolute;transform:translate(-50%,-50%);background:var(--chip-bg);color:var(--chip-ink);font:500 12px/1.35 var(--font-data);font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:3px;white-space:nowrap;pointer-events:none}
+.mk-lab b{font-weight:500}
 .marks-off .marks,.marks-off .mk-lab{display:none}
 /* zoom: the picture scales, the tracked marks keep their screen size */
 .frame.zoomed{touch-action:none}
@@ -175,11 +178,11 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .rail .ticks span.l{transform:none}
 .rail .ticks em{font-style:normal}
 @media (max-width:640px){.rail .ticks em{display:none}}
-.scrub{position:absolute;left:0;right:0;top:0;width:100%;height:24px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.scrub{position:absolute;left:0;right:0;top:0;width:100%;height:24px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;-webkit-tap-highlight-color:transparent;outline-offset:4px}
 .scrub::-webkit-slider-runnable-track{height:24px;background:transparent}
 .scrub::-moz-range-track{height:24px;background:transparent}
-.scrub::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:24px;border:0;border-radius:0;background:linear-gradient(var(--ink),var(--ink)) center/2px 100% no-repeat,radial-gradient(circle at 50% 12px,var(--ink) 0 6px,transparent 6.5px)}
-.scrub::-moz-range-thumb{width:14px;height:24px;border:0;border-radius:0;background:linear-gradient(var(--ink),var(--ink)) center/2px 100% no-repeat,radial-gradient(circle at 50% 12px,var(--ink) 0 6px,transparent 6.5px)}
+.scrub::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:4px;border:0;border-radius:50%;background:var(--ink);box-shadow:none}
+.scrub::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--ink);box-shadow:none}
 .seg{display:inline-flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:transparent;padding:6px 11px;font-size:13px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .seg button + button{border-left:1px solid var(--rule)}
@@ -305,22 +308,22 @@ footer{height:96px}      /* room for the fixed play bar */
   .clips{grid-template-columns:1fr;gap:14px}
   .chip{font-size:11px;padding:3px 6px}
   .chip.tag{left:6px;top:6px} .chip.rate{right:6px;top:6px;font-size:10.5px}
-  .chip.read,.mk-lab{display:none}
+  .chip.read{display:none}
+  .mk-lab{font-size:10.5px;padding:0 4px;line-height:1.45}
+  .mk-lab span{display:none}      /* the value is listed under the clip; the symbol marks where it is measured */
   .zreset{right:6px;bottom:6px;font-size:11px;padding:4px 7px}
   /* under each clip: symbol, its name, its value */
   .vals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;margin-top:8px}
   .brand img{height:30px}
   .tip{left:0;right:auto}
   .mk-ring{stroke-width:1.4}
-  .mk-tip{stroke-width:5.5}
+
   .vals > span{display:grid;gap:1px;min-width:0}
   .vals .vk{font-size:11.5px;line-height:1.3;color:var(--muted)}
   .vals .vk i{font-style:normal;font-family:var(--font-data);color:var(--ink-2);margin-right:4px}
   .vals b{font-family:var(--font-data);font-size:14px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
   .key{font-size:12.5px;gap:3px 16px}
   .key .sym{display:none}
-  .mk-dotbg{stroke-width:9}
-  .mk-dot{stroke-width:6.5}
   .mk-line{stroke-width:2}
   .mk-axis{stroke-width:1.5}
   .transport{grid-template-columns:auto 1fr auto}
@@ -631,7 +634,6 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="rig.title">The rig</h2>
-        <p class="sub" data-i18n-html="rig.sub"><em class="hl">The elevation motor on the base has to keep the payload plate at the commanded inertial angle.</em></p>
       </div>
     </div>
     <div class="rig">
@@ -683,7 +685,7 @@ tbody th small{text-wrap:balance}
 <script src="data.js?v=2eb71e58"></script>
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=a2bee38c"></script>
-<script src="i18n.js?v=4367dfb7"></script>
+<script src="i18n.js?v=2e9c3975"></script>
 <script>
 (function () {
   'use strict';
@@ -1099,6 +1101,8 @@ tbody th small{text-wrap:balance}
 
   /* ---------- dots, lines and angles on the clips, from video tracking ---------- */
   var shown = { off: null, on: null }, marks = {};
+  var phone = window.matchMedia ? window.matchMedia('(max-width:640px)') : null;
+  var UPP = 1;                           // picture units per screen pixel in the clips, so dots keep their size on screen at any width or zoom
   var Z = { s: 1, u: 0, v: 0 };          // zoom shared by both clips: scale, and the top-left of the visible part as a fraction of the frame
   function clipFrame(k) {
     var ct = vidReady && !vidFailed && shown[k] != null ? shown[k] : S.t + LEAD;
@@ -1115,10 +1119,13 @@ tbody th small{text-wrap:balance}
     function arc(e, cx, cy, r, ax, ay, bx, by, sweep) {
       e.setAttribute('d', 'M' + r1(cx + ax * r) + ' ' + r1(cy + ay * r) + 'A' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + r1(cx + bx * r) + ' ' + r1(cy + by * r));
     }
-    function place(lab, x, y, text) {
+    [labTh, labDeck].forEach(function (lab) {      // symbol and value apart, so a phone can show the symbol alone
+      lab.textContent = ''; lab.appendChild(document.createElement('b')); lab.appendChild(document.createElement('span'));
+    });
+    function place(lab, x, y, sym, val) {
       var px = (x / TR.w - Z.u) * Z.s, py = (y / TR.h - Z.v) * Z.s;      // through the zoom
       if (Z.s > 1 && (px < 0.09 || px > 0.91 || py < 0.05 || py > 0.95)) { lab.hidden = true; return; }      // no half labels at the edge of a zoomed clip
-      lab.hidden = false; lab.textContent = text;
+      lab.hidden = false; lab.firstChild.textContent = sym; lab.lastChild.textContent = ' ' + val;
       lab.style.left = (px * 100).toFixed(2) + '%'; lab.style.top = (py * 100).toFixed(2) + '%';
     }
     function show(parts, on) { parts.forEach(function (e) { if (on) e.removeAttribute('display'); else e.setAttribute('display', 'none'); }); }
@@ -1137,7 +1144,7 @@ tbody th small{text-wrap:balance}
     // The dashed line from the same point is the 45 deg target (the direction the axis had at the hold). The two lines are equally
     // long, so the gap between their far ends is the tilt error; a ring around the target's end shows where to look.
     var A0 = T.info.holdUpper + 90, dT = dir(A0), EXT = 110, RING = 32;
-    var tgtLine = el('line', 'mk-tgt'), axisLine = el('line', 'mk-line ' + k), thArc = el('path', 'mk-arc'), ring = el('circle', 'mk-ring'), tip = el('path', 'mk-tip ' + k);
+    var tgtLine = el('line', 'mk-tgt'), axisLine = el('line', 'mk-line ' + k), thArc = el('path', 'mk-arc'), ring = el('circle', 'mk-ring'), tip = el('circle', 'mk-tip ' + k);
     var plateLine = el('line', 'mk-axis ' + k), aim = [tgtLine, axisLine, thArc, ring, tip], focus = null;
 
     // the three tracked points and the paths they have drawn
@@ -1149,27 +1156,27 @@ tbody th small{text-wrap:balance}
       }
       return { x: xy[0], y: xy[1], pts: pts, first: first, last: last, path: el('polyline', 'mk-path ' + k), recent: el('polyline', 'mk-recent ' + k) };
     });
-    dots.forEach(function (d) { d.bg = el('path', 'mk-dotbg'); d.dot = el('path', 'mk-dot ' + k); });     // dots sit above everything
+    dots.forEach(function (d) { d.bg = el('circle', 'mk-dotbg'); d.dot = el('circle', 'mk-dot ' + k); });     // dots sit above everything
+    function disc(e, x, y, px) { e.setAttribute('cx', x); e.setAttribute('cy', y); e.setAttribute('r', (px * UPP).toFixed(2)); }      // px: radius on screen
 
     return {
       focus: function () { return focus; },          // centre of the ring, for the zoom button
       update: function () {
-        var f = clipFrame(k), tilt = T.tilt[f], deck = T.deck[f] - MID;
+        var f = clipFrame(k), tilt = T.tilt[f], deck = T.deck[f] - MID, small = !!(phone && phone.matches);
         dots.forEach(function (d) {
-          var on = f >= d.first && f <= d.last, m;
+          var on = f >= d.first && f <= d.last;
           show([d.path, d.recent, d.bg, d.dot], on);
           if (!on) return;
           d.path.setAttribute('points', d.pts.slice(d.first, f + 1).join(' '));          // everything this dot has drawn so far
           d.recent.setAttribute('points', d.pts.slice(Math.max(d.first, f - RECENT), f + 1).join(' '));
-          m = 'M' + d.x[f] + ' ' + d.y[f] + 'h0.01';
-          d.bg.setAttribute('d', m); d.dot.setAttribute('d', m);
+          disc(d.bg, d.x[f], d.y[f], small ? 4.5 : 5.25); disc(d.dot, d.x[f], d.y[f], small ? 3.25 : 3.75);
         });
 
         // base: from the hinge pin to the tracked point on its free end, against the reference line
         var mx = T.mx[f], my = T.my[f], vx = mx - hx, vy = my - hy, len = Math.sqrt(vx * vx + vy * vy);
         seg(deckLine, hx, hy, mx, my);
         arc(deckArc, hx, hy, Math.round(len * 0.9), gX, gY, vx / len, vy / len, deck >= 0 ? 0 : 1);
-        place(labDeck, mx + 52, my - 22, t('lab.deck') + ' ' + num(deck, 1) + '°');
+        place(labDeck, mx + (small ? 30 : 52), my - (small ? 34 : 22), t('lab.deck'), num(deck, 1) + '°');
         vDeck.textContent = num(deck, 1) + '°';
 
         // launcher angle: 45 deg at the hold, plus the rotation measured since
@@ -1184,7 +1191,7 @@ tbody th small{text-wrap:balance}
           show([plateLine], true); seg(plateLine, cx, cy, tx, ty);
           if (sV > -60 || sV < -560) {               // early in the step the axis is too flat to meet the reference line inside the picture
             show(aim, false);
-            place(labTh, cx - 76, cy + 4, 'θ ' + num(REF + tilt, 1) + '°');
+            place(labTh, cx - (small ? 40 : 76), cy + 4, 'θ', num(REF + tilt, 1) + '°');
           } else {
             var Vx = mpx + sV * dA[0], Vy = mpy + sV * dA[1], reach = EXT - sV;
             var Px = Vx + dA[0] * reach, Py = Vy + dA[1] * reach, Qx = Vx + dT[0] * reach, Qy = Vy + dT[1] * reach;
@@ -1193,8 +1200,8 @@ tbody th small{text-wrap:balance}
             seg(tgtLine, Vx, Vy, Qx + dT[0] * 18, Qy + dT[1] * 18);
             arc(thArc, Vx, Vy, 52, -gX, -gY, dA[0], dA[1], 1);
             ring.setAttribute('cx', r1(Qx)); ring.setAttribute('cy', r1(Qy)); ring.setAttribute('r', RING);
-            tip.setAttribute('d', 'M' + r1(Px) + ' ' + r1(Py) + 'h0.01');
-            place(labTh, Qx - RING - 52, Qy, 'θ ' + num(REF + tilt, 1) + '°');      // the angle is read at the top, beside the ring
+            disc(tip, r1(Px), r1(Py), small ? 2.75 : 3.25);
+            place(labTh, Qx - RING - (small ? 30 : 52), Qy, 'θ', num(REF + tilt, 1) + '°');      // the angle is read at the top, beside the ring
             focus = [Qx, Qy];
           }
           vTh.textContent = num(REF + tilt, 1) + '°';
@@ -1232,8 +1239,12 @@ tbody th small{text-wrap:balance}
       btn.hidden = !on; btn.textContent = t('zoom.reset', { x: Z.s.toFixed(1) + '×' });
     });
     if (zoomBtn) zoomBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    measureMarks();
     drawMarks();
   }
+  function measureMarks() { var w = zFrames[0] ? zFrames[0].clientWidth : 0; UPP = w ? vwOf() / Z.s / w : 1; }
+  function vwOf() { return TR ? TR.w : 960; }
+  window.addEventListener('resize', function () { measureMarks(); drawMarks(); });
   // The button zooms both clips onto the ring (or back out) and shows, for a few seconds, how to zoom by hand.
   if (zoomBtn) zoomBtn.addEventListener('click', function () {
     clearTimeout(tipTimer);
@@ -1593,11 +1604,28 @@ tbody th small{text-wrap:balance}
       });
     });
   }
+  // Put each sentence of a paragraph in its own box (class sn). A sentence ends at . ! or ? followed by a space or the end,
+  // so the point in "5.0" is not an end. Emphasised parts are boxes already and are left alone.
+  function wrapSentences(el) {
+    Array.prototype.slice.call(el.childNodes).forEach(function (node) {
+      if (node.nodeType !== 3) return;
+      var parts = node.nodeValue.match(/[\s\S]*?[.!?](?=\s|$)\s*|[\s\S]+$/g), frag = document.createDocumentFragment();
+      if (!parts) return;
+      parts.forEach(function (part) {
+        var text = part.replace(/^\s+|\s+$/g, ''), span;
+        if (/^\s/.test(part)) frag.appendChild(document.createTextNode(' '));
+        if (text) { span = document.createElement('span'); span.className = 'sn'; span.textContent = text; frag.appendChild(span); }
+        if (text && /\s$/.test(part)) frag.appendChild(document.createTextNode(' '));
+      });
+      el.replaceChild(frag, node);
+    });
+  }
   function setLang(lang, announce) {
     LANG = I18N[lang] ? lang : 'en';
     document.documentElement.lang = LANG;
     try { localStorage.setItem('isp-lang', LANG); } catch (err) {}
     applyStatic();
+    $$('.lede, .sub, .cap').forEach(wrapSentences);
     renderMetrics();
     $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
     setPlaying(S.playing);
