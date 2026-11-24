@@ -159,6 +159,8 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:6px 11px;font-size:13px;color:var(--ink-2);cursor:pointer;white-space:nowrap}
 .btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
 .btn[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.tip .sn{display:block}                         /* the hint: one sentence per line */
+.tip .sn + .sn{margin-top:2px}
 .tip{position:absolute;right:0;top:calc(100% + 8px);z-index:7;width:max-content;max-width:min(320px,84vw);background:var(--tip-bg);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:var(--btn-ink);border-radius:6px;padding:9px 12px;font-size:13px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,.28)}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:20px}
 .pick-g{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%}
@@ -317,7 +319,7 @@ footer{height:96px}      /* room for the fixed play bar */
   /* under each clip: symbol, its name, its value */
   .vals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;margin-top:8px}
   .brand img{height:30px}
-  .tip{left:0;right:auto}
+  .tip{left:0;right:auto;max-width:calc(100vw - 32px)}
   .mk-ring{stroke-width:1.4}
 
   .vals > span{display:grid;gap:1px;min-width:0}
@@ -1623,7 +1625,7 @@ tbody th small{text-wrap:balance}
     document.documentElement.lang = LANG;
     try { localStorage.setItem('isp-lang', LANG); } catch (err) {}
     applyStatic();
-    $$('.lede, .sub, .cap').forEach(wrapSentences);
+    $$('.lede, .sub, .cap, .tip').forEach(wrapSentences);
     renderMetrics();
     $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
     setPlaying(S.playing);
