@@ -101,7 +101,7 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 
 /* ---------- clips ---------- */
 .clips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.frame{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--video-bg);border-radius:6px;overflow:hidden;cursor:zoom-in;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.frame{position:relative;aspect-ratio:6/5;max-width:100%;background:var(--video-bg);border-radius:6px;overflow:hidden;cursor:zoom-in;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .frame video{display:block;width:100%;height:100%;object-fit:cover;transform-origin:0 0}
 .chip{position:absolute;background:var(--chip-bg);color:var(--chip-ink);border-radius:4px;padding:4px 8px;font-size:12.5px;line-height:1.3;pointer-events:none}
 .chip.tag{left:10px;top:10px;font-weight:500}
@@ -209,7 +209,7 @@ tr.grp th{font-family:var(--font-data);font-size:11.5px;letter-spacing:.04em;col
 /* ---------- rig ---------- */
 .rig{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start}
 .photo{position:relative;border-radius:6px;overflow:hidden;background:var(--video-bg)}
-.photo img{display:block;width:100%;height:auto}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;object-position:50% 100%}
 .pin{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--chip-bg);color:var(--chip-ink);border:1.5px solid var(--chip-ink);font-family:var(--font-data);font-size:12px;display:grid;place-items:center}
 .parts{display:grid;gap:9px;counter-reset:p}
 .parts li{display:grid;grid-template-columns:24px 1fr;gap:10px;font-size:14.5px;color:var(--ink-2)}
@@ -390,10 +390,10 @@ tbody th small{text-wrap:balance}
     <div class="clips">
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=2f485d58" src="media/dob_off.mp4?v=2936c640" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
+          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=de3a1503" src="media/dob_off.mp4?v=37da02fc" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
           <div class="chip tag"><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
-          <svg class="marks" data-marks-for="off" viewBox="0 0 960 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+          <svg class="marks" data-marks-for="off" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
@@ -406,10 +406,10 @@ tbody th small{text-wrap:balance}
       </figure>
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg?v=c9f33c9d" src="media/dob_on.mp4?v=30fdcc47" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
+          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg?v=ca712ed6" src="media/dob_on.mp4?v=80b69f18" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
           <div class="chip tag"><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
-          <svg class="marks" data-marks-for="on" viewBox="0 0 960 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+          <svg class="marks" data-marks-for="on" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
@@ -626,7 +626,7 @@ tbody th small{text-wrap:balance}
     </div>
     <div class="rig">
       <figure class="photo">
-        <img src="media/dob_on.jpg?v=c9f33c9d" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
+        <img src="media/dob_on.jpg?v=ca712ed6" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
         <span class="pin" style="left:54%;top:24%">2</span>
         <span class="pin" style="left:33%;top:35%">3</span>
@@ -681,7 +681,7 @@ tbody th small{text-wrap:balance}
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 <script src="data.js?v=2eb71e58"></script>
 <script src="model.js?v=d9333bed"></script>
-<script src="track.js?v=1625db3e"></script>
+<script src="track.js?v=a2bee38c"></script>
 <script src="i18n.js?v=1f0225d3"></script>
 <script>
 (function () {
@@ -1205,7 +1205,7 @@ tbody th small{text-wrap:balance}
     Z.s = clamp(Z.s, 1, Z_MAX);
     if (Z.s < 1.03) Z.s = 1;
     Z.u = clamp(Z.u, 0, 1 - 1 / Z.s); Z.v = clamp(Z.v, 0, 1 - 1 / Z.s);
-    var on = Z.s > 1, vw = TR ? TR.w : 960, vh = TR ? TR.h : 720;
+    var on = Z.s > 1, vw = TR ? TR.w : 960, vh = TR ? TR.h : 800;
     zFrames.forEach(function (f) {
       var v = $('video', f), svg = $('.marks', f), btn = $('[data-zreset]', f);
       v.style.transform = on ? 'scale(' + Z.s.toFixed(4) + ') translate(' + (-Z.u * 100).toFixed(3) + '%,' + (-Z.v * 100).toFixed(3) + '%)' : '';
