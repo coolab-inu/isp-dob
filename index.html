@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Hardware validation of a disturbance observer on an inertially stabilized platform: tracked rig videos, logged signals and a 3D replay, observer off against on.">
+<link rel="alternate" hreflang="en" href="https://coolab-inu.github.io/isp-dob/">
+<link rel="alternate" hreflang="ko" href="https://coolab-inu.github.io/isp-dob/ko/">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>ISP DOB Validation</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one clock. Two clips and every trace hang off a single playhead; the page reads top to bottom as video, response, signals, numbers, rig. */
 :root{
@@ -17,9 +19,9 @@
   --video-bg:#0b0d10; --chip-bg:rgba(10,12,15,.74); --chip-ink:#f4f5f7;
   --mk-off:#ff9457; --mk-on:#6fb4ff; --mk-ink:#ffffff;
   --m-frame:#e6e8ec; --m-deck:#cdd3dc; --m-cam:#a6adb8; --m-edge:#2b3038;
-  --font-display:"Archivo","Arial Narrow",Arial,sans-serif;
-  --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --font-data:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --font-display:"Archivo","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
+  --font-body:"IBM Plex Sans","IBM Plex Sans KR",system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-data:"IBM Plex Mono","IBM Plex Sans KR",ui-monospace,"Cascadia Mono",Consolas,"Malgun Gothic",monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -52,7 +54,7 @@ button{font:inherit;color:inherit}
 
 /* ---------- nav ---------- */
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--plane);border-bottom:1px solid var(--rule)}
-.nav .wrap{display:flex;align-items:center;gap:20px;min-height:48px}
+.nav .wrap{display:flex;align-items:center;gap:8px 18px;min-height:48px}
 .brand{font-family:var(--font-data);font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;color:var(--ink)}
 .brand b{font-weight:500;color:var(--muted)}
 .links{display:flex;gap:4px;overflow-x:auto;min-width:0;margin-left:auto;scrollbar-width:none}
@@ -60,6 +62,8 @@ button{font:inherit;color:inherit}
 .links a{font-size:13.5px;text-decoration:none;color:var(--ink-2);padding:6px 10px;border-radius:4px;white-space:nowrap}
 .links a:hover{color:var(--ink);background:var(--grid)}
 .links a[aria-current="true"]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
+.seg.lang{flex:none}
+.seg.lang button{padding:4px 9px;font-size:12.5px}
 
 /* ---------- header ---------- */
 .head{padding-block:44px 30px}
@@ -115,10 +119,9 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .marks .off{stroke:var(--mk-off)} .marks .on{stroke:var(--mk-on)}
 .mk-lab{position:absolute;transform:translate(-50%,-50%);background:var(--chip-bg);color:var(--chip-ink);font:500 12px/1.35 var(--font-data);font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:3px;white-space:nowrap;pointer-events:none}
 .marks-off .marks,.marks-off .mk-lab{display:none}
+.vals{display:none}
 .pick{display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px;margin-top:20px}
 .pick-g{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%}
-.pick-s{overflow-x:auto;min-width:0;scrollbar-width:none}
-.pick-s::-webkit-scrollbar{display:none}
 .pick-l{font-family:var(--font-data);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 
 /* ---------- transport ---------- */
@@ -241,66 +244,95 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 
 @media (max-width:820px){
   .rig{grid-template-columns:1fr}
+  /* signal buttons become separate pills that wrap, so none runs off the screen */
+  .pick{gap:12px}
+  .pick-g{flex-direction:column;align-items:flex-start;gap:6px;width:100%}
+  .pick .seg{display:flex;flex-wrap:wrap;gap:6px;border:0;background:transparent;border-radius:0;overflow:visible}
+  .pick .seg button{border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:6px 10px}
+  .pick .seg button + button{border-left:1px solid var(--rule)}
+  .pick .seg button[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
 }
 @media (max-width:640px){
+  .nav .wrap{flex-wrap:wrap;padding-block:8px 4px;gap:4px 12px}
+  .links{order:3;flex-basis:100%;margin-left:0;justify-content:space-between;overflow:visible}
+  .links a{padding:5px 4px;font-size:13px}
+  .seg.lang{margin-left:auto}
+  section{scroll-margin-top:92px}
   .head{padding-block:30px 22px}
   .stats{grid-template-columns:1fr 1fr}
   .stat.lead{grid-column:1/-1;border-bottom:1px solid var(--rule);padding-bottom:14px}
   .stat.lead + .stat{padding-left:0;border-left:0}
-  .clips{gap:8px}
+  /* clips one above the other at full width; the angles move from the picture to a line under it */
+  .clips{grid-template-columns:1fr;gap:14px}
   .chip{font-size:11px;padding:3px 6px}
-  .chip.tag{left:6px;top:6px} .chip.rate{display:none}
-  .chip.read{left:6px;bottom:6px;font-size:11px} .chip.read .th{display:none}
-  .mk-dotbg{stroke-width:8}
-  .mk-dot{stroke-width:5.5}
-  .mk-line{stroke-width:1.75}
-  .mk-axis{stroke-width:1.25}
-  .mk-lab{font-size:10px;padding:0 4px}
-  .mk-lab[data-lab="deck"]{display:none}
-  .pick-g{flex-direction:column;align-items:flex-start;gap:6px}
+  .chip.tag{left:6px;top:6px} .chip.rate{right:6px;top:6px;font-size:10.5px}
+  .chip.read,.mk-lab{display:none}
+  .vals{display:flex;flex-wrap:wrap;gap:2px 14px;margin-top:6px;font-family:var(--font-data);font-size:12px;color:var(--ink-2)}
+  .vals b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+  .mk-dotbg{stroke-width:9}
+  .mk-dot{stroke-width:6.5}
+  .mk-line{stroke-width:2}
+  .mk-axis{stroke-width:1.5}
   .transport{grid-template-columns:auto 1fr auto}
   .transport .rail{grid-column:1/-1;grid-row:2}
   .dock .err{display:none}
   .dock .wrap{grid-template-columns:auto auto minmax(0,1fr)}
   .legend b{min-width:5.5ch}
   .stage{aspect-ratio:4/3}
+  .stage-hint{font-size:11px;right:8px;left:8px;text-align:right}
   .dials{gap:8px}
   .dial{grid-template-columns:1fr;padding:10px 12px}
   .how li{grid-template-columns:1fr;gap:2px}
+  /* the table fits the screen instead of scrolling sideways */
+  table{min-width:0;font-size:13px}
+  th,td{padding:8px 8px 8px 0}
+  td.n,th.n{padding-left:8px;font-size:12px}
+  thead th{font-size:11.5px}
+  thead th.n{white-space:normal}
+  tbody th small{font-size:11.5px}
 }
+/* Korean: break lines between words, and drop the wide tracking meant for Latin capitals */
+:lang(ko) body{word-break:keep-all;line-height:1.62}
+:lang(ko) h1{font-stretch:100%;letter-spacing:-.02em;line-height:1.16;max-width:13em}
+:lang(ko) h2{font-stretch:100%;letter-spacing:-.015em;line-height:1.25}
+:lang(ko) .eyebrow,:lang(ko) .brand,:lang(ko) .pick-l,:lang(ko) tr.grp th{letter-spacing:.02em}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
 </head>
 <body>
-<nav class="nav" aria-label="Sections">
+<nav class="nav" aria-label="Sections" data-i18n-aria="nav.aria">
   <div class="wrap">
-    <span class="brand">ISP <b>/</b> DOB validation</span>
+    <span class="brand" data-i18n-html="nav.brand">ISP <b>/</b> DOB validation</span>
     <div class="links" id="links">
-      <a href="#runs">Runs</a>
-      <a href="#signals">Signals</a>
-      <a href="#replay">3D replay</a>
-      <a href="#metrics">Metrics</a>
-      <a href="#rig">Rig</a>
+      <a href="#runs" data-i18n="nav.runs">Runs</a>
+      <a href="#signals" data-i18n="nav.signals">Signals</a>
+      <a href="#replay" data-i18n="nav.replay">3D replay</a>
+      <a href="#metrics" data-i18n="nav.metrics">Metrics</a>
+      <a href="#rig" data-i18n="nav.rig">Rig</a>
+    </div>
+    <div class="seg lang" role="group" aria-label="Language" data-i18n-aria="lang.aria">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="ko" aria-pressed="false" lang="ko">한국어</button>
     </div>
   </div>
 </nav>
 
 <header class="head wrap">
-  <p class="eyebrow">Hardware validation · elevation axis</p>
-  <h1>Disturbance Observer on an Inertially Stabilized Platform</h1>
-  <p class="lede">The elevation axis steps to 45° and holds that angle while a cam rocks the deck underneath it. Both runs use the same controller and the same cam speed. Only the disturbance observer (DOB) changes.</p>
+  <p class="eyebrow" data-i18n="head.eyebrow">Hardware validation · elevation axis</p>
+  <h1 data-i18n="head.title">Disturbance Observer on an Inertially Stabilized Platform</h1>
+  <p class="lede" data-i18n="head.lede">The elevation axis steps to 45° and holds that angle while a cam rocks the deck underneath it. Both runs use the same controller and the same cam speed. Only the disturbance observer (DOB) changes.</p>
   <dl class="stats">
     <div class="stat lead">
-      <dt>RMS tracking error while the cam runs</dt>
+      <dt data-i18n="stat.rms">RMS tracking error while the cam runs</dt>
       <dd><span class="fig" id="k-rms">−65%</span><span class="from" id="k-rms-d">0.81° → 0.28°</span></dd>
     </div>
     <div class="stat">
-      <dt>Settling time after the step</dt>
+      <dt data-i18n="stat.settle">Settling time after the step</dt>
       <dd><span class="fig" id="k-set">0.49 s</span><span class="from" id="k-set-d">from 1.55 s</span></dd>
     </div>
     <div class="stat">
-      <dt>Overshoot on the step</dt>
-      <dd><span class="fig" id="k-ov">0.32°</span><span class="from" id="k-ov-d">from 2.65°</span></dd>
+      <dt data-i18n="stat.over">Overshoot on the step</dt>
+      <dd><span class="fig" id="k-ov">0.31°</span><span class="from" id="k-ov-d">from 2.65°</span></dd>
     </div>
   </dl>
 </header>
@@ -310,83 +342,85 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2>The clips, on the test clock</h2>
-        <p class="sub">The dots, lines and angles on the clips are tracked from the video itself, and the faint line behind each dot is the path it has taken. The clips and the logs are separate runs of the same test, so they share its clock (step at 0 s, cam on at 5.0 s) but not the phase of the cam. Click or drag a plot to scrub.</p>
+        <h2 data-i18n="runs.title">The clips, on the test clock</h2>
+        <p class="sub" data-i18n="runs.sub">The dots, lines and angles on the clips are tracked from the video itself, and the faint line behind each dot is the path it has taken. The clips and the logs are separate runs of the same test, so they share its clock (step at 0 s, cam on at 5.0 s) but not the phase of the cam. Click or drag a plot to scrub.</p>
       </div>
-      <div class="seg" role="group" aria-label="Tracked dots on the clips">
-        <button type="button" data-marks="on" aria-pressed="true">Dots on</button>
-        <button type="button" data-marks="off" aria-pressed="false">Off</button>
+      <div class="seg" role="group" aria-label="Tracked dots on the clips" data-i18n-aria="marks.aria">
+        <button type="button" data-marks="on" aria-pressed="true" data-i18n="marks.on">Dots on</button>
+        <button type="button" data-marks="off" aria-pressed="false" data-i18n="marks.off">Off</button>
       </div>
     </div>
 
     <div class="clips">
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg" src="media/dob_off.mp4" aria-label="Rig video, observer off"></video>
-          <div class="chip tag"><i class="dot off"></i>Observer off</div>
+          <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg" src="media/dob_off.mp4" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
+          <div class="chip tag"><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
           <svg class="marks" data-marks-for="off" viewBox="0 0 960 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
-          <div class="chip read"><span>tilt <b id="r-off-tilt">–</b></span><span class="th">deck <b id="r-off-deck">–</b></span></div>
+          <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-off-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">deck</span> <b id="r-off-deck">–</b></span></div>
         </div>
+        <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">deck</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">plate–deck</span> <b data-v="rel">–</b></span></figcaption>
       </figure>
       <figure class="clip">
         <div class="frame" data-toggle>
-          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg" src="media/dob_on.mp4" aria-label="Rig video, observer on"></video>
-          <div class="chip tag"><i class="dot on"></i>Observer on</div>
+          <video id="v-on" muted playsinline preload="auto" poster="media/dob_on.jpg" src="media/dob_on.mp4" aria-label="Rig video, observer on" data-i18n-aria="video.on.aria"></video>
+          <div class="chip tag"><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
           <div class="chip rate" data-rate-label>1× real time</div>
           <svg class="marks" data-marks-for="on" viewBox="0 0 960 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
           <div class="mk-lab" data-lab="th" hidden></div>
           <div class="mk-lab" data-lab="deck" hidden></div>
           <div class="mk-lab" data-lab="rel" hidden></div>
-          <div class="chip read"><span>tilt <b id="r-on-tilt">–</b></span><span class="th">deck <b id="r-on-deck">–</b></span></div>
+          <div class="chip read"><span><span data-i18n="chip.tilt">tilt</span> <b id="r-on-tilt">–</b></span><span class="th"><span data-i18n="chip.deck">deck</span> <b id="r-on-deck">–</b></span></div>
         </div>
+        <figcaption class="vals"><span>θ <b data-v="th">–</b></span><span><span data-i18n="lab.deck">deck</span> <b data-v="deck">–</b></span><span><span data-i18n="lab.rel">plate–deck</span> <b data-v="rel">–</b></span></figcaption>
       </figure>
     </div>
 
     <div class="transport" id="transport">
-      <button class="play" type="button" data-play aria-pressed="false" aria-label="Play both runs">
+      <button class="play" type="button" data-play aria-pressed="false" aria-label="Play both clips">
         <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
         <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
       </button>
       <output class="clock" data-clock>t = 9.00 s</output>
       <div class="rail">
         <div class="bands"><i></i></div>
-        <input class="scrub" id="scrub" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds">
+        <input class="scrub" id="scrub" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
         <div class="ticks" aria-hidden="true">
-          <span style="left:2.53%">0</span><span style="left:34.18%" class="l">5 s<em> · cam starts</em></span><span style="left:65.82%">10</span><span style="left:97.47%">15</span>
+          <span style="left:2.53%">0</span><span style="left:34.18%" class="l">5 s<em data-i18n="rail.cam"> · cam starts</em></span><span style="left:65.82%">10</span><span style="left:97.47%">15</span>
         </div>
       </div>
-      <div class="seg mono" role="group" aria-label="Playback speed">
+      <div class="seg mono" role="group" aria-label="Playback speed" data-i18n-aria="speed.aria">
         <button type="button" data-rate="0.25" aria-pressed="false">0.25×</button>
         <button type="button" data-rate="0.5" aria-pressed="false">0.5×</button>
         <button type="button" data-rate="1" aria-pressed="true">1×</button>
       </div>
     </div>
 
-    <p class="cap" id="dots-cap">Three points are tracked in each clip: two corners of the payload plate and the free end of the deck. The line through the plate's corners gives θ, set to 45° at the hold. The line from the hinge pin to the deck's free end gives the deck angle above its lowest position; dashed lines mark θ = 0 and that lowest position. The third angle, drawn where the plate's axis meets the deck line, is the plate against the deck: θ plus the deck angle, which is what the motor has to turn through.</p>
+    <p class="cap" id="dots-cap" hidden></p>
 
     <div class="pick" id="pick">
       <div class="pick-g" data-pick="clips">
-        <span class="pick-l">In the clips</span>
-        <div class="pick-s"><div class="seg" role="group" aria-label="Signals measured in the clips">
-          <button type="button" data-sig="tiltv" aria-pressed="true">Tilt error</button>
-          <button type="button" data-sig="deckv" aria-pressed="false">Deck angle</button>
-          <button type="button" data-sig="relv" aria-pressed="false">Plate–deck</button>
-        </div></div>
+        <span class="pick-l" data-i18n="pick.clips">In the clips</span>
+        <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
+          <button type="button" data-sig="tiltv" aria-pressed="true" data-i18n="sig.tiltv">Tilt error</button>
+          <button type="button" data-sig="deckv" aria-pressed="false" data-i18n="sig.deckv">Deck angle</button>
+          <button type="button" data-sig="relv" aria-pressed="false" data-i18n="sig.relv">Plate–deck</button>
+        </div>
       </div>
       <div class="pick-g">
-        <span class="pick-l">Logged runs</span>
-        <div class="pick-s"><div class="seg" role="group" aria-label="Signals from the logged runs">
-          <button type="button" data-sig="theta" aria-pressed="false">Angle θ</button>
-          <button type="button" data-sig="err" aria-pressed="false">Error</button>
-          <button type="button" data-sig="deck" aria-pressed="false">Deck</button>
-          <button type="button" data-sig="iq" aria-pressed="false">Current</button>
-          <button type="button" data-sig="dh" aria-pressed="false">Observer d̂</button>
-          <button type="button" data-sig="rpm" aria-pressed="false">Cam speed</button>
-        </div></div>
+        <span class="pick-l" data-i18n="pick.logs">Logged runs</span>
+        <div class="seg" role="group" aria-label="Signals from the logged runs" data-i18n-aria="pick.logs.aria">
+          <button type="button" data-sig="theta" aria-pressed="false" data-i18n="sig.theta">Angle θ</button>
+          <button type="button" data-sig="err" aria-pressed="false" data-i18n="sig.err">Error</button>
+          <button type="button" data-sig="deck" aria-pressed="false" data-i18n="sig.deck">Deck</button>
+          <button type="button" data-sig="iq" aria-pressed="false" data-i18n="sig.iq">Current</button>
+          <button type="button" data-sig="dh" aria-pressed="false" data-i18n="sig.dh">Observer d̂</button>
+          <button type="button" data-sig="rpm" aria-pressed="false" data-i18n="sig.rpm">Cam speed</button>
+        </div>
       </div>
     </div>
 
@@ -395,20 +429,20 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
         <div class="chart-head">
           <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong><span data-unit>deg</span></div>
           <div class="legend">
-            <span data-leg="off"><i class="k off"></i>Observer off<b data-val="off">–</b></span>
-            <span data-leg="on"><i class="k on"></i>Observer on<b data-val="on">–</b></span>
-            <span data-leg="ref" hidden><i class="k ref"></i>Target 45°</span>
+            <span data-leg="off"><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span>
+            <span data-leg="on"><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span>
+            <span data-leg="ref" hidden><i class="k ref"></i><span data-i18n="leg.target">Target 45°</span></span>
           </div>
         </div>
-        <div class="plot tall"><svg role="img" aria-label="Selected signal over time"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
     </div>
     <div class="sec-head" style="margin:12px 0 0;align-items:flex-start">
-      <p class="cap" style="margin-top:0">Signals marked “in the clips” are measured from the video and match it frame for frame. “Logged runs” are separate runs of the same test: same clock, different cam phase. The shaded span is the 10 s in which the cam motor runs, and the vertical line is the playhead.</p>
-      <div class="seg" role="group" aria-label="Time window" data-views>
-        <button type="button" data-view="full" aria-pressed="true">Full run</button>
-        <button type="button" data-view="step" aria-pressed="false">Step, 0–2 s</button>
-        <button type="button" data-view="dist" aria-pressed="false">Disturbance, 5–15 s</button>
+      <p class="cap" style="margin-top:0" data-i18n="runs.cap2">Signals marked “in the clips” are measured from the video and match it frame for frame. “Logged runs” are separate runs of the same test: same clock, different cam phase. The shaded span is the 10 s in which the cam motor runs, and the vertical line is the playhead.</p>
+      <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
+        <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
+        <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
+        <button type="button" data-view="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
       </div>
     </div>
   </div>
@@ -418,50 +452,50 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2>What the controller was doing</h2>
-        <p class="sub">These are the logged runs. The encoder measures the payload relative to the deck, so −(θ + encoder) is the deck's own angle. It swings about 8° peak to peak in both runs, the same swing the clips show, so every run faced the same disturbance. Both logged runs start with the cam parked high in its stroke.</p>
+        <h2 data-i18n="signals.title">What the controller was doing</h2>
+        <p class="sub" data-i18n="signals.sub">These are the logged runs. The encoder measures the payload relative to the deck, so −(θ + encoder) is the deck's own angle. It swings about 8° peak to peak in both runs, the same swing the clips show, so every run faced the same disturbance. Both logged runs start with the cam parked high in its stroke.</p>
       </div>
-      <div class="seg" role="group" aria-label="Time window" data-views>
-        <button type="button" data-view="full" aria-pressed="true">Full run</button>
-        <button type="button" data-view="step" aria-pressed="false">Step, 0–2 s</button>
-        <button type="button" data-view="dist" aria-pressed="false">Disturbance, 5–15 s</button>
+      <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
+        <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
+        <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
+        <button type="button" data-view="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
       </div>
     </div>
     <div class="card stack">
       <figure class="chart" data-chart="err">
         <div class="chart-head">
-          <div class="chart-title">Tracking error θ − 45°<span>deg</span></div>
-          <div class="legend"><span><i class="k off"></i>Observer off<b data-val="off">–</b></span><span><i class="k on"></i>Observer on<b data-val="on">–</b></span></div>
+          <div class="chart-title" data-i18n-html="st.err">Tracking error θ − 45°<span>deg</span></div>
+          <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
-        <div class="plot"><svg role="img" aria-label="Tracking error over time for both runs"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot"><svg role="img" aria-label="Tracking error over time for both runs" data-i18n-aria="st.err.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
       <figure class="chart" data-chart="deck">
         <div class="chart-head">
-          <div class="chart-title">Deck angle, from −(θ + encoder)<span>deg above the bottom of the cam stroke</span></div>
-          <div class="legend"><span><i class="k off"></i>Observer off<b data-val="off">–</b></span><span><i class="k on"></i>Observer on<b data-val="on">–</b></span></div>
+          <div class="chart-title" data-i18n-html="st.deck">Deck angle, from −(θ + encoder)<span>deg above the bottom of the cam stroke</span></div>
+          <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
-        <div class="plot"><svg role="img" aria-label="Deck angle over time for both runs"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot"><svg role="img" aria-label="Deck angle over time for both runs" data-i18n-aria="st.deck.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
       <figure class="chart" data-chart="iq">
         <div class="chart-head">
-          <div class="chart-title">Motor current I<sub>q</sub><span>A</span></div>
-          <div class="legend"><span><i class="k off"></i>Observer off<b data-val="off">–</b></span><span><i class="k on"></i>Observer on<b data-val="on">–</b></span></div>
+          <div class="chart-title" data-i18n-html="st.iq">Motor current I<sub>q</sub><span>A</span></div>
+          <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
-        <div class="plot"><svg role="img" aria-label="Motor current over time for both runs"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot"><svg role="img" aria-label="Motor current over time for both runs" data-i18n-aria="st.iq.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
       <figure class="chart" data-chart="dh">
         <div class="chart-head">
-          <div class="chart-title">Observer disturbance estimate d̂<span>rad/s², observer-on run</span></div>
-          <div class="legend"><span><i class="k on"></i>Observer on<b data-val="on">–</b></span></div>
+          <div class="chart-title" data-i18n-html="st.dh">Observer disturbance estimate d̂<span>rad/s², observer-on run</span></div>
+          <div class="legend"><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
-        <div class="plot"><svg role="img" aria-label="Observer disturbance estimate over time"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot"><svg role="img" aria-label="Observer disturbance estimate over time" data-i18n-aria="st.dh.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
       <figure class="chart" data-chart="rpm">
         <div class="chart-head">
-          <div class="chart-title">Cam motor speed<span>rpm</span></div>
-          <div class="legend"><span><i class="k off"></i>Observer off<b data-val="off">–</b></span><span><i class="k on"></i>Observer on<b data-val="on">–</b></span></div>
+          <div class="chart-title" data-i18n-html="st.rpm">Cam motor speed<span>rpm</span></div>
+          <div class="legend"><span><i class="k off"></i><span data-i18n="run.off">Observer off</span><b data-val="off">–</b></span><span><i class="k on"></i><span data-i18n="run.on">Observer on</span><b data-val="on">–</b></span></div>
         </div>
-        <div class="plot"><svg role="img" aria-label="Cam motor speed over time for both runs"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        <div class="plot"><svg role="img" aria-label="Cam motor speed over time for both runs" data-i18n-aria="st.rpm.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
     </div>
   </div>
@@ -471,47 +505,47 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2>3D replay</h2>
-        <p class="sub">The CAD model replays the two logged runs on the same playhead. Each deck rocks as its encoder and IMU saw it, and each payload sits at its logged θ. The dashed line is the 45° target.</p>
+        <h2 data-i18n="replay.title">3D replay</h2>
+        <p class="sub" data-i18n="replay.sub">The CAD model replays the two logged runs on the same playhead. Each deck rocks as its encoder and IMU saw it, and each payload sits at its logged θ. The dashed line is the 45° target.</p>
       </div>
-      <div class="seg" role="group" aria-label="Camera">
-        <button type="button" data-cam="side" aria-pressed="true">Video angle</button>
-        <button type="button" data-cam="iso" aria-pressed="false">Isometric</button>
+      <div class="seg" role="group" aria-label="Camera" data-i18n-aria="cam.aria">
+        <button type="button" data-cam="side" aria-pressed="true" data-i18n="cam.side">Video angle</button>
+        <button type="button" data-cam="iso" aria-pressed="false" data-i18n="cam.iso">Isometric</button>
       </div>
     </div>
     <div class="card stage" id="stage">
-      <canvas id="gl" aria-label="3D model of the platform replaying both runs"></canvas>
-      <div class="tag3d" data-tag="off" hidden><i class="dot off"></i>Observer off</div>
-      <div class="tag3d" data-tag="on" hidden><i class="dot on"></i>Observer on</div>
-      <div class="stage-msg" id="stage-msg">Loading the model…</div>
-      <div class="stage-hint" id="stage-hint" hidden>Drag to orbit · Ctrl + scroll to zoom · grid 10 cm</div>
+      <canvas id="gl" aria-label="3D model of the platform replaying both runs" data-i18n-aria="gl.aria"></canvas>
+      <div class="tag3d" data-tag="off" hidden><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
+      <div class="tag3d" data-tag="on" hidden><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
+      <div class="stage-msg" id="stage-msg" data-i18n="stage.loading">Loading the model…</div>
+      <div class="stage-hint" id="stage-hint" data-i18n="stage.hint" hidden>Drag to orbit · Ctrl + scroll to zoom · grid 10 cm</div>
     </div>
     <div class="dials">
       <figure class="card dial" data-dial="off">
-        <svg viewBox="0 0 220 134" role="img" aria-label="Tracking error dial, observer off, plus or minus 3 degrees"></svg>
+        <svg viewBox="0 0 220 134" role="img" aria-label="Tracking error dial, observer off, plus or minus 3 degrees" data-i18n-aria="dial.off.aria"></svg>
         <div class="nums">
-          <div class="who"><i class="dot off"></i>Observer off</div>
-          <div>θ<b data-n="th">–</b></div>
-          <div>Error<b data-n="err">–</b></div>
-          <div>Deck<b data-n="deck">–</b></div>
+          <div class="who"><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
+          <div><span>θ</span><b data-n="th">–</b></div>
+          <div><span data-i18n="dial.err">Error</span><b data-n="err">–</b></div>
+          <div><span data-i18n="dial.deck">Deck</span><b data-n="deck">–</b></div>
         </div>
       </figure>
       <figure class="card dial" data-dial="on">
-        <svg viewBox="0 0 220 134" role="img" aria-label="Tracking error dial, observer on, plus or minus 3 degrees"></svg>
+        <svg viewBox="0 0 220 134" role="img" aria-label="Tracking error dial, observer on, plus or minus 3 degrees" data-i18n-aria="dial.on.aria"></svg>
         <div class="nums">
-          <div class="who"><i class="dot on"></i>Observer on</div>
-          <div>θ<b data-n="th">–</b></div>
-          <div>Error<b data-n="err">–</b></div>
-          <div>Deck<b data-n="deck">–</b></div>
+          <div class="who"><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
+          <div><span>θ</span><b data-n="th">–</b></div>
+          <div><span data-i18n="dial.err">Error</span><b data-n="err">–</b></div>
+          <div><span data-i18n="dial.deck">Deck</span><b data-n="deck">–</b></div>
         </div>
       </figure>
     </div>
-    <p class="cap">The model moves at true scale, so a 1° error is small on screen. The dials show the same error on a ±3° scale.</p>
+    <p class="cap" data-i18n="replay.cap">The model moves at true scale, so a 1° error is small on screen. The dials show the same error on a ±3° scale.</p>
     <ul class="how">
-      <li><b>Payload</b><span>Absolute angle is <code>theta_deg</code>. The CAD pose, with the payload envelope lying flat, is θ = 0, and positive θ raises its hinge-side end. That is the direction the plate turns in the clips.</span></li>
-      <li><b>Deck</b><span>Angle about the hinge pin is <code>−(theta_deg + encoder_delta_deg)</code>, measured from its lowest level while the cam runs and held at the parked level before 5.0 s.</span></li>
-      <li><b>Cam</b><span>Not instrumented. Its angle is reconstructed from the deck: lobe down at each trough, lobe up at each peak. The direction of rotation is a guess.</span></li>
-      <li><b>Model</b><span>Read from the Fusion 360 design “ISP_final” and rigged in Blender. The CAD frame is one solid, so it is split at the deck to let the deck pivot. The rig in the videos carries a small plate where the CAD has an 8 × 19 × 6 cm envelope.</span></li>
+      <li><b data-i18n="how.payload.k">Payload</b><span data-i18n-html="how.payload.v">Absolute angle is <code>theta_deg</code>. The CAD pose, with the payload envelope lying flat, is θ = 0, and positive θ raises its hinge-side end. That is the direction the plate turns in the clips.</span></li>
+      <li><b data-i18n="how.deck.k">Deck</b><span data-i18n-html="how.deck.v">Angle about the hinge pin is <code>−(theta_deg + encoder_delta_deg)</code>, measured from its lowest level while the cam runs and held at the parked level before 5.0 s.</span></li>
+      <li><b data-i18n="how.cam.k">Cam</b><span data-i18n-html="how.cam.v">Not instrumented. Its angle is reconstructed from the deck: lobe down at each trough, lobe up at each peak. The direction of rotation is a guess.</span></li>
+      <li><b data-i18n="how.model.k">Model</b><span data-i18n-html="how.model.v">Read from the Fusion 360 design “ISP_final” and rigged in Blender. The CAD frame is one solid, so it is split at the deck to let the deck pivot. The rig in the videos carries a small plate where the CAD has an 8 × 19 × 6 cm envelope.</span></li>
     </ul>
   </div>
 </section>
@@ -520,13 +554,13 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2>The numbers</h2>
-        <p class="sub">Every value is computed in this page from the two logs, 1,500 samples each at 100 Hz.</p>
+        <h2 data-i18n="metrics.title">The numbers</h2>
+        <p class="sub" data-i18n="metrics.sub">Logged values are computed in this page from the two logs, 1,500 samples each at 100 Hz. Clip values come from the video tracking.</p>
       </div>
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th scope="col">Metric</th><th scope="col" class="n">Observer off</th><th scope="col" class="n">Observer on</th><th scope="col" class="n">Change</th></tr></thead>
+        <thead><tr><th scope="col" data-i18n="tbl.metric">Metric</th><th scope="col" class="n" data-i18n="run.off">Observer off</th><th scope="col" class="n" data-i18n="run.on">Observer on</th><th scope="col" class="n" data-i18n="tbl.change">Change</th></tr></thead>
         <tbody id="metrics-body"></tbody>
       </table>
     </div>
@@ -538,13 +572,13 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2>The rig and the test</h2>
-        <p class="sub">A 3D-printed frame carries a deck that pivots on a pin. A cam under the deck lifts and drops it. The elevation motor on the deck has to keep the payload plate at the commanded inertial angle.</p>
+        <h2 data-i18n="rig.title">The rig and the test</h2>
+        <p class="sub" data-i18n="rig.sub">A 3D-printed frame carries a deck that pivots on a pin. A cam under the deck lifts and drops it. The elevation motor on the deck has to keep the payload plate at the commanded inertial angle.</p>
       </div>
     </div>
     <div class="rig">
       <figure class="photo">
-        <img src="media/dob_on.jpg" alt="The test rig: white printed frame, pivoting deck, cam disc under the deck, tilted payload plate on top" width="960" height="720">
+        <img src="media/dob_on.jpg" alt="The test rig: white printed frame, pivoting deck, cam disc under the deck, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
         <span class="pin" style="left:54%;top:24%">2</span>
         <span class="pin" style="left:33%;top:35%">3</span>
@@ -554,18 +588,18 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       </figure>
       <div>
         <ol class="parts">
-          <li><span><b>Payload plate with IMU.</b> Held at 45° in this frame.</span></li>
-          <li><span><b>Elevation axis.</b> Motor and encoder between deck and payload.</span></li>
-          <li><span><b>Deck.</b> Rocks when the cam turns.</span></li>
-          <li><span><b>Pivot pin.</b> The deck rotates about it.</span></li>
-          <li><span><b>Cam disc.</b> Driven by the second motor, target 300 rpm.</span></li>
-          <li><span><b>Base tray.</b> Fixed to the bench.</span></li>
+          <li><span data-i18n-html="part.1"><b>Payload plate with IMU.</b> Held at 45° in this frame.</span></li>
+          <li><span data-i18n-html="part.2"><b>Elevation axis.</b> Motor and encoder between deck and payload.</span></li>
+          <li><span data-i18n-html="part.3"><b>Deck.</b> Rocks when the cam turns.</span></li>
+          <li><span data-i18n-html="part.4"><b>Pivot pin.</b> The deck rotates about it.</span></li>
+          <li><span data-i18n-html="part.5"><b>Cam disc.</b> Driven by the second motor, target 300 rpm.</span></li>
+          <li><span data-i18n-html="part.6"><b>Base tray.</b> Fixed to the bench.</span></li>
         </ol>
         <ol class="proto">
-          <li><time>pre-run</time><span>1 s angle stability check (±2°) and gyro bias calibration.</span></li>
-          <li><time>0.0 s</time><span>Target of 45° applied. The payload starts near −10°.</span></li>
-          <li><time>5.0 s</time><span>Cam motor starts. The deck begins to rock.</span></li>
-          <li><time>15.0 s</time><span>Logging stops after 1,500 samples of 12 channels.</span></li>
+          <li><time data-i18n="proto.t0">pre-run</time><span data-i18n="proto.1">1 s angle stability check (±2°) and gyro bias calibration.</span></li>
+          <li><time>0.0 s</time><span data-i18n="proto.2">Target of 45° applied. The payload starts between −2° and −11°, depending on the run.</span></li>
+          <li><time>5.0 s</time><span data-i18n="proto.3">Cam motor starts. The deck begins to rock.</span></li>
+          <li><time>15.0 s</time><span data-i18n="proto.4">Logging stops after 1,500 samples of 12 channels.</span></li>
         </ol>
         <p class="cap" id="log-facts"></p>
       </div>
@@ -576,21 +610,21 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 </main>
 
 <footer>
-  <div class="wrap">Draft for review. Figures are computed in the browser from DOB_OFF_RESULT.xlsx and DOB_ON_RESULT.xlsx; the 3D model comes from ISP_3DMODELING.f3d.</div>
+  <div class="wrap" data-i18n="footer">Draft for review. Figures are computed in the browser from DOB_OFF_RESULT.xlsx and DOB_ON_RESULT.xlsx; the 3D model comes from ISP_3DMODELING.f3d.</div>
 </footer>
 
 <div class="dock" id="dock" hidden>
   <div class="wrap">
-    <button class="play" type="button" data-play aria-pressed="false" aria-label="Play both runs">
+    <button class="play" type="button" data-play aria-pressed="false" aria-label="Play both clips">
       <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
       <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
     </button>
     <output class="clock" data-clock>t = 9.00 s</output>
     <div class="rail">
       <div class="bands"><i></i></div>
-      <input class="scrub" id="scrub-dock" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds">
+      <input class="scrub" id="scrub-dock" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
     </div>
-    <div class="err"><span><i class="dot off"></i>tilt<b id="d-off">–</b></span><span><i class="dot on"></i>tilt<b id="d-on">–</b></span></div>
+    <div class="err"><span><i class="dot off"></i><span data-i18n="chip.tilt">tilt</span><b id="d-off">–</b></span><span><i class="dot on"></i><span data-i18n="chip.tilt">tilt</span><b id="d-on">–</b></span></div>
   </div>
 </div>
 
@@ -600,12 +634,28 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 <script src="data.js"></script>
 <script src="model.js"></script>
 <script src="track.js"></script>
+<script src="i18n.js"></script>
 <script>
 (function () {
   'use strict';
   var R = window.ISP_RUNS;
   if (!R) return;
   var TR = window.ISP_TRACK || null;        // per-frame tracking of the two clips
+
+  /* ---------- language ---------- */
+  // English static text is read from the DOM; i18n.js supplies Korean and the strings built in script.
+  var I18N = window.ISP_I18N || { en: {}, ko: {} }, EN_DOM = {}, LANG = 'en';
+  (function () {
+    var h = (location.hash || '').slice(1), saved = null, want;
+    try { saved = localStorage.getItem('isp-lang'); } catch (err) {}
+    want = h === 'ko' || h === 'en' ? h : (window.ISP_LANG || saved || 'en');      // link, then page default, then last choice
+    LANG = I18N[want] ? want : 'en';
+  })();
+  function t(key, vars) {
+    var s = LANG !== 'en' && I18N[LANG] && I18N[LANG][key] != null ? I18N[LANG][key] : (I18N.en[key] != null ? I18N.en[key] : EN_DOM[key]);
+    if (s == null) s = key;
+    return vars ? s.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; }) : s;
+  }
 
   var N = R.off.th.length, DT = R.dt, REF = R.ref, T_DIST = R.distStart, T_END = N * DT;
   var LEAD = R.clipLead, T_MIN = -LEAD, T_MAX = R.clipDur - LEAD;
@@ -664,93 +714,84 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
 
   function pct(a, b) { var p = (b - a) / a * 100; return signed(p, 0) + '%'; }
   var ROWS = [
-    { grp: 'Step to 45°, 0–5 s' },
-    { name: 'Rise time', def: '10% to 90% of the step', k: 'rise', dp: 2, u: ' s' },
-    { name: 'Overshoot', def: 'peak above 45°', k: 'overshoot', dp: 2, u: '°' },
-    { name: 'Settling time', def: 'last sample outside ±0.9° (2% of the target)', k: 'settle', dp: 2, u: ' s' },
-    { name: 'Error at rest, RMS', def: '3 s to 5 s, before the cam starts', k: 'rest', dp: 3, u: '°' },
-    { grp: 'Cam disturbance, 5–15 s' },
-    { name: 'Tracking error, RMS', def: 'θ − 45°', k: 'rms', dp: 3, u: '°' },
-    { name: 'Tracking error, largest', def: 'largest |θ − 45°|', k: 'max', dp: 2, u: '°' },
-    { name: 'θ peak to peak', def: '', k: 'p2p', dp: 2, u: '°' },
-    { name: 'Deck swing, peak to peak', def: '−(θ + encoder), 5.5 s to 15 s', k: 'deckpp', dp: 2, u: '°' },
-    { name: 'Cam motor speed, mean', def: '6 s to 15 s', k: 'rpm', dp: 0, u: ' rpm' },
-    { name: 'Motor current Iⁱ, RMS'.replace('ⁱ', 'q'), def: 'measured q-axis current', k: 'iq', dp: 3, u: ' A' },
-    { name: 'Limit flag set', def: 'share of samples where commanded and requested current differ', k: 'lim', dp: 1, u: '%', pts: true }
+    { grp: 'tbl.g1' },
+    { id: 'rise', dp: 2, u: ' s' }, { id: 'overshoot', dp: 2, u: '°' }, { id: 'settle', dp: 2, u: ' s' }, { id: 'rest', dp: 3, u: '°' },
+    { grp: 'tbl.g2' },
+    { id: 'rms', dp: 3, u: '°' }, { id: 'max', dp: 2, u: '°' }, { id: 'p2p', dp: 2, u: '°' }, { id: 'deckpp', dp: 2, u: '°' },
+    { id: 'rpm', dp: 0, u: ' rpm' }, { id: 'iq', dp: 3, u: ' A' }, { id: 'lim', dp: 1, u: '%', pts: true }
   ];
-  ROWS[0].grp = 'Logged runs · step to 45°, 0–5 s';
-  ROWS[5].grp = 'Logged runs · cam disturbance, 5–15 s';
   if (TR) {
     var vo = TR.off.info, vn = TR.on.info;
     ROWS.push(
-      { grp: 'In the clips · video tracking of separate runs' },
-      { name: 'Tilt error, RMS', def: '5.5 s to 14.9 s, plate edges fitted in each frame', v: [vo.tiltRms, vn.tiltRms], dp: 2, u: '°' },
-      { name: 'Tilt error, largest', def: '5.5 s to 14.9 s', v: [vo.tiltMax, vn.tiltMax], dp: 2, u: '°' },
-      { name: 'Deck swing, peak to peak', def: 'bracket position about the hinge pin', v: [vo.deckSwing, vn.deckSwing], dp: 2, u: '°' },
-      { name: 'Start angle', def: 'plate angle before the step', v: [vo.startAngle, vn.startAngle], dp: 1, u: '°', plain: true }
+      { grp: 'tbl.g3' },
+      { id: 'vrms', v: [vo.tiltRms, vn.tiltRms], dp: 2, u: '°' },
+      { id: 'vmax', v: [vo.tiltMax, vn.tiltMax], dp: 2, u: '°' },
+      { id: 'vdeck', v: [vo.deckSwing, vn.deckSwing], dp: 2, u: '°' },
+      { id: 'vstart', v: [vo.startAngle, vn.startAngle], dp: 1, u: '°', plain: true }
     );
   }
-  (function buildTable() {
-    var body = $('#metrics-body');
+  function renderMetrics() {                       // everything here is text, so it is rebuilt when the language changes
+    var body = $('#metrics-body'), ul = $('#notes'), notes = [], cap = $('#dots-cap');
+    body.textContent = ''; ul.textContent = '';
     ROWS.forEach(function (row) {
       var tr = document.createElement('tr'), th = document.createElement('th');
       if (row.grp) {
-        tr.className = 'grp'; th.colSpan = 4; th.scope = 'colgroup'; th.textContent = row.grp; tr.appendChild(th);
+        tr.className = 'grp'; th.colSpan = 4; th.scope = 'colgroup'; th.textContent = t(row.grp); tr.appendChild(th);
       } else {
-        th.scope = 'row'; th.textContent = row.name;
-        if (row.def) { var sm = document.createElement('small'); sm.textContent = row.def; th.appendChild(sm); }
+        var def = t('m.' + row.id + '.d'), a = row.v ? row.v[0] : M.off[row.id], b = row.v ? row.v[1] : M.on[row.id];
+        th.scope = 'row'; th.textContent = t('m.' + row.id + '.n');
+        if (def) { var sm = document.createElement('small'); sm.textContent = def; th.appendChild(sm); }
         tr.appendChild(th);
-        var a = row.v ? row.v[0] : M.off[row.k], b = row.v ? row.v[1] : M.on[row.k];
-        [num(a, row.dp) + row.u, num(b, row.dp) + row.u, row.plain ? '–' : row.pts ? signed(b - a, 1) + ' pts' : pct(a, b)].forEach(function (txt) {
+        [num(a, row.dp) + row.u, num(b, row.dp) + row.u, row.plain ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b)].forEach(function (txt) {
           var td = document.createElement('td'); td.className = 'n'; td.textContent = txt; tr.appendChild(td);
         });
       }
       body.appendChild(tr);
     });
-    var notes = [];
-    if (TR) notes.push(
-      'The clips and the logs are different runs of the same test. In the clips the plate starts at ' + num(TR.off.info.startAngle, 1) + '° (off) and ' + num(TR.on.info.startAngle, 1) + '° (on); the logs start at ' + num(M.off.start, 1) + '° and ' + num(M.on.start, 1) + '°, and the cam is parked at a different point of its stroke. They share the test clock, not the cam phase.',
-      'Tilt measured in the clips is ' + num(TR.off.info.tiltRms, 2) + '° RMS with the observer off and ' + num(TR.on.info.tiltRms, 2) + '° with it on while the cam runs. The logged runs report ' + num(M.off.rms, 2) + '° and ' + num(M.on.rms, 2) + '° from the IMU. On a still plate the tracking noise is ' + num(TR.off.info.noiseHold, 2) + '° to ' + num(TR.on.info.noiseHold, 2) + '° RMS.',
-      'The deck angle in the clips assumes the deck turns about the visible hinge pin; a 20-pixel error in that point changes its scale by about 5%.'
-    );
-    if (TR) $('#dots-cap').textContent = 'Three points are tracked in each clip: two corners of the payload plate and the free end of the deck. The line through the plate’s corners gives θ, set to 45° at the hold. The line from the hinge pin to the deck’s free end gives the deck angle above its lowest position; dashed lines mark θ = 0 and that lowest position. The third angle, drawn where the plate’s axis meets the deck line, is the plate against the deck: θ plus the deck angle, which is what the motor has to turn through. The path of the plate’s top corner is ' + num(TR.off.info.pathWidthTop, 1) + ' px wide with the observer off and ' + num(TR.on.info.pathWidthTop, 1) + ' px with it on (RMS across the path, in a 960 px frame).';
+    if (TR) {
+      notes.push(
+        t('n.runs', { a: num(TR.off.info.startAngle, 1), b: num(TR.on.info.startAngle, 1), c: num(M.off.start, 1), d: num(M.on.start, 1) }),
+        t('n.tilt', { a: num(TR.off.info.tiltRms, 2), b: num(TR.on.info.tiltRms, 2), c: num(M.off.rms, 2), d: num(M.on.rms, 2), e: num(TR.off.info.noiseHold, 2), f: num(TR.on.info.noiseHold, 2) }),
+        t('n.hinge')
+      );
+      cap.hidden = false;
+      cap.textContent = t('cap.dots', { a: num(TR.off.info.pathWidthTop, 1), b: num(TR.on.info.pathWidthTop, 1) });
+    }
     notes.push(
-      'One logged run and one clip per condition. There are no repeats, so no spread is reported.',
-      'With the observer on, the logged limit flag is set in ' + num(M.on.lim, 1) + '% of samples while the cam runs, against ' + num(M.off.lim, 1) + '% with it off. The flag is set whenever the commanded current differs from the requested current.',
-      'The gyro rate reads a constant ' + num(M.on.thdMax, 1) + ' °/s for ' + M.on.sat + ' consecutive samples during the observer-on step, which is what a ±250 °/s range does at full scale. θ and the encoder keep the same ratio in both runs.',
-      'At rest before the cam starts, the logged observer-on run is noisier: ' + num(M.on.rest, 3) + '° RMS against ' + num(M.off.rest, 3) + '°.'
+      t('n.single'),
+      t('n.limit', { a: num(M.on.lim, 1), b: num(M.off.lim, 1) }),
+      t('n.gyro', { a: num(M.on.thdMax, 1), b: M.on.sat }),
+      t('n.rest', { a: num(M.on.rest, 3), b: num(M.off.rest, 3) })
     );
-    var ul = $('#notes');
-    notes.forEach(function (t) { var li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+    notes.forEach(function (txt) { var li = document.createElement('li'); li.textContent = txt; ul.appendChild(li); });
 
     $('#k-rms').textContent = pct(M.off.rms, M.on.rms);
     $('#k-rms-d').textContent = num(M.off.rms, 2) + '° → ' + num(M.on.rms, 2) + '°';
     $('#k-set').textContent = num(M.on.settle, 2) + ' s';
-    $('#k-set-d').textContent = 'from ' + num(M.off.settle, 2) + ' s';
+    $('#k-set-d').textContent = t('k.from', { v: num(M.off.settle, 2) + ' s' });
     $('#k-ov').textContent = num(M.on.overshoot, 2) + '°';
-    $('#k-ov-d').textContent = 'from ' + num(M.off.overshoot, 2) + '°';
+    $('#k-ov-d').textContent = t('k.from', { v: num(M.off.overshoot, 2) + '°' });
 
     function period(f) { var m = /control_max_period_us=(\d+)/.exec(f || ''); return m ? (m[1] / 1000).toFixed(2) + ' ms' : 'n/a'; }
     function missed(f) { var m = /control_missed_ticks=(\d+)/.exec(f || ''); return m ? +m[1] : null; }
     var mo = missed(R.off.footer), mn = missed(R.on.footer);
-    $('#log-facts').textContent = 'Log footers: ' + (mo === 0 && mn === 0 ? 'no missed control ticks and no buffer overflow in either run' : 'missed control ticks ' + mo + ' (off), ' + mn + ' (on)') +
-      '; longest control period ' + period(R.off.footer) + ' with the observer off and ' + period(R.on.footer) + ' with it on.';
-  })();
+    $('#log-facts').textContent = t('log.facts', { a: mo === 0 && mn === 0 ? t('log.ok') : t('log.missed', { a: mo, b: mn }), b: period(R.off.footer), c: period(R.on.footer) });
+  }
 
   /* ---------- shared state ---------- */
   var S = { t: 9.0, hover: null, hoverChart: null, view: [0, T_END], playing: false, rate: 1 };
   var VIEWS = { full: [0, T_END], step: [0, 2], dist: [T_DIST, T_END] };
 
-  var CH = {
-    tiltv: { key: 'tiltv', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom', title: 'Tilt error, measured in the clips', unit: 'deg, plate edges tracked in the video' },
-    deckv: { key: 'deckv', runs: ['off', 'on'], dp: 2, include: [0], zero: true, title: 'Deck angle, measured in the clips', unit: 'deg above the bottom of the cam stroke' },
-    relv: { key: 'relv', runs: ['off', 'on'], dp: 2, robust: 'bottom', title: 'Plate against deck, measured in the clips', unit: 'deg, θ plus the deck angle' },
-    theta: { key: 'th', runs: ['off', 'on'], dp: 2, include: [REF], ref: REF, title: 'Elevation angle θ, logged runs', unit: 'deg' },
-    err: { key: 'err', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom', title: 'Tracking error θ − 45°, logged runs', unit: 'deg' },
-    deck: { key: 'deck', runs: ['off', 'on'], dp: 2, include: [0], zero: true, title: 'Deck angle from −(θ + encoder), logged runs', unit: 'deg above the bottom of the cam stroke' },
-    iq: { key: 'iq', runs: ['off', 'on'], dp: 3, title: 'Motor current Iq, logged runs', unit: 'A' },
-    dh: { key: 'dh', runs: ['on'], dp: 1, signed: true, include: [0], zero: true, title: 'Observer disturbance estimate d̂, logged run', unit: 'rad/s², observer on' },
-    rpm: { key: 'rpm', runs: ['off', 'on'], dp: 0, include: [0], xLabels: true, title: 'Cam motor speed, logged runs', unit: 'rpm' }
+  var CH = {                                       // titles and units are 'ch.<name>.t' / 'ch.<name>.u' in the dictionary
+    tiltv: { key: 'tiltv', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom' },
+    deckv: { key: 'deckv', runs: ['off', 'on'], dp: 2, include: [0], zero: true },
+    relv: { key: 'relv', runs: ['off', 'on'], dp: 2, robust: 'bottom' },
+    theta: { key: 'th', runs: ['off', 'on'], dp: 2, include: [REF], ref: REF },
+    err: { key: 'err', runs: ['off', 'on'], dp: 2, signed: true, include: [0], zero: true, robust: 'bottom' },
+    deck: { key: 'deck', runs: ['off', 'on'], dp: 2, include: [0], zero: true },
+    iq: { key: 'iq', runs: ['off', 'on'], dp: 3 },
+    dh: { key: 'dh', runs: ['on'], dp: 1, signed: true, include: [0], zero: true },
+    rpm: { key: 'rpm', runs: ['off', 'on'], dp: 0, include: [0], xLabels: true }
   };
 
   function niceTicks(a, b, target) {
@@ -769,21 +810,22 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     $$('[data-val]', host).forEach(function (el) { valEls[el.getAttribute('data-val')] = el; });
     $$('[data-leg]', host).forEach(function (el) { legEls[el.getAttribute('data-leg')] = el; });
     var mg = { l: 44, r: 12, t: 12, b: 8 };
-    var W = 0, H = 0, x0 = 0, x1 = 1, y0 = 0, y1 = 1, dragging = false, self = {};
+    var W = 0, H = 0, x0 = 0, x1 = 1, y0 = 0, y1 = 1, dragging = false, self = {}, cur = null;
     function setSignal(name) {
       var base = CH[name], key;
-      cfg = {};
+      cfg = {}; cur = name;
       for (key in base) cfg[key] = base[key];
       if (isMain) {                                   // the chart under the clips shows whichever signal is picked
-        cfg.xLabels = true; cfg.bandLabel = 'cam running';
-        titleEl.textContent = base.title; unitEl.textContent = base.unit;
+        cfg.xLabels = true; cfg.bandLabel = true;
+        titleEl.textContent = t('ch.' + name + '.t'); unitEl.textContent = t('ch.' + name + '.u');
         legEls.off.hidden = cfg.runs.indexOf('off') < 0; legEls.on.hidden = cfg.runs.indexOf('on') < 0; legEls.ref.hidden = cfg.ref == null;
-        svg.setAttribute('aria-label', base.title + ', over time');
+        svg.setAttribute('aria-label', t('ch.' + name + '.t'));
       }
       mg.b = cfg.xLabels ? 24 : 8;
     }
     setSignal(isMain ? (TR ? 'tiltv' : 'theta') : id);
     self.setSignal = function (name) { setSignal(name); self.render(); self.cursor(); };
+    self.relabel = function () { if (isMain) setSignal(cur); self.render(); self.cursor(); };       // after a language change
     function X(t) { return mg.l + (t - x0) / (x1 - x0) * (W - mg.l - mg.r); }
     function Y(v) { return H - mg.b - (v - y0) / (y1 - y0) * (H - mg.t - mg.b); }
     function Tinv(px) { return x0 + (px - mg.l) / (W - mg.l - mg.r) * (x1 - x0); }
@@ -805,7 +847,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       if (x1 > T_DIST) {
         var bx = X(Math.max(T_DIST, x0)), bw = X(Math.min(T_END, x1)) - bx;
         s += '<rect class="band" x="' + f1(bx) + '" y="' + top + '" width="' + f1(bw) + '" height="' + (bot - top) + '"/>';
-        if (cfg.bandLabel && bw > 110 && x0 < T_DIST && !(offScale && W < 640)) s += '<text class="note" x="' + f1(bx + 7) + '" y="' + (bot - 8) + '">' + cfg.bandLabel + '</text>';
+        if (cfg.bandLabel && bw > 110 && x0 < T_DIST && !(offScale && W < 640)) s += '<text class="note" x="' + f1(bx + 7) + '" y="' + (bot - 8) + '">' + t('note.cam') + '</text>';
       }
       yt.ticks.forEach(function (v) {
         var y = f1(Y(v));
@@ -830,7 +872,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
         s += '<path class="ln ' + k + '" d="' + p + '"/>';
       });
       s += '</g>';
-      if (offScale) s += '<text class="note" x="' + f1(Math.max(left + 7, X(0.62))) + '" y="' + (cfg.robust === 'top' ? top + 13 : bot - 8) + '">step transient off scale before 2 s</text>';
+      if (offScale) s += '<text class="note" x="' + f1(Math.max(left + 7, X(0.62))) + '" y="' + (cfg.robust === 'top' ? top + 13 : bot - 8) + '">' + t('note.offscale') + '</text>';
       cfg.runs.forEach(function (k) { s += '<circle class="pt ' + k + '" data-pt="' + k + '" r="4.5"/>'; });
       svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
       svg.innerHTML = s;
@@ -908,7 +950,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   function seek(t) { S.t = clamp(t, T_MIN, T_MAX); setVideoTime(S.t); paint(); }
   function setPlaying(on) {
     S.playing = on;
-    playBtns.forEach(function (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? 'Pause both runs' : 'Play both runs'); });
+    playBtns.forEach(function (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', t(on ? 'play.pause' : 'play.play')); });
   }
   function play() {
     if (S.t >= T_MAX - 0.1) S.t = T_MIN;
@@ -949,9 +991,10 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
       S.rate = parseFloat(b.getAttribute('data-rate'));
       vids.forEach(function (v) { v.playbackRate = S.rate; });
       $$('[data-rate]').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
-      $$('[data-rate-label]').forEach(function (o) { o.textContent = (S.rate === 1 ? '1×' : S.rate + '×') + ' real time'; });
+      paintRate();
     });
   });
+  function paintRate() { $$('[data-rate-label]').forEach(function (o) { o.textContent = t('rate', { x: (S.rate === 1 ? '1' : S.rate) + '×' }); }); }
   $$('[data-view]').forEach(function (b) {
     b.addEventListener('click', function () {
       var name = b.getAttribute('data-view');
@@ -982,6 +1025,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   function Marks(svg, k) {
     var T = TR[k], NS = 'http://www.w3.org/2000/svg', n = T.deck.length, RECENT = Math.round(1.5 * TR.fps), D2R = Math.PI / 180;
     var host = svg.parentNode, labTh = $('[data-lab="th"]', host), labDeck = $('[data-lab="deck"]', host);
+    var fig = host.parentNode, vTh = $('[data-v="th"]', fig), vDeck = $('[data-v="deck"]', fig), vRel = $('[data-v="rel"]', fig);      // the same values as text under the clip (phones)
     function el(name, cls) { var e = document.createElementNS(NS, name); e.setAttribute('class', cls); svg.appendChild(e); return e; }
     function r1(v) { return v.toFixed(1); }
     function dir(deg) { var a = deg * D2R; return [Math.cos(a), -Math.sin(a)]; }          // screen y points down
@@ -1035,11 +1079,13 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
         seg(deckLine, hx, hy, mx, my);
         seg(deckLow, hx, hy, hx + lx, hy + ly);
         arc(deckArc, hx, hy, Math.round(len * 0.9), lx / len, ly / len, vx / len, vy / len, deck >= 0 ? 0 : 1);
-        place(labDeck, mx + 52, my - 22, 'deck ' + num(deck, 1) + '°');
+        place(labDeck, mx + 52, my - 22, t('lab.deck') + ' ' + num(deck, 1) + '°');
+        vDeck.textContent = num(deck, 1) + '°';
 
         // plate angle: 45 deg at the hold, plus the rotation measured since
         if (T.cx[f] == null || tilt == null) {
           show(plateParts, false); labTh.hidden = true; labRel.hidden = true;
+          vTh.textContent = vRel.textContent = '–';
         } else {
           var cx = T.cx[f], cy = T.cy[f], ex = T.tx[f] - cx, ey = T.ty[f] - cy, L = Math.sqrt(ex * ex + ey * ey), ux = ex / L, uy = ey / L;
           var cur = Math.atan2(-uy, ux) / D2R;
@@ -1055,7 +1101,8 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
           var bx = -dx - nx, by = -dy - ny, bl = Math.sqrt(bx * bx + by * by);
           seg(axisLine, mpx - nx * 78, mpy - ny * 78, Vx, Vy);
           arc(relArc, Vx, Vy, 58, -dx, -dy, -nx, -ny, 1);
-          place(labRel, Vx + bx / bl * 108, Vy + by / bl * 108, 'plate–deck ' + num(REF + tilt + deck, 1) + '°');
+          place(labRel, Vx + bx / bl * 108, Vy + by / bl * 108, t('lab.rel') + ' ' + num(REF + tilt + deck, 1) + '°');
+          vTh.textContent = num(REF + tilt, 1) + '°'; vRel.textContent = num(REF + tilt + deck, 1) + '°';
         }
         var txt = tilt == null ? '–' : signed(tilt, 2) + '°';
         read[k].tilt.textContent = txt; read[k].d.textContent = txt;
@@ -1091,7 +1138,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   if (!TR) {                                  // no tracking file: fall back to the logged angle and hide the clip signals
     $$('[data-pick="clips"]').forEach(function (g) { g.hidden = true; });
     $$('[data-sig]').forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-sig') === 'theta' ? 'true' : 'false'); });
-    $$('.chip.read').forEach(function (c) { c.hidden = true; });
+    $$('.chip.read, .vals').forEach(function (c) { c.hidden = true; });
   }
 
   /* ---------- error dials ---------- */
@@ -1116,7 +1163,7 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     if (!d) return;
     var e = th - REF, shown = clamp(e, -3.3, 3.3);
     d.needle.setAttribute('transform', 'rotate(' + (shown * 20).toFixed(2) + ' ' + d.cx + ' ' + d.cy + ')');
-    d.over.textContent = shown !== e ? 'off scale' : '';
+    d.over.textContent = shown !== e ? t('dial.offscale') : '';
     d.th.textContent = num(th, 2) + '°';
     d.err.textContent = signed(e, 2) + '°';
     d.deck.textContent = num(deck, 2) + '°';
@@ -1127,11 +1174,11 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   function Replay() {
     var stage = $('#stage'), canvas = $('#gl'), msg = $('#stage-msg'), hint = $('#stage-hint'), T = window.THREE;
     var tags = { off: $('[data-tag="off"]'), on: $('[data-tag="on"]') };
-    function fail(text) { msg.textContent = text; msg.hidden = false; return null; }
-    if (!stage || !T || !T.GLTFLoader) return fail('The 3D view could not load. The dials below still follow the playhead.');
+    function fail(key) { msg.setAttribute('data-i18n', key); msg.textContent = t(key); msg.hidden = false; return null; }
+    if (!stage || !T || !T.GLTFLoader) return fail('stage.fail.lib');
     var renderer;
     try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); }
-    catch (err) { return fail('This browser could not start WebGL, so the 3D view is unavailable. The dials below still follow the playhead.'); }
+    catch (err) { return fail('stage.fail.gl'); }
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
 
     var RAD = Math.PI / 180, scene = new T.Scene(), camera = new T.OrthographicCamera(-1, 1, 1, -1, 0.01, 20);
@@ -1273,9 +1320,9 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     if (window.IntersectionObserver) new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) dirty = true; }).observe(stage);
     fit();
     function loaded(gltf) {
-      try { build(gltf); } catch (err) { fail('The 3D model did not load correctly. The dials below still follow the playhead.'); }
+      try { build(gltf); } catch (err) { fail('stage.fail.model'); }
     }
-    function broken() { fail('The 3D model could not be read. The dials below still follow the playhead.'); }
+    function broken() { fail('stage.fail.read'); }
     var loader = new T.GLTFLoader();
     if (window.ISP_GLB) {                      // model shipped inline as base64 (model.js); no fetch needed
       try {
@@ -1289,6 +1336,39 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
     requestAnimationFrame(loop);
     return { update: update };
   }
+
+  /* ---------- language switch ---------- */
+  function applyStatic() {
+    [['data-i18n', function (el) { return el.textContent; }, function (el, v) { el.textContent = v; }],
+     ['data-i18n-html', function (el) { return el.innerHTML; }, function (el, v) { el.innerHTML = v; }],      // strings are this page's own, never user data
+     ['data-i18n-aria', function (el) { return el.getAttribute('aria-label'); }, function (el, v) { el.setAttribute('aria-label', v); }],
+     ['data-i18n-alt', function (el) { return el.getAttribute('alt'); }, function (el, v) { el.setAttribute('alt', v); }]
+    ].forEach(function (p) {
+      $$('[' + p[0] + ']').forEach(function (el) {
+        var k = el.getAttribute(p[0]);
+        if (EN_DOM[k] == null && I18N.en[k] == null) EN_DOM[k] = p[1](el);       // first pass: remember the English that is in the page
+        p[2](el, t(k));
+      });
+    });
+  }
+  function setLang(lang, announce) {
+    LANG = I18N[lang] ? lang : 'en';
+    document.documentElement.lang = LANG;
+    try { localStorage.setItem('isp-lang', LANG); } catch (err) {}
+    applyStatic();
+    renderMetrics();
+    $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
+    setPlaying(S.playing);
+    paintRate();
+    charts.forEach(function (c) { c.relabel(); });
+    paint();
+    if (announce) { try { location.hash = LANG; } catch (err) {} }               // #ko / #en makes the choice a shareable link
+  }
+  $$('[data-lang]').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-lang'), true); }); });
+  window.addEventListener('hashchange', function () {
+    var h = (location.hash || '').slice(1);
+    if ((h === 'ko' || h === 'en') && h !== LANG) setLang(h, false);
+  });
 
   /* ---------- nav + dock ---------- */
   var links = $$('#links a');
@@ -1318,8 +1398,9 @@ footer{border-top:1px solid var(--rule);padding-block:22px 96px;font-size:13px;c
   /* ---------- boot ---------- */
   $$('[data-chart]').forEach(function (el) { var c = Chart(el); charts.push(c); if (el.getAttribute('data-chart') === 'main') mainChart = c; });
   charts.forEach(function (c) { c.render(); });
+  applyStatic();                                   // before anything else rewrites tagged text
   replay = Replay();
-  paint();
+  setLang(LANG, false);
   ready();
   requestAnimationFrame(frame);
 })();
