@@ -100,7 +100,7 @@ h1 .nb{white-space:nowrap}
 section{padding-block:38px;scroll-margin-top:56px}
 .embed-frame{display:block;width:100%;height:1300px;border:0;background:transparent}
 /* inside the frame (?embed=1): only the clips, their chart and the metrics */
-html.embed .nav,html.embed header.head,html.embed #signals,html.embed #replay,html.embed #dis,html.embed #rig,html.embed footer,html.embed .dock{display:none!important}
+html.embed .nav,html.embed header.head,html.embed #signals,html.embed #replay,html.embed #dis,html.embed #cmp,html.embed #rig,html.embed footer,html.embed .dock{display:none!important}
 html.embed #runs .sec-head h2,html.embed #runs .sec-head .sub{display:none}
 html.embed #runs .sec-head{justify-content:flex-end}
 html.embed section{padding-block:0 28px;border-top:0}
@@ -245,10 +245,6 @@ tr.grp th{font-size:13.5px;font-weight:600;color:var(--ink);background:var(--gri
 tr.grp:not(:first-child) th{border-top:14px solid var(--plane)}
 
 /* ---------- comparison of two to four runs from both experiments ---------- */
-.cmp{margin-top:40px;padding-top:30px;border-top:1px solid var(--rule)}
-.cmp .sec-head{margin-bottom:14px}
-.h-sub{font-family:var(--font-display);font-stretch:108%;font-weight:650;font-size:clamp(1.2rem,2.1vw,1.5rem);line-height:1.2;letter-spacing:-.006em}
-:lang(ko) .h-sub{font-stretch:100%;letter-spacing:-.012em}
 .cmp-pick{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
 .cmp-pick .pick-l{transition:color .2s}
 .cmp-pick .pick-l.warn{color:var(--em-2)}                  /* a press that would leave fewer than two */
@@ -386,7 +382,6 @@ footer{height:96px}      /* room for the fixed play bar */
   thead th.n{white-space:normal}
   tbody th small{font-size:11.5px}
   /* comparison: the four run buttons in two columns, the clips two to a row */
-  .cmp{margin-top:32px;padding-top:24px}
   .cmp-runs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
   .run-btn{white-space:normal;font-size:12.5px;padding:6px 8px}
   .cmp-clips{gap:8px}
@@ -683,106 +678,108 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="dis.title">Added disturbance</h2>
-        <p class="sub" data-i18n-html="dis.sub">On top of the cam disturbance, and to simulate the missile loading system, <em class="hl">a 9&nbsp;g mass was added at the end of the axis for the whole run.</em></p>
+        <p class="sub" data-i18n-html="dis.sub">On top of the cam disturbance, <em class="hl">a 9&nbsp;g mass was added at the end of the axis for the whole run.</em> The mass simulates the missile loading system.</p>
       </div>
     </div>
     <iframe class="embed-frame" id="dis-frame" scrolling="no" title="Clips and results of the run with the added disturbance" data-i18n-aria="dis.frame" loading="lazy"></iframe>
+  </div>
+</section>
 
-    <div class="cmp" id="cmp">
-      <div class="sec-head">
-        <div>
-          <h3 class="h-sub" data-i18n="cmp.title">Compare runs</h3>
+<section id="cmp">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2 data-i18n="cmp.title">Compare runs</h2>
+      </div>
+    </div>
+    <div class="cmp-pick">
+      <span class="pick-l" data-cmp-pick data-i18n="cmp.pick">Runs to compare, 2 to 4</span>
+      <div class="cmp-runs" role="group" aria-label="Runs to compare" data-i18n-aria="cmp.aria">
+        <button type="button" class="run-btn" data-run="off" aria-pressed="true"><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span></button>
+        <button type="button" class="run-btn" data-run="on" aria-pressed="true"><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span></button>
+        <button type="button" class="run-btn" data-run="doff" aria-pressed="true"><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span></button>
+        <button type="button" class="run-btn" data-run="don" aria-pressed="true"><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span></button>
+      </div>
+    </div>
+
+    <div class="cmp-clips">
+      <figure class="cclip" data-run="off">
+        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off.jpg?v=de3a1503" data-src="media/dob_off.mp4?v=37da02fc" aria-label="DOB_OFF" data-i18n-aria="cmp.off"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+        <figcaption><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-v="th">–</b></figcaption>
+      </figure>
+      <figure class="cclip" data-run="on">
+        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on.jpg?v=ca712ed6" data-src="media/dob_on.mp4?v=80b69f18" aria-label="DOB_ON" data-i18n-aria="cmp.on"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+        <figcaption><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-v="th">–</b></figcaption>
+      </figure>
+      <figure class="cclip" data-run="doff">
+        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off_dis.jpg?v=2eb6e410" data-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="DOB_OFF_DIS" data-i18n-aria="cmp.doff"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+        <figcaption><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span><b data-v="th">–</b></figcaption>
+      </figure>
+      <figure class="cclip" data-run="don">
+        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on_dis.jpg?v=7e4bc917" data-src="media/dob_on_dis.mp4?v=7b05c5c4" aria-label="DOB_ON_DIS" data-i18n-aria="cmp.don"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+        <figcaption><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span><b data-v="th">–</b></figcaption>
+      </figure>
+    </div>
+
+    <div class="transport">
+      <button class="play" type="button" data-cplay aria-pressed="false" aria-label="Play the compared clips">
+        <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+        <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
+      </button>
+      <output class="clock" data-cclock>t = 9.00 s</output>
+      <div class="rail">
+        <div class="bands"><i></i></div>
+        <input class="scrub" id="cmp-scrub" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
+        <div class="ticks" aria-hidden="true">
+          <span style="left:2.53%">0</span><span style="left:34.18%" class="l">5 s<em data-i18n="rail.cam"> · cam starts</em></span><span style="left:65.82%">10</span><span style="left:97.47%">15</span>
         </div>
       </div>
-      <div class="cmp-pick">
-        <span class="pick-l" data-cmp-pick data-i18n="cmp.pick">Runs to compare, 2 to 4</span>
-        <div class="cmp-runs" role="group" aria-label="Runs to compare" data-i18n-aria="cmp.aria">
-          <button type="button" class="run-btn" data-run="off" aria-pressed="true"><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span></button>
-          <button type="button" class="run-btn" data-run="on" aria-pressed="true"><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span></button>
-          <button type="button" class="run-btn" data-run="doff" aria-pressed="true"><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span></button>
-          <button type="button" class="run-btn" data-run="don" aria-pressed="true"><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span></button>
+      <div class="seg mono" role="group" aria-label="Playback speed" data-i18n-aria="speed.aria">
+        <button type="button" data-crate="0.25" aria-pressed="false">0.25×</button>
+        <button type="button" data-crate="0.5" aria-pressed="false">0.5×</button>
+        <button type="button" data-crate="1" aria-pressed="true">1×</button>
+      </div>
+    </div>
+
+    <div class="pick">
+      <div class="pick-g" data-cpick="clips">
+        <span class="pick-l" data-i18n="pick.clips">In the clips</span>
+        <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
+          <button type="button" data-csig="tiltv" aria-pressed="true" data-i18n="sig.tiltv">Tilt error</button>
+          <button type="button" data-csig="deckv" aria-pressed="false" data-i18n="sig.deckv">Base φ</button>
         </div>
       </div>
-
-      <div class="cmp-clips">
-        <figure class="cclip" data-run="off">
-          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off.jpg?v=de3a1503" data-src="media/dob_off.mp4?v=37da02fc" aria-label="DOB_OFF" data-i18n-aria="cmp.off"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
-          <figcaption><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-v="th">–</b></figcaption>
-        </figure>
-        <figure class="cclip" data-run="on">
-          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on.jpg?v=ca712ed6" data-src="media/dob_on.mp4?v=80b69f18" aria-label="DOB_ON" data-i18n-aria="cmp.on"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
-          <figcaption><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-v="th">–</b></figcaption>
-        </figure>
-        <figure class="cclip" data-run="doff">
-          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off_dis.jpg?v=2eb6e410" data-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="DOB_OFF_DIS" data-i18n-aria="cmp.doff"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
-          <figcaption><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span><b data-v="th">–</b></figcaption>
-        </figure>
-        <figure class="cclip" data-run="don">
-          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on_dis.jpg?v=7e4bc917" data-src="media/dob_on_dis.mp4?v=7b05c5c4" aria-label="DOB_ON_DIS" data-i18n-aria="cmp.don"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
-          <figcaption><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span><b data-v="th">–</b></figcaption>
-        </figure>
+      <div class="pick-g">
+        <span class="pick-l" data-i18n="pick.logs">Logged runs</span>
+        <div class="seg" role="group" aria-label="Signals from the logged runs" data-i18n-aria="pick.logs.aria">
+          <button type="button" data-csig="theta" aria-pressed="false" data-i18n="sig.theta">Angle θ</button>
+          <button type="button" data-csig="err" aria-pressed="false" data-i18n="sig.err">Error</button>
+          <button type="button" data-csig="deck" aria-pressed="false" data-i18n="sig.deck">Base φ</button>
+          <button type="button" data-csig="dh" aria-pressed="false" data-i18n="sig.dh">Observer d̂</button>
+        </div>
       </div>
+    </div>
 
-      <div class="transport">
-        <button class="play" type="button" data-cplay aria-pressed="false" aria-label="Play the compared clips">
-          <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
-          <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
-        </button>
-        <output class="clock" data-cclock>t = 9.00 s</output>
-        <div class="rail">
-          <div class="bands"><i></i></div>
-          <input class="scrub" id="cmp-scrub" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
-          <div class="ticks" aria-hidden="true">
-            <span style="left:2.53%">0</span><span style="left:34.18%" class="l">5 s<em data-i18n="rail.cam"> · cam starts</em></span><span style="left:65.82%">10</span><span style="left:97.47%">15</span>
+    <div class="card" style="margin-top:12px">
+      <figure class="chart" data-chart="cmp">
+        <div class="chart-head">
+          <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong><span data-unit>deg</span></div>
+          <div class="legend">
+            <span data-leg="off"><i class="k off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-val="off">–</b></span>
+            <span data-leg="on"><i class="k on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-val="on">–</b></span>
+            <span data-leg="doff"><i class="k doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span><b data-val="doff">–</b></span>
+            <span data-leg="don"><i class="k don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span><b data-val="don">–</b></span>
+            <span data-leg="ref" hidden><i class="k ref"></i><span data-i18n="leg.target">Target 45°</span></span>
           </div>
         </div>
-        <div class="seg mono" role="group" aria-label="Playback speed" data-i18n-aria="speed.aria">
-          <button type="button" data-crate="0.25" aria-pressed="false">0.25×</button>
-          <button type="button" data-crate="0.5" aria-pressed="false">0.5×</button>
-          <button type="button" data-crate="1" aria-pressed="true">1×</button>
-        </div>
-      </div>
-
-      <div class="pick">
-        <div class="pick-g" data-cpick="clips">
-          <span class="pick-l" data-i18n="pick.clips">In the clips</span>
-          <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
-            <button type="button" data-csig="tiltv" aria-pressed="true" data-i18n="sig.tiltv">Tilt error</button>
-            <button type="button" data-csig="deckv" aria-pressed="false" data-i18n="sig.deckv">Base φ</button>
-          </div>
-        </div>
-        <div class="pick-g">
-          <span class="pick-l" data-i18n="pick.logs">Logged runs</span>
-          <div class="seg" role="group" aria-label="Signals from the logged runs" data-i18n-aria="pick.logs.aria">
-            <button type="button" data-csig="theta" aria-pressed="false" data-i18n="sig.theta">Angle θ</button>
-            <button type="button" data-csig="err" aria-pressed="false" data-i18n="sig.err">Error</button>
-            <button type="button" data-csig="deck" aria-pressed="false" data-i18n="sig.deck">Base φ</button>
-            <button type="button" data-csig="dh" aria-pressed="false" data-i18n="sig.dh">Observer d̂</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:12px">
-        <figure class="chart" data-chart="cmp">
-          <div class="chart-head">
-            <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong><span data-unit>deg</span></div>
-            <div class="legend">
-              <span data-leg="off"><i class="k off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-val="off">–</b></span>
-              <span data-leg="on"><i class="k on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-val="on">–</b></span>
-              <span data-leg="doff"><i class="k doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span><b data-val="doff">–</b></span>
-              <span data-leg="don"><i class="k don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span><b data-val="don">–</b></span>
-              <span data-leg="ref" hidden><i class="k ref"></i><span data-i18n="leg.target">Target 45°</span></span>
-            </div>
-          </div>
-          <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
-        </figure>
-      </div>
-      <div class="cmp-foot">
-        <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria">
-          <button type="button" data-cview="full" aria-pressed="true" data-i18n="view.full">Full run</button>
-          <button type="button" data-cview="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
-          <button type="button" data-cview="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
-        </div>
+        <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+      </figure>
+    </div>
+    <div class="cmp-foot">
+      <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria">
+        <button type="button" data-cview="full" aria-pressed="true" data-i18n="view.full">Full run</button>
+        <button type="button" data-cview="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
+        <button type="button" data-cview="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
       </div>
     </div>
   </div>
@@ -846,7 +843,7 @@ tbody th small{text-wrap:balance}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=f1290974"></script>
+<script src="i18n.js?v=7f2005f8"></script>
 <script>
 (function () {
   'use strict';
@@ -2095,13 +2092,14 @@ tbody th small{text-wrap:balance}
     $$('main section').forEach(function (s) { spy.observe(s); });
     // the bar at the bottom plays the clips at the top; it is hidden while those are on screen, above them,
     // and while the added-disturbance section (which has its own controls) is on screen
-    var dock = $('#dock'), tr = $('#transport'), disSec = $('#dis'), trShown = true, trBelow = true, disShown = false;
-    var setDock = function () { dock.hidden = trShown || trBelow || disShown; };
+    var dock = $('#dock'), tr = $('#transport'), disSec = $('#dis'), cmpSec = $('#cmp'), trShown = true, trBelow = true, disShown = false, cmpShown = false;
+    var setDock = function () { dock.hidden = trShown || trBelow || disShown || cmpShown; };
     new IntersectionObserver(function (es) {
       var en = es[0];
       trShown = en.isIntersecting; trBelow = en.boundingClientRect.top > 0; setDock();
     }).observe(tr);
     if (disSec) new IntersectionObserver(function (es) { disShown = es[0].isIntersecting; setDock(); }).observe(disSec);
+    if (cmpSec) new IntersectionObserver(function (es) { cmpShown = es[0].isIntersecting; setDock(); }).observe(cmpSec);      // the comparison has its own controls too
   }
 
   /* ---------- boot ---------- */
