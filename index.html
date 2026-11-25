@@ -250,11 +250,11 @@ tbody th{font-weight:500}
 tbody th small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
 tr.grp th{font-size:13.5px;font-weight:600;color:var(--ink);background:var(--grid);padding:9px 10px;border-bottom:0}
 tr.grp:not(:first-child) th{border-top:14px solid var(--plane)}
-/* one table per experiment, each with its name and its one-sentence result above it */
-.tbl-block + .tbl-block{margin-top:40px}
-.tbl-title{font-family:var(--font-display);font-stretch:106%;font-weight:650;font-size:1.15rem;line-height:1.25}
-:lang(ko) .tbl-title{font-stretch:100%}
-.tbl-key{margin:6px 0 12px}
+/* both experiments side by side: a rule before each, and its name over its three columns */
+th.gs,td.gs{border-left:1px solid var(--rule)}
+thead tr.sets th.set{text-align:center;padding-right:0;font-size:13px;font-weight:600;color:var(--ink);border-bottom-color:var(--rule)}
+/* where the table is wider than the screen it slides sideways, and the metric names stay put */
+.tbl-wrap tbody th[scope="row"],.tbl-wrap thead tr.sets th:first-child{position:sticky;left:0;z-index:1;background:var(--plane)}
 
 /* ---------- comparison of two to four runs from both experiments ---------- */
 .cmp-pick{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
@@ -388,10 +388,11 @@ footer{height:96px}      /* room for the fixed play bar */
   .dial{grid-template-columns:1fr;padding:10px 12px}
   .how li{grid-template-columns:1fr;gap:2px}
   /* the table fits the screen instead of scrolling sideways */
-  table{min-width:0;font-size:13.5px}
-  th,td{padding:9px 8px 9px 0}
-  td.n,th.n{padding-left:8px;font-size:13px}
-  thead th{font-size:12px}
+  table{min-width:0;font-size:12.5px}
+  th,td{padding:8px 4px 8px 0}
+  td.n,th.n{padding-left:6px;font-size:12px}
+  thead th{font-size:11.5px}
+  td.gs,th.gs{padding-left:7px}
   thead th.n{white-space:nowrap}
   tbody th small{font-size:11.5px}
   /* comparison: the four run buttons in two columns, the clips two to a row */
@@ -788,9 +789,15 @@ html{overflow-anchor:none}
     <div class="sec-head">
       <div>
         <h2 data-i18n="metrics.title">The numbers</h2>
+        <p class="sub" id="metrics-key" hidden></p>
       </div>
     </div>
-    <div id="metrics-tables"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead id="metrics-head"></thead>
+        <tbody id="metrics-body"></tbody>
+      </table>
+    </div>
   </div>
 </section>
 
@@ -852,7 +859,7 @@ html{overflow-anchor:none}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=d7ed6ffa"></script>
+<script src="i18n.js?v=6e1820e9"></script>
 <script>
 (function () {
   'use strict';
@@ -960,7 +967,7 @@ html{overflow-anchor:none}
     return out;
   }
   var M = metricsOf(R);
-  // One table per experiment: cam disturbance, then the added disturbance (on the page itself, not in its frame).
+  // The table holds both experiments side by side: cam disturbance, then the added disturbance (on the page itself, not in its frame).
   var TSETS = [{ name: 'tbl.base', R: R, TR: TR, M: M }];
   if (!EMBED && EXP === 'base' && window.ISP_RUNS_DIS) {
     derive(window.ISP_RUNS_DIS, window.ISP_TRACK_DIS || null);
@@ -970,47 +977,52 @@ html{overflow-anchor:none}
   function pct(a, b) { if (a == null || b == null || !a) return '–'; var p = (b - a) / a * 100; return signed(p, 0) + '%'; }
   function cell(v, row) { return v == null || isNaN(v) ? '–' : num(v, row.dp); }      // the unit is in the row's name
   function unitName(name, u) { return /\)$/.test(name) ? name.replace(/\)$/, ', ' + u + ')') : name + ' (' + u + ')'; }
-  // the rows that matter: the step, the error while the cam runs, and the same error seen in the clips
+  // the rows that matter: the step, and the error while the cam runs
   var ROWS = [
     { grp: 'tbl.g1' },
     { id: 'rise', dp: 2, u: 's' }, { id: 'overshoot', dp: 2, u: '°' }, { id: 'settle', dp: 2, u: 's' }, { id: 'rest', dp: 3, u: '°' },
     { grp: 'tbl.g2' },
     { id: 'rms', dp: 3, u: '°' }, { id: 'max', dp: 2, u: '°' }
   ];
-  if (TSETS.some(function (S) { return S.TR; })) {
-    var clipInfo = function (key) { return function (S, k) { return S.TR ? S.TR[k].info[key] : null; }; };
-    ROWS.push({ grp: 'tbl.g3' }, { id: 'vrms', clip: clipInfo('tiltRms'), dp: 2, u: '°' }, { id: 'vmax', clip: clipInfo('tiltMax'), dp: 2, u: '°' });
-  }
+  // On a phone the column heads are OFF / ON (the experiment's name is over them): "DOB_OFF" did not fit and broke in two.
+  var shortHeads = window.matchMedia ? window.matchMedia('(max-width:640px)') : null;
   function renderMetrics() {                       // everything here is text, so it is rebuilt when the language changes
-    var host = $('#metrics-tables');
+    var body = $('#metrics-body'), head = $('#metrics-head'), short = !!(shortHeads && shortHeads.matches), cols = 1 + 3 * TSETS.length;
     function el(tag, txt, cls, span) { var c = document.createElement(tag); if (cls) c.className = cls; if (span) c.colSpan = span; if (txt != null) c.textContent = txt; return c; }
-    host.textContent = '';
+    // header: the experiments over their columns, then DOB_OFF / DOB_ON / change under each
+    head.textContent = '';
+    var h1 = el('tr', null, 'sets'), h2 = el('tr'), first = el('th', t('tbl.metric'));
+    first.rowSpan = 2; first.scope = 'col'; h1.appendChild(first);
     TSETS.forEach(function (S) {
-      var block = el('div', null, 'tbl-block');
-      if (TSETS.length > 1) block.appendChild(el('h3', t(S.name), 'tbl-title'));
-      // the result in one sentence, from the same numbers; shown only when the logs and the clips agree that the error fell
-      var kv = S.TR ? [S.TR.off.info.tiltRms, S.TR.on.info.tiltRms] : null;
-      if (kv && S.M.on.rms < S.M.off.rms && kv[1] < kv[0]) {
-        var key = el('p', null, 'sub tbl-key');
-        key.innerHTML = '<em class="hl r">' + t('metrics.key', {
-          a: num(S.M.off.rms, 2) + '°', b: num(S.M.on.rms, 2) + '°', c: pct(S.M.off.rms, S.M.on.rms),
-          d: num(kv[0], 2) + '°', e: num(kv[1], 2) + '°', f: pct(kv[0], kv[1])
-        }) + '</em>';
-        block.appendChild(key);
-      }
-      var wrap = el('div', null, 'tbl-wrap'), table = el('table'), head = el('thead'), body = el('tbody'), hr = el('tr');
-      [t('tbl.metric'), 'DOB_OFF', 'DOB_ON', t('tbl.change')].forEach(function (txt, n) { var c = el('th', txt, n ? 'n' : ''); c.scope = 'col'; hr.appendChild(c); });
-      head.appendChild(hr);
-      ROWS.forEach(function (row) {
-        var tr = el('tr'), th = el('th');
-        if (row.grp) { tr.className = 'grp'; th.colSpan = 4; th.scope = 'colgroup'; th.textContent = t(row.grp); tr.appendChild(th); body.appendChild(tr); return; }
-        var a = row.clip ? row.clip(S, 'off') : S.M.off[row.id], b = row.clip ? row.clip(S, 'on') : S.M.on[row.id];
-        th.scope = 'row'; th.textContent = unitName(t('m.' + row.id + '.n'), row.u); tr.appendChild(th);
-        [cell(a, row), cell(b, row), pct(a, b)].forEach(function (txt) { tr.appendChild(el('td', txt, 'n')); });
-        body.appendChild(tr);
-      });
-      table.appendChild(head); table.appendChild(body); wrap.appendChild(table); block.appendChild(wrap); host.appendChild(block);
+      var g = el('th', t(S.name), 'n gs set', 3); g.scope = 'colgroup'; h1.appendChild(g);
+      [short ? 'OFF' : 'DOB_OFF', short ? 'ON' : 'DOB_ON', t('tbl.change')].forEach(function (txt, n) { var c = el('th', txt, n ? 'n' : 'n gs'); c.scope = 'col'; h2.appendChild(c); });
     });
+    head.appendChild(h1); head.appendChild(h2);
+    body.textContent = '';
+    ROWS.forEach(function (row) {
+      var tr = el('tr'), th = el('th');
+      if (row.grp) { tr.className = 'grp'; th.colSpan = cols; th.scope = 'colgroup'; th.textContent = t(row.grp); tr.appendChild(th); body.appendChild(tr); return; }
+      th.scope = 'row'; th.textContent = unitName(t('m.' + row.id + '.n'), row.u); tr.appendChild(th);
+      TSETS.forEach(function (S) {
+        var a = S.M.off[row.id], b = S.M.on[row.id];
+        [cell(a, row), cell(b, row), pct(a, b)].forEach(function (txt, n) { tr.appendChild(el('td', txt, n ? 'n' : 'n gs')); });
+      });
+      body.appendChild(tr);
+    });
+    // the result in one sentence, from the same numbers (logs): the tracking error while the cam runs, in each experiment
+    var keyEl = $('#metrics-key'), B = TSETS[0].M, D = TSETS[1] ? TSETS[1].M : null;
+    keyEl.hidden = !(B.on.rms < B.off.rms && (!D || D.on.rms < D.off.rms));
+    if (!keyEl.hidden) {
+      keyEl.innerHTML = '<em class="hl r">' + t(D ? 'metrics.key' : 'metrics.key1', {
+        a: num(B.off.rms, 2) + '°', b: num(B.on.rms, 2) + '°', c: pct(B.off.rms, B.on.rms),
+        d: D ? num(D.off.rms, 2) + '°' : '', e: D ? num(D.on.rms, 2) + '°' : '', f: D ? pct(D.off.rms, D.on.rms) : ''
+      }) + '</em>';
+    }
+    if (!renderMetrics.watching && shortHeads) {    // turning a phone or resizing across the width rebuilds the heads
+      renderMetrics.watching = true;
+      var reheads = function () { renderMetrics(); };
+      if (shortHeads.addEventListener) shortHeads.addEventListener('change', reheads); else if (shortHeads.addListener) shortHeads.addListener(reheads);
+    }
     $('#k-rms').textContent = pct(M.off.rms, M.on.rms);
     $('#k-rms-d').textContent = num(M.off.rms, 2) + '° → ' + num(M.on.rms, 2) + '°';
   }
