@@ -317,7 +317,8 @@ thead tr.sets th.set{text-align:center;padding-right:0;font-size:13px;font-weigh
 .how code{font-family:var(--font-data);font-size:13px;color:var(--ink)}
 
 footer{height:96px}      /* room for the fixed play bar */
-.tr3d{display:none}      /* the 3D replay's own play bar: phones only (below) */
+.tr3d{margin-top:12px}      /* the 3D replay's own play bar */
+.zsel{position:absolute;background:rgba(42,120,214,.14);border-left:1px solid var(--on);border-right:1px solid var(--on);pointer-events:none}      /* a stretch being picked to zoom into */
 
 /* ---------- dock ---------- */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--rule);padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -383,7 +384,6 @@ footer{height:96px}      /* room for the fixed play bar */
   .transport{grid-template-columns:auto 1fr auto}
   .transport .rail{grid-column:1/-1;grid-row:2}
   .dock .err{display:none}
-  .tr3d{display:grid;margin-top:10px}
   .dock .wrap{grid-template-columns:auto auto minmax(0,1fr)}
   .legend b{min-width:5.5ch}
   .stage{aspect-ratio:4/3}
@@ -587,10 +587,16 @@ html{overflow-anchor:none}
       </figure>
     </div>
     <div class="sec-head" style="margin:12px 0 0;align-items:flex-start;justify-content:flex-end">
-      <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
-        <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
-        <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
-        <button type="button" data-view="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
+      <div class="tools">
+        <div class="tip-host">
+          <button class="btn" type="button" data-gzoom="S" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
+          <div class="tip" role="status" hidden><span class="for-mouse" data-i18n="gzoom.tip">Drag across a graph to zoom into that stretch. Double-click to go back.</span><span class="for-touch" data-i18n="zoom.tip.touch">Press Zoom again to go back.</span></div>
+        </div>
+        <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
+          <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
+          <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
+          <button type="button" data-view="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
+        </div>
       </div>
     </div>
   </div>
@@ -602,10 +608,16 @@ html{overflow-anchor:none}
       <div>
         <h2 data-i18n="signals.title">What the controller was doing</h2>
       </div>
-      <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
-        <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
-        <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
-        <button type="button" data-view="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
+      <div class="tools">
+        <div class="tip-host">
+          <button class="btn" type="button" data-gzoom="S" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
+          <div class="tip" role="status" hidden><span class="for-mouse" data-i18n="gzoom.tip">Drag across a graph to zoom into that stretch. Double-click to go back.</span><span class="for-touch" data-i18n="zoom.tip.touch">Press Zoom again to go back.</span></div>
+        </div>
+        <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
+          <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
+          <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
+          <button type="button" data-view="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
+        </div>
       </div>
     </div>
     <div class="card stack">
@@ -658,7 +670,7 @@ html{overflow-anchor:none}
         <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
         <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
       </button>
-      <output class="clock" data-clock>t = 9.00 s</output>
+      <output class="clock" data-clock3d>t = 9.00 s</output>
       <div class="rail">
         <div class="bands"><i></i></div>
         <input class="scrub" id="scrub-3d" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
@@ -667,9 +679,9 @@ html{overflow-anchor:none}
         </div>
       </div>
       <div class="seg mono" role="group" aria-label="Playback speed" data-i18n-aria="speed.aria">
-        <button type="button" data-rate="0.25" aria-pressed="false">0.25×</button>
-        <button type="button" data-rate="0.5" aria-pressed="false">0.5×</button>
-        <button type="button" data-rate="1" aria-pressed="true">1×</button>
+        <button type="button" data-rate3d="0.25" aria-pressed="false">0.25×</button>
+        <button type="button" data-rate3d="0.5" aria-pressed="false">0.5×</button>
+        <button type="button" data-rate3d="1" aria-pressed="true">1×</button>
       </div>
     </div>
     <div class="dials">
@@ -797,7 +809,11 @@ html{overflow-anchor:none}
         <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
     </div>
-    <div class="cmp-foot">
+    <div class="cmp-foot tools">
+      <div class="tip-host">
+          <button class="btn" type="button" data-gzoom="C" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
+          <div class="tip" role="status" hidden><span class="for-mouse" data-i18n="gzoom.tip">Drag across a graph to zoom into that stretch. Double-click to go back.</span><span class="for-touch" data-i18n="zoom.tip.touch">Press Zoom again to go back.</span></div>
+        </div>
       <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria">
         <button type="button" data-cview="full" aria-pressed="true" data-i18n="view.full">Full run</button>
         <button type="button" data-cview="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
@@ -882,7 +898,7 @@ html{overflow-anchor:none}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=d9f0ef05"></script>
+<script src="i18n.js?v=2178d84e"></script>
 <script>
 (function () {
   'use strict';
@@ -1074,7 +1090,43 @@ html{overflow-anchor:none}
   var charts = [], chartSeq = 0, mainChart = null;
   // ctx: the clock the chart follows (st), where a run's channels are (data), which runs to draw (runs, default the channel's own),
   // and what a press on the chart does (seek, cursors). The charts of the top runs share MAINCTX; the comparison has its own.
-  var MAINCTX = { st: S, data: function (k) { return R[k]; }, seek: function (v) { seek(v); }, cursors: function () { cursors(); } };
+  var MAINCTX = { st: S, data: function (k) { return R[k]; }, seek: function (v) { seek(v); }, cursors: function () { cursors(); },
+    zoomed: function () { return S.zoomed; }, zoomTo: function (r) { gzS.to(r); }, unzoom: function () { gzS.off(); } };
+  // Zoom on the charts. The button jumps to the part that matters: 3 s around the largest error while the cam runs.
+  // With a mouse, a drag across a zoomed chart zooms into that stretch, and a double-click goes back.
+  function bigWindow(series) {
+    var a = idx(T_DIST + 0.5), b = idx(T_END), best = -1, bi = a, i, v, h = 1.5;
+    series.forEach(function (d) { for (i = a; i <= b; i++) { v = d[i]; if (v != null && Math.abs(v) > best) { best = Math.abs(v); bi = i; } } });
+    var x0 = clamp((bi + 1) * DT - h, T_DIST, T_END - 2 * h);
+    return [x0, x0 + 2 * h];
+  }
+  function ChartZoom(st, buttons, where, redraw) {          // st: S or the comparison's clock; st.base is the window picked with the buttons
+    var self = {};
+    st.zoomed = false; st.base = st.view;
+    function mark() { buttons.forEach(function (b) { b.setAttribute('aria-pressed', st.zoomed ? 'true' : 'false'); }); }
+    self.to = function (r) { if (!st.zoomed) st.base = st.view; st.zoomed = true; st.view = r; mark(); redraw(); };
+    self.off = function () { if (!st.zoomed) return; st.zoomed = false; st.view = st.base; mark(); redraw(); };
+    self.pick = function (v) { st.zoomed = false; st.base = st.view = v; mark(); };      // a time-window button
+    buttons.forEach(function (b) {
+      var tip = b.parentNode.querySelector('.tip'), timer = 0;
+      b.addEventListener('click', function () {
+        clearTimeout(timer);
+        if (st.zoomed) { self.off(); if (tip) tip.hidden = true; return; }
+        self.to(where());
+        if (!tip) return;
+        tip.style.left = ''; tip.style.right = ''; tip.hidden = false;
+        if (tip.getBoundingClientRect().left < 8) { tip.style.left = '0'; tip.style.right = 'auto'; }
+        timer = setTimeout(function () { tip.hidden = true; }, 2000);
+      });
+    });
+    return self;
+  }
+  document.addEventListener('pointerdown', function (e) {      // a chart's hint goes at the next touch or click elsewhere
+    $$('[data-gzoom]').forEach(function (b) {
+      var tip = b.parentNode.querySelector('.tip');
+      if (tip && !tip.hidden && !(e.target.closest && e.target.closest('[data-gzoom]') === b)) tip.hidden = true;
+    });
+  }, true);
   function Chart(host, ctx) {
     ctx = ctx || MAINCTX;
     var id = host.getAttribute('data-chart'), picks = id === 'main' || id === 'cmp', cfg = null, uid = 'cp' + (++chartSeq), st = ctx.st, runs = [];
@@ -1180,20 +1232,38 @@ html{overflow-anchor:none}
     };
 
     function timeAt(e) { var r = plot.getBoundingClientRect(); return clamp(Tinv(e.clientX - r.left), Math.max(x0, 0), Math.min(x1, T_END)); }
+    var zsel = document.createElement('div'), pick = null;
+    zsel.className = 'zsel'; zsel.hidden = true; plot.appendChild(zsel);
     plot.addEventListener('pointerdown', function (e) {
       if (e.button) return;
-      dragging = true;
       try { plot.setPointerCapture(e.pointerId); } catch (err) {}
+      if (e.pointerType === 'mouse' && ctx.zoomed && ctx.zoomed()) { pick = { a: timeAt(e), x: e.clientX, moved: false }; return; }      // zoomed: a drag picks a stretch
+      dragging = true;
       ctx.seek(timeAt(e));
     });
     plot.addEventListener('pointermove', function (e) {
       var t = timeAt(e);
-      if (dragging) ctx.seek(t);
+      if (pick) {
+        if (pick.moved || Math.abs(e.clientX - pick.x) > 5) {
+          pick.moved = true;
+          var l = X(Math.min(pick.a, t)), r = X(Math.max(pick.a, t));
+          zsel.hidden = false; zsel.style.left = f1(l) + 'px'; zsel.style.width = f1(r - l) + 'px'; zsel.style.top = mg.t + 'px'; zsel.style.height = (H - mg.t - mg.b) + 'px';
+        }
+      } else if (dragging) ctx.seek(t);
       st.hover = t; st.hoverChart = self; ctx.cursors();
     });
-    function end() { dragging = false; }
+    function end(e) {
+      dragging = false;
+      if (!pick) return;
+      var t = timeAt(e), p = pick;
+      pick = null; zsel.hidden = true;
+      if (e.type !== 'pointerup') return;
+      if (p.moved && Math.abs(t - p.a) > 0.15) ctx.zoomTo([Math.min(p.a, t), Math.max(p.a, t)]);
+      else if (!p.moved) ctx.seek(t);
+    }
     plot.addEventListener('pointerup', end);
     plot.addEventListener('pointercancel', end);
+    plot.addEventListener('dblclick', function () { if (ctx.zoomed && ctx.zoomed() && ctx.unzoom) ctx.unzoom(); });
     plot.addEventListener('pointerleave', function () { if (!dragging) { st.hover = null; st.hoverChart = null; ctx.cursors(); } });
 
     if (window.ResizeObserver) new ResizeObserver(function () { self.render(); self.cursor(); }).observe(plot);
@@ -1211,10 +1281,7 @@ html{overflow-anchor:none}
     var txt = 't = ' + num(S.t, 2) + ' s', i = idx(S.t);
     clocks.forEach(function (c) { c.textContent = txt; });
     scrubs.forEach(function (s) { if (document.activeElement !== s || S.playing) s.value = S.t.toFixed(2); });
-    if (scrub3d && (document.activeElement !== scrub3d || solo.playing)) scrub3d.value = S.t.toFixed(2);
-    ['off', 'on'].forEach(function (k) { setDial(k, R[k].th[i], R[k].deckc[i]); });
     drawMarks();
-    if (replay) replay.update(i);
   }
   function moveClip(v, t) {
     var ct = clamp(t + LEAD, 0, R.clipDur - 0.05);
@@ -1237,7 +1304,6 @@ html{overflow-anchor:none}
     if (EMBED) { try { window.parent.postMessage({ isp: 'playing' }, location.origin); } catch (err) {} return; }
     if (from !== 'main' && S.playing) pause();
     if (from !== 'cmp' && cmp && cmp.playing()) cmp.pause();
-    if (from !== '3d' && solo.playing) setSolo(false);
     var df = document.getElementById('dis-frame');
     if (df && df.contentWindow) { try { df.contentWindow.postMessage({ isp: 'pause' }, location.origin); } catch (err) {} }
   }
@@ -1298,10 +1364,10 @@ html{overflow-anchor:none}
       }
       paint();
     }
-    if (solo.playing) {                                // the 3D replay alone: the page clock runs without the clips
-      S.t += (last ? Math.min(0.1, (ts - last) / 1000) : 0) * S.rate;
-      if (S.t >= T_MAX - 0.03) S.t = T_MIN;
-      paint();
+    if (R3.playing) {                                  // the 3D replay runs on its own clock, apart from the clips
+      R3.t += (last ? Math.min(0.1, (ts - last) / 1000) : 0) * R3.rate;
+      if (R3.t >= T_MAX - 0.03) R3.t = T_MIN;
+      paint3d();
     }
     if (cmp) cmp.tick(ts);
     last = ts;
@@ -1310,21 +1376,34 @@ html{overflow-anchor:none}
 
   playBtns.forEach(function (b) { b.addEventListener('click', toggle); });
 
-  /* ---------- the 3D replay alone (phones): its own play bar under the model ---------- */
-  // It moves the model and the dials on the page clock without playing or seeking the clips, so a phone decodes no video
-  // for it. The top clips pick up from the same time when they are played again.
-  var solo = { playing: false }, play3dBtn = $('[data-play3d]'), scrub3d = $('#scrub-3d');
-  function setSolo(on) {
-    solo.playing = on;
+  /* ---------- the 3D replay: a clock and a play bar of its own ---------- */
+  // On one clock with the clips, the model and the clips pulled against each other (and a phone decoded video for the model).
+  // The model, its dials and its bar now keep their own time. The model starts when its section comes on screen and stops
+  // when it leaves; a pause by hand is kept.
+  var R3 = { t: 9.0, playing: false, rate: 1, held: false }, play3dBtn = $('[data-play3d]'), scrub3d = $('#scrub-3d'), clock3d = $('[data-clock3d]');
+  function setPlay3d(on) {
+    R3.playing = on;
     if (play3dBtn) { play3dBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); play3dBtn.setAttribute('aria-label', t(on ? 'play3d.pause' : 'play3d.play')); }
   }
+  function paint3d() {
+    var i = idx(R3.t);
+    if (clock3d) clock3d.textContent = 't = ' + num(R3.t, 2) + ' s';
+    if (scrub3d && (document.activeElement !== scrub3d || R3.playing)) scrub3d.value = R3.t.toFixed(2);
+    ['off', 'on'].forEach(function (k) { setDial(k, R[k].th[i], R[k].deckc[i]); });
+    if (replay) replay.update(i);
+  }
   if (play3dBtn) play3dBtn.addEventListener('click', function () {
-    if (solo.playing) { setSolo(false); paint(); return; }
-    if (S.t >= T_MAX - 0.1) S.t = T_MIN;
-    others('3d');
-    setSolo(true);
+    if (R3.playing) { setPlay3d(false); R3.held = true; return; }
+    if (R3.t >= T_MAX - 0.1) R3.t = T_MIN;
+    R3.held = false; setPlay3d(true);
   });
-  if (scrub3d) scrub3d.addEventListener('input', function () { S.t = clamp(parseFloat(scrub3d.value), T_MIN, T_MAX); paint(); });
+  if (scrub3d) scrub3d.addEventListener('input', function () { R3.t = clamp(parseFloat(scrub3d.value), T_MIN, T_MAX); paint3d(); });
+  $$('[data-rate3d]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      R3.rate = parseFloat(b.getAttribute('data-rate3d'));
+      $$('[data-rate3d]').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+    });
+  });
   $$('[data-toggle]').forEach(function (el) { el.addEventListener('click', toggle); });
   scrubs.forEach(function (s) { s.addEventListener('input', function () { seek(parseFloat(s.value)); }); });
   $$('[data-rate]').forEach(function (b) {
@@ -1336,10 +1415,11 @@ html{overflow-anchor:none}
     });
   });
   function paintRate() { $$('[data-rate-label]').forEach(function (o) { o.textContent = t('rate', { x: (S.rate === 1 ? '1' : S.rate) + '×' }); }); }
+  var gzS = ChartZoom(S, $$('[data-gzoom="S"]'), function () { return bigWindow([R.off.err]); }, function () { charts.forEach(function (c) { c.render(); }); paint(); });
   $$('[data-view]').forEach(function (b) {
     b.addEventListener('click', function () {
       var name = b.getAttribute('data-view');
-      S.view = VIEWS[name];
+      gzS.pick(VIEWS[name]);
       $$('[data-view]').forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-view') === name ? 'true' : 'false'); });
       charts.forEach(function (c) { c.render(); });
       paint();
@@ -1792,7 +1872,7 @@ html{overflow-anchor:none}
         models[k] = m;
       });
       msg.hidden = true; hint.hidden = false;
-      last = -1; update(idx(S.t));
+      last = -1; update(idx(R3.t));
     }
 
     function setView(name) {
@@ -1956,8 +2036,13 @@ html{overflow-anchor:none}
       runs: function (cfg) { return sel.filter(function (id) { return cfg.runs.indexOf(RUN[id].k) >= 0; }); },
       empty: 'cmp.nodh',                             // the only channel some runs lack is d̂ (observer off)
       seek: function (v) { seekC(v); },
-      cursors: function () { chart.cursor(); }
+      cursors: function () { chart.cursor(); },
+      zoomed: function () { return C.zoomed; }, zoomTo: function (r) { gzC.to(r); }, unzoom: function () { gzC.off(); }
     });
+    var gzC = ChartZoom(C, $$('[data-gzoom="C"]', root), function () {      // around the largest error of the picked observer-off runs (or of all picked)
+      var offs = sel.filter(function (id) { return RUN[id].k === 'off'; });
+      return bigWindow((offs.length ? offs : sel).map(function (id) { return RUN[id].r.err; }));
+    }, function () { chart.render(); paintC(); });
 
     function setPlayingC(on) {
       C.playing = on;
@@ -2053,7 +2138,7 @@ html{overflow-anchor:none}
     $$('[data-cview]', root).forEach(function (b) {
       b.addEventListener('click', function () {
         var name = b.getAttribute('data-cview');
-        C.view = VIEWS[name];
+        gzC.pick(VIEWS[name]);
         $$('[data-cview]', root).forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
         chart.render(); paintC();
       });
@@ -2135,11 +2220,12 @@ html{overflow-anchor:none}
     renderMetrics();
     $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
     setPlaying(S.playing);
-    setSolo(solo.playing);
+    setPlay3d(R3.playing);
     paintRate();
     applyZoom();
     charts.forEach(function (c) { c.relabel(); });
     if (cmp) cmp.relabel();
+    paint3d();
     if (linkRow) rowFades();                       // the link names change width with the language
     paint();
     if (announce) { try { location.hash = LANG; } catch (err) {} }               // #ko / #en makes the choice a shareable link
@@ -2196,7 +2282,7 @@ html{overflow-anchor:none}
     // and while the added-disturbance section (which has its own controls) is on screen
     var dock = $('#dock'), tr = $('#transport'), disSec = $('#dis'), cmpSec = $('#cmp'), trShown = true, trBelow = true, disShown = false, cmpShown = false;
     var repSec = $('#replay'), repShown = false;
-    var setDock = function () { dock.hidden = trShown || trBelow || disShown || cmpShown || (repShown && !!(phone && phone.matches)); };
+    var setDock = function () { dock.hidden = trShown || trBelow || disShown || cmpShown || repShown; };      // the 3D section has its own bar
     new IntersectionObserver(function (es) {
       var en = es[0];
       trShown = en.isIntersecting; trBelow = en.boundingClientRect.top > 0; setDock();
@@ -2205,7 +2291,8 @@ html{overflow-anchor:none}
     if (cmpSec) new IntersectionObserver(function (es) { cmpShown = es[0].isIntersecting; setDock(); }).observe(cmpSec);      // the comparison has its own controls too
     if (repSec) new IntersectionObserver(function (es) {
       repShown = es[0].isIntersecting; setDock();
-      if (!repShown && solo.playing) { setSolo(false); paint(); }
+      if (repShown && !R3.playing && !R3.held && !reduced) { if (R3.t >= T_MAX - 0.1) R3.t = T_MIN; setPlay3d(true); }
+      else if (!repShown && R3.playing) setPlay3d(false);
     }).observe(repSec);
   }
 
