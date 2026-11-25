@@ -317,6 +317,7 @@ thead tr.sets th.set{text-align:center;padding-right:0;font-size:13px;font-weigh
 .how code{font-family:var(--font-data);font-size:13px;color:var(--ink)}
 
 footer{height:96px}      /* room for the fixed play bar */
+.tr3d{display:none}      /* the 3D replay's own play bar: phones only (below) */
 
 /* ---------- dock ---------- */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--rule);padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -382,6 +383,7 @@ footer{height:96px}      /* room for the fixed play bar */
   .transport{grid-template-columns:auto 1fr auto}
   .transport .rail{grid-column:1/-1;grid-row:2}
   .dock .err{display:none}
+  .tr3d{display:grid;margin-top:10px}
   .dock .wrap{grid-template-columns:auto auto minmax(0,1fr)}
   .legend b{min-width:5.5ch}
   .stage{aspect-ratio:4/3}
@@ -651,6 +653,25 @@ html{overflow-anchor:none}
       <div class="stage-msg" id="stage-msg" data-i18n="stage.loading">Loading the model…</div>
       <div class="stage-hint" id="stage-hint" data-i18n="stage.hint" hidden>Drag to orbit · Ctrl + scroll to zoom · grid 10 cm</div>
     </div>
+    <div class="transport tr3d">
+      <button class="play" type="button" data-play3d aria-pressed="false" aria-label="Play the 3D replay">
+        <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+        <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
+      </button>
+      <output class="clock" data-clock>t = 9.00 s</output>
+      <div class="rail">
+        <div class="bands"><i></i></div>
+        <input class="scrub" id="scrub-3d" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
+        <div class="ticks" aria-hidden="true">
+          <span style="left:2.53%">0</span><span style="left:34.18%" class="l">5 s<em data-i18n="rail.cam"> · cam starts</em></span><span style="left:65.82%">10</span><span style="left:97.47%">15</span>
+        </div>
+      </div>
+      <div class="seg mono" role="group" aria-label="Playback speed" data-i18n-aria="speed.aria">
+        <button type="button" data-rate="0.25" aria-pressed="false">0.25×</button>
+        <button type="button" data-rate="0.5" aria-pressed="false">0.5×</button>
+        <button type="button" data-rate="1" aria-pressed="true">1×</button>
+      </div>
+    </div>
     <div class="dials">
       <figure class="card dial" data-dial="off">
         <svg viewBox="0 0 220 134" role="img" aria-label="Tracking error dial, observer off, plus or minus 3 degrees" data-i18n-aria="dial.off.aria"></svg>
@@ -861,7 +882,7 @@ html{overflow-anchor:none}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=6e1820e9"></script>
+<script src="i18n.js?v=d9f0ef05"></script>
 <script>
 (function () {
   'use strict';
@@ -1190,6 +1211,7 @@ html{overflow-anchor:none}
     var txt = 't = ' + num(S.t, 2) + ' s', i = idx(S.t);
     clocks.forEach(function (c) { c.textContent = txt; });
     scrubs.forEach(function (s) { if (document.activeElement !== s || S.playing) s.value = S.t.toFixed(2); });
+    if (scrub3d && (document.activeElement !== scrub3d || solo.playing)) scrub3d.value = S.t.toFixed(2);
     ['off', 'on'].forEach(function (k) { setDial(k, R[k].th[i], R[k].deckc[i]); });
     drawMarks();
     if (replay) replay.update(i);
@@ -1215,6 +1237,7 @@ html{overflow-anchor:none}
     if (EMBED) { try { window.parent.postMessage({ isp: 'playing' }, location.origin); } catch (err) {} return; }
     if (from !== 'main' && S.playing) pause();
     if (from !== 'cmp' && cmp && cmp.playing()) cmp.pause();
+    if (from !== '3d' && solo.playing) setSolo(false);
     var df = document.getElementById('dis-frame');
     if (df && df.contentWindow) { try { df.contentWindow.postMessage({ isp: 'pause' }, location.origin); } catch (err) {} }
   }
@@ -1275,12 +1298,33 @@ html{overflow-anchor:none}
       }
       paint();
     }
+    if (solo.playing) {                                // the 3D replay alone: the page clock runs without the clips
+      S.t += (last ? Math.min(0.1, (ts - last) / 1000) : 0) * S.rate;
+      if (S.t >= T_MAX - 0.03) S.t = T_MIN;
+      paint();
+    }
     if (cmp) cmp.tick(ts);
     last = ts;
     requestAnimationFrame(frame);
   }
 
   playBtns.forEach(function (b) { b.addEventListener('click', toggle); });
+
+  /* ---------- the 3D replay alone (phones): its own play bar under the model ---------- */
+  // It moves the model and the dials on the page clock without playing or seeking the clips, so a phone decodes no video
+  // for it. The top clips pick up from the same time when they are played again.
+  var solo = { playing: false }, play3dBtn = $('[data-play3d]'), scrub3d = $('#scrub-3d');
+  function setSolo(on) {
+    solo.playing = on;
+    if (play3dBtn) { play3dBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); play3dBtn.setAttribute('aria-label', t(on ? 'play3d.pause' : 'play3d.play')); }
+  }
+  if (play3dBtn) play3dBtn.addEventListener('click', function () {
+    if (solo.playing) { setSolo(false); paint(); return; }
+    if (S.t >= T_MAX - 0.1) S.t = T_MIN;
+    others('3d');
+    setSolo(true);
+  });
+  if (scrub3d) scrub3d.addEventListener('input', function () { S.t = clamp(parseFloat(scrub3d.value), T_MIN, T_MAX); paint(); });
   $$('[data-toggle]').forEach(function (el) { el.addEventListener('click', toggle); });
   scrubs.forEach(function (s) { s.addEventListener('input', function () { seek(parseFloat(s.value)); }); });
   $$('[data-rate]').forEach(function (b) {
@@ -2091,6 +2135,7 @@ html{overflow-anchor:none}
     renderMetrics();
     $$('[data-lang]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === LANG ? 'true' : 'false'); });
     setPlaying(S.playing);
+    setSolo(solo.playing);
     paintRate();
     applyZoom();
     charts.forEach(function (c) { c.relabel(); });
@@ -2150,13 +2195,18 @@ html{overflow-anchor:none}
     // the bar at the bottom plays the clips at the top; it is hidden while those are on screen, above them,
     // and while the added-disturbance section (which has its own controls) is on screen
     var dock = $('#dock'), tr = $('#transport'), disSec = $('#dis'), cmpSec = $('#cmp'), trShown = true, trBelow = true, disShown = false, cmpShown = false;
-    var setDock = function () { dock.hidden = trShown || trBelow || disShown || cmpShown; };
+    var repSec = $('#replay'), repShown = false;
+    var setDock = function () { dock.hidden = trShown || trBelow || disShown || cmpShown || (repShown && !!(phone && phone.matches)); };
     new IntersectionObserver(function (es) {
       var en = es[0];
       trShown = en.isIntersecting; trBelow = en.boundingClientRect.top > 0; setDock();
     }).observe(tr);
     if (disSec) new IntersectionObserver(function (es) { disShown = es[0].isIntersecting; setDock(); }).observe(disSec);
     if (cmpSec) new IntersectionObserver(function (es) { cmpShown = es[0].isIntersecting; setDock(); }).observe(cmpSec);      // the comparison has its own controls too
+    if (repSec) new IntersectionObserver(function (es) {
+      repShown = es[0].isIntersecting; setDock();
+      if (!repShown && solo.playing) { setSolo(false); paint(); }
+    }).observe(repSec);
   }
 
   /* ---------- boot ---------- */
