@@ -3,58 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0d0f12">
 <meta name="description" content="Hardware validation of disturbance observer-based elevation control on a wave simulation platform: tracked rig videos, logged signals and a 3D replay, observer off against on.">
 <link rel="alternate" hreflang="en" href="https://coolab-inu.github.io/isp-dob/">
 <link rel="alternate" hreflang="ko" href="https://coolab-inu.github.io/isp-dob/ko/">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Disturbance Observer-based Elevation Control System for a Launch Platform in a Wave Simulation Environment</title>
-<!-- link preview (KakaoTalk, Slack, etc.): COOL Lab logo card from the lab homepage -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="COOL Lab · Incheon National University">
-<meta property="og:title" content="Disturbance Observer-based Elevation Control System for a Launch Platform in a Wave Simulation Environment">
-<meta property="og:description" content="Hardware validation of disturbance observer-based elevation control on a wave simulation platform: tracked rig videos, logged signals and a 3D replay, observer off against on.">
-<meta property="og:url" content="https://coolab-inu.github.io/isp-dob/">
-<meta property="og:image" content="https://coolab-inu.github.io/assets/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: one clock. Two clips and every trace hang off a single playhead; the page reads top to bottom as video, response, signals, numbers, rig. */
 :root{
-  --plane:#f2f3f5; --surface:#fcfcfd; --ink:#101418; --ink-2:#474d56; --muted:#767d88;
-  --rule:#dcdfe5; --grid:#e8eaee; --axis:#c3c7ce; --band:rgba(16,20,24,.05);
-  --off:#eb6834; --on:#2a78d6;
+  color-scheme:dark;      /* the page is always dark (user, 2026-11-25); the light values are gone */
+  --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
+  --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
+  --off:#d95926; --on:#3987e5;
   /* the added-mass runs, for the comparison: plum (observer off) and aqua (on); with the two above, every pair clears the
-     colour-blind and normal-vision separation checks in both themes */
-  --doff:#723d77; --don:#3ba482; --mk-doff:#e79aea; --mk-don:#5fdcae;
-  --em:#1557d0; --em-2:#c9281a; --hero-dim:1; --lg-l:block; --lg-d:none; --tip-bg:rgba(16,20,24,.78);
-  --btn:#101418; --btn-ink:#fcfcfd;
+     colour-blind and normal-vision separation checks on this dark page */
+  --doff:#8e4d94; --don:#269573; --mk-doff:#e79aea; --mk-don:#5fdcae;
+  --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --tip-bg:rgba(236,238,241,.82);
+  --btn:#eceef1; --btn-ink:#0d0f12;
   --video-bg:#0b0d10; --chip-bg:rgba(10,12,15,.74); --chip-ink:#f4f5f7;
   --mk-off:#ff9457; --mk-on:#6fb4ff; --mk-ink:#ffffff;
-  --m-frame:#e6e8ec; --m-deck:#cdd3dc; --m-cam:#a6adb8; --m-edge:#2b3038;
+  --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
   --font-display:"Archivo","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
   --font-body:"IBM Plex Sans","IBM Plex Sans KR",system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --font-data:"IBM Plex Mono","IBM Plex Sans KR",ui-monospace,"Cascadia Mono",Consolas,"Malgun Gothic",monospace;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
-    --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-    --off:#d95926; --on:#3987e5; --doff:#8e4d94; --don:#269573; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
-    --btn:#eceef1; --btn-ink:#0d0f12;
-    --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
-  --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-  --off:#d95926; --on:#3987e5; --doff:#8e4d94; --don:#269573; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
-  --btn:#eceef1; --btn-ink:#0d0f12;
-  --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
-  color-scheme:dark;
-}
+/* blocks rise into place as they come on screen (as on the cube page). Only when the script below the style turns it on:
+   on the page itself (not in its own frame), with motion allowed, and with IntersectionObserver. */
+html.rv-on .rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+html.rv-on .rv.in{opacity:1;transform:none}
+@media print{html.rv-on .rv{opacity:1;transform:none;transition:none}}
 
 *{box-sizing:border-box}
 body{background:var(--plane);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -71,8 +51,6 @@ button{font:inherit;color:inherit}
 .nav .wrap{display:flex;align-items:center;gap:8px 18px;min-height:48px}
 .brand{display:flex;align-items:center;flex:none}
 .brand img{height:34px;width:auto}
-.brand .lg-l{display:var(--lg-l)}
-.brand .lg-d{display:var(--lg-d)}
 .links{display:flex;gap:4px;overflow-x:auto;min-width:0;margin-left:auto;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .links::-webkit-scrollbar{display:none}
 /* the links slide sideways when they do not fit; a fade on a side means more links that way */
@@ -327,7 +305,7 @@ thead tr.sets th.set{text-align:center;padding-right:0;font-size:13px;font-weigh
 
 footer{height:96px}      /* room for the fixed play bar */
 .tr3d{margin-top:12px}      /* the 3D replay's own play bar */
-.zsel{position:absolute;background:rgba(42,120,214,.14);border-left:1px solid var(--on);border-right:1px solid var(--on);pointer-events:none}      /* a stretch being picked to zoom into */
+.zsel{position:absolute;background:rgba(57,135,229,.14);border-left:1px solid var(--on);border-right:1px solid var(--on);pointer-events:none}      /* a stretch being picked to zoom into */
 
 /* ---------- dock ---------- */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:8;background:var(--surface);border-top:1px solid var(--rule);padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -441,9 +419,16 @@ html{overflow-anchor:none}
 </style>
 </head>
 <body>
+<script>/* turn the rise-into-place on before anything is drawn, so blocks below the screen start out of place */
+(function (d) {
+  var framed = /[?&]embed=1(&|$)/.test(location.search) && window.parent !== window;
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!framed && !still && 'IntersectionObserver' in window) d.classList.add('rv-on');
+})(document.documentElement);</script>
+
 <nav class="nav" aria-label="Sections" data-i18n-aria="nav.aria">
   <div class="wrap">
-    <a class="brand" href="https://coolab-inu.github.io/" aria-label="COOL Lab"><img class="lg-l" src="media/cool_lab.png?v=616990cc" alt="COOL Lab, Control &amp; Observer Optimization Lab" width="325" height="120"><img class="lg-d" src="media/cool_lab_dark.png?v=c769bd6b" alt="" width="325" height="120"></a>
+    <a class="brand" href="https://coolab-inu.github.io/" aria-label="COOL Lab"><img src="media/cool_lab_dark.png?v=c769bd6b" alt="COOL Lab, Control &amp; Observer Optimization Lab" width="325" height="120"></a>
     <div class="links" id="links">
       <a href="#runs" data-i18n="nav.runs">Runs</a>
       <a href="#signals" data-i18n="nav.signals">Signals</a>
@@ -462,18 +447,18 @@ html{overflow-anchor:none}
 
 <header class="head wrap">
   <div class="head-top">
-  <div class="head-text">
+  <div class="head-text rv">
   <p class="eyebrow" data-i18n="head.eyebrow">Hardware validation · wave simulation platform</p>
   <h1 data-i18n-html="head.title">Disturbance <span class="nb">Observer-based</span> Elevation Control System for a Launch Platform in a Wave Simulation Environment</h1>
   <p class="lede" data-i18n-html="head.lede">The elevation axis steps to 45° and holds that angle while a cam rocks the base underneath it, imitating wave motion. Both runs use the same controller and the same cam speed. <em class="hl">Only the disturbance observer (DOB) changes.</em></p>
   </div>
-  <figure class="head-fig">
+  <figure class="head-fig rv">
     <video id="v-hero" muted loop playsinline autoplay preload="metadata" poster="media/concept.jpg?v=04bbb109" src="media/concept.mp4?v=ac9b94fe" aria-label="Concept animation: a launch platform holding its elevation on a ship in waves" data-i18n-aria="hero.aria"></video>
   </figure>
   <script>/* inside the page's own frame the header is hidden: drop its loop before the browser fetches it */
   if (/[?&]embed=1(&|$)/.test(location.search) && window.parent !== window) { (function (h) { h.removeAttribute('autoplay'); h.preload = 'none'; h.removeAttribute('poster'); h.removeAttribute('src'); })(document.getElementById('v-hero')); }</script>
   </div>
-  <dl class="stats">
+  <dl class="stats rv">
     <div class="stat lead">
       <dt data-i18n="stat.rms">RMS tracking error while the cam runs</dt>
       <dd><span class="fig" id="k-rms">−65%</span><span class="from" id="k-rms-d">0.81° → 0.28°</span></dd>
@@ -484,7 +469,7 @@ html{overflow-anchor:none}
 <main>
 <section id="runs">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="runs.title">The clips, on the test clock</h2>
         <p class="sub" data-i18n-html="runs.sub">The 45° target is applied at 0 s and the cam runs from 5.0 s. <em class="hl">The long dashed line is the 45° target.</em></p>
@@ -501,7 +486,7 @@ html{overflow-anchor:none}
       </div>
     </div>
 
-    <div class="clips">
+    <div class="clips rv">
       <figure class="clip">
         <div class="frame" data-toggle>
           <video id="v-off" muted playsinline preload="auto" poster="media/dob_off.jpg?v=de3a1503" src="media/dob_off.mp4?v=37da02fc" data-dis-poster="media/dob_off_dis.jpg?v=2eb6e410" data-dis-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="Rig video, observer off" data-i18n-aria="video.off.aria"></video>
@@ -536,14 +521,14 @@ html{overflow-anchor:none}
       ['v-off', 'v-on'].forEach(function (id) { var v = document.getElementById(id); v.setAttribute('poster', v.getAttribute('data-dis-poster')); v.setAttribute('src', v.getAttribute('data-dis-src')); });
     }</script>
 
-    <ul class="key" id="marks-key">
+    <ul class="key rv" id="marks-key">
       <li><i class="kl"></i><span data-i18n="key.tgt">Target elevation, 45°</span></li>
       <li><i class="kl ground"></i><span data-i18n="key.ground">Ground reference line (fixed)</span></li>
       <li class="sym"><b>θ</b><span data-i18n="key.th.long">elevation of the payload plate</span></li>
       <li class="sym"><b>φ</b><span data-i18n="key.deck.long">base angle from mid-stroke</span></li>
     </ul>
 
-    <div class="transport" id="transport">
+    <div class="transport rv" id="transport">
       <button class="play" type="button" data-play aria-pressed="false" aria-label="Play both clips">
         <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
         <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
@@ -563,7 +548,7 @@ html{overflow-anchor:none}
       </div>
     </div>
 
-    <div class="pick" id="pick">
+    <div class="pick rv" id="pick">
       <div class="pick-g" data-pick="clips">
         <span class="pick-l" data-i18n="pick.clips">In the clips</span>
         <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
@@ -582,7 +567,7 @@ html{overflow-anchor:none}
       </div>
     </div>
 
-    <div class="card" style="margin-top:12px">
+    <div class="card rv" style="margin-top:12px">
       <figure class="chart" data-chart="main">
         <div class="chart-head">
           <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong><span data-unit>deg</span></div>
@@ -595,7 +580,7 @@ html{overflow-anchor:none}
         <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
     </div>
-    <div class="sec-head" style="margin:12px 0 0;align-items:flex-start;justify-content:flex-end">
+    <div class="sec-head rv" style="margin:12px 0 0;align-items:flex-start;justify-content:flex-end">
       <div class="tools">
         <div class="tip-host">
           <button class="btn" type="button" data-gzoom="main" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
@@ -613,7 +598,7 @@ html{overflow-anchor:none}
 
 <section id="signals">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="signals.title">What the controller was doing</h2>
       </div>
@@ -629,7 +614,7 @@ html{overflow-anchor:none}
         </div>
       </div>
     </div>
-    <div class="card stack">
+    <div class="card stack rv">
       <figure class="chart" data-chart="err">
         <div class="chart-head">
           <div class="chart-title" data-i18n-html="st.err">Tracking error θ − 45°<span>deg</span></div>
@@ -657,7 +642,7 @@ html{overflow-anchor:none}
 
 <section id="replay">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="replay.title">3D replay</h2>
         <p class="sub" data-i18n-html="replay.sub"><em class="hl">The dashed line is the 45° target.</em></p>
@@ -667,14 +652,14 @@ html{overflow-anchor:none}
         <button type="button" data-cam="iso" aria-pressed="false" data-i18n="cam.iso">Isometric</button>
       </div>
     </div>
-    <div class="card stage" id="stage">
+    <div class="card stage rv" id="stage">
       <canvas id="gl" aria-label="3D model of the platform replaying both runs" data-i18n-aria="gl.aria"></canvas>
       <div class="tag3d" data-tag="off" hidden><i class="dot off"></i><span data-i18n="run.off">Observer off</span></div>
       <div class="tag3d" data-tag="on" hidden><i class="dot on"></i><span data-i18n="run.on">Observer on</span></div>
       <div class="stage-msg" id="stage-msg" data-i18n="stage.loading">Loading the model…</div>
       <div class="stage-hint" id="stage-hint" data-i18n="stage.hint" hidden>Drag to orbit · Ctrl + scroll to zoom · grid 10 cm</div>
     </div>
-    <div class="transport tr3d">
+    <div class="transport tr3d rv">
       <button class="play" type="button" data-play3d aria-pressed="false" aria-label="Play the 3D replay">
         <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
         <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
@@ -693,7 +678,7 @@ html{overflow-anchor:none}
         <button type="button" data-rate3d="1" aria-pressed="true">1×</button>
       </div>
     </div>
-    <div class="dials">
+    <div class="dials rv">
       <figure class="card dial" data-dial="off">
         <svg viewBox="0 0 220 134" role="img" aria-label="Tracking error dial, observer off, plus or minus 3 degrees" data-i18n-aria="dial.off.aria"></svg>
         <div class="nums">
@@ -718,24 +703,24 @@ html{overflow-anchor:none}
 
 <section id="dis">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="dis.title">Added disturbance</h2>
         <p class="sub" data-i18n-html="dis.sub">On top of the cam disturbance, <em class="hl">a 9&nbsp;g mass was added at the end of the axis for the whole run.</em> The mass simulates the missile loading system.</p>
       </div>
     </div>
-    <iframe class="embed-frame" id="dis-frame" scrolling="no" title="Clips and results of the run with the added disturbance" data-i18n-aria="dis.frame" loading="lazy"></iframe>
+    <iframe class="embed-frame rv" id="dis-frame" scrolling="no" title="Clips and results of the run with the added disturbance" data-i18n-aria="dis.frame" loading="lazy"></iframe>
   </div>
 </section>
 
 <section id="cmp">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="cmp.title">Side by side</h2>
       </div>
     </div>
-    <div class="cmp-pick">
+    <div class="cmp-pick rv">
       <span class="pick-l" data-cmp-pick data-i18n="cmp.pick">Runs to compare, 2 to 4</span>
       <div class="cmp-runs" role="group" aria-label="Runs to compare" data-i18n-aria="cmp.aria">
         <button type="button" class="run-btn" data-run="off" aria-pressed="true"><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span></button>
@@ -745,7 +730,7 @@ html{overflow-anchor:none}
       </div>
     </div>
 
-    <div class="cmp-clips">
+    <div class="cmp-clips rv">
       <figure class="cclip" data-run="off">
         <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off.jpg?v=de3a1503" data-src="media/dob_off.mp4?v=37da02fc" aria-label="DOB_OFF" data-i18n-aria="cmp.off"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
         <figcaption><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-v="th">–</b></figcaption>
@@ -764,7 +749,7 @@ html{overflow-anchor:none}
       </figure>
     </div>
 
-    <div class="transport">
+    <div class="transport rv">
       <button class="play" type="button" data-cplay aria-pressed="false" aria-label="Play the compared clips">
         <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
         <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
@@ -784,7 +769,7 @@ html{overflow-anchor:none}
       </div>
     </div>
 
-    <div class="pick">
+    <div class="pick rv">
       <div class="pick-g" data-cpick="clips">
         <span class="pick-l" data-i18n="pick.clips">In the clips</span>
         <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
@@ -803,7 +788,7 @@ html{overflow-anchor:none}
       </div>
     </div>
 
-    <div class="card" style="margin-top:12px">
+    <div class="card rv" style="margin-top:12px">
       <figure class="chart" data-chart="cmp">
         <div class="chart-head">
           <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong></div>
@@ -818,7 +803,7 @@ html{overflow-anchor:none}
         <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
     </div>
-    <div class="cmp-foot tools">
+    <div class="cmp-foot tools rv">
       <div class="tip-host">
           <button class="btn" type="button" data-gzoom="C" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.6"/><path d="M10.3 10.3L14 14M4.9 6.8h3.8M6.8 4.9v3.8"/></svg><span data-i18n="zoom.btn">Zoom</span></button>
           <div class="tip up" role="status" hidden><span class="for-mouse" data-i18n="gzoom.tip">Drag across a graph to zoom into that stretch. Double-click to go back.</span><span class="for-touch" data-i18n="zoom.tip.touch">Press Zoom again to go back.</span></div>
@@ -834,13 +819,13 @@ html{overflow-anchor:none}
 
 <section id="metrics">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="metrics.title">The numbers</h2>
         <p class="sub" id="metrics-key" hidden></p>
       </div>
     </div>
-    <div class="tbl-wrap">
+    <div class="tbl-wrap rv">
       <table>
         <thead id="metrics-head"></thead>
         <tbody id="metrics-body"></tbody>
@@ -851,12 +836,12 @@ html{overflow-anchor:none}
 
 <section id="rig">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head rv">
       <div>
         <h2 data-i18n="rig.title">The rig</h2>
       </div>
     </div>
-    <div class="rig">
+    <div class="rig rv">
       <figure class="photo">
         <img src="media/dob_on.jpg?v=ca712ed6" loading="lazy" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
@@ -899,6 +884,22 @@ html{overflow-anchor:none}
   </div>
 </div>
 
+<script>/* blocks rise into place once 12 % of them is on screen (this runs before the scripts below load, so the first
+   screen shows at once); then they drop the class, so nothing in them is laid out
+   against a moved box (the zoom, the tooltips, the 3D view) */
+(function () {
+  if (!document.documentElement.classList.contains('rv-on')) return;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var el = e.target;
+      io.unobserve(el); el.classList.add('in');
+      setTimeout(function () { el.classList.remove('rv'); el.classList.remove('in'); }, 800);
+    });
+  }, { threshold: 0.12 });
+  Array.prototype.forEach.call(document.querySelectorAll('.rv'), function (el) { io.observe(el); });
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
@@ -1852,8 +1853,6 @@ html{overflow-anchor:none}
       dirty = true;
     }
     theme();
-    if (window.matchMedia) { var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', theme); }
-    if (window.MutationObserver) new MutationObserver(theme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     function line(a, b, material) {
       var g = new T.BufferGeometry().setFromPoints([a, b]), l = new T.Line(g, material);
