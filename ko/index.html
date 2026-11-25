@@ -17,6 +17,9 @@
   --plane:#f2f3f5; --surface:#fcfcfd; --ink:#101418; --ink-2:#474d56; --muted:#767d88;
   --rule:#dcdfe5; --grid:#e8eaee; --axis:#c3c7ce; --band:rgba(16,20,24,.05);
   --off:#eb6834; --on:#2a78d6;
+  /* the added-mass runs, for the comparison: plum (observer off) and aqua (on); with the two above, every pair clears the
+     colour-blind and normal-vision separation checks in both themes */
+  --doff:#723d77; --don:#3ba482; --mk-doff:#e79aea; --mk-don:#5fdcae;
   --em:#1557d0; --em-2:#c9281a; --hero-dim:1; --lg-l:block; --lg-d:none; --tip-bg:rgba(16,20,24,.78);
   --btn:#101418; --btn-ink:#fcfcfd;
   --video-bg:#0b0d10; --chip-bg:rgba(10,12,15,.74); --chip-ink:#f4f5f7;
@@ -30,7 +33,7 @@
   :root:not([data-theme="light"]){
     --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
     --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-    --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
+    --off:#d95926; --on:#3987e5; --doff:#8e4d94; --don:#269573; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
     --btn:#eceef1; --btn-ink:#0d0f12;
     --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
     color-scheme:dark;
@@ -39,7 +42,7 @@
 :root[data-theme="dark"]{
   --plane:#0d0f12; --surface:#16191e; --ink:#eceef1; --ink-2:#b7bcc5; --muted:#8b919b;
   --rule:#2a2e36; --grid:#21252b; --axis:#3b4049; --band:rgba(255,255,255,.055);
-  --off:#d95926; --on:#3987e5; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
+  --off:#d95926; --on:#3987e5; --doff:#8e4d94; --don:#269573; --em:#8db6ff; --em-2:#ff9283; --hero-dim:.84; --lg-l:none; --lg-d:block; --tip-bg:rgba(236,238,241,.82);
   --btn:#eceef1; --btn-ink:#0d0f12;
   --m-frame:#313741; --m-deck:#3f4755; --m-cam:#5c6575; --m-edge:#aeb5c0;
   color-scheme:dark;
@@ -116,10 +119,10 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 
 /* ---------- series keys ---------- */
 .k{display:inline-block;width:14px;height:0;border-top:2px solid var(--ink);vertical-align:middle;margin-right:6px;border-radius:1px}
-.k.off{border-color:var(--off)} .k.on{border-color:var(--on)}
+.k.off{border-color:var(--off)} .k.on{border-color:var(--on)} .k.doff{border-color:var(--doff)} .k.don{border-color:var(--don)}
 .k.ref{border-top:1px dashed var(--ink-2)}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--ink)}
-.dot.off{background:var(--off)} .dot.on{background:var(--on)}
+.dot.off{background:var(--off)} .dot.on{background:var(--on)} .dot.doff{background:var(--doff)} .dot.don{background:var(--don)}
 
 /* ---------- clips ---------- */
 .clips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -137,7 +140,7 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .mk-recent{stroke-width:2.25}
 .marks circle.mk-dotbg{fill:var(--mk-ink);stroke:none}
 .marks circle.mk-dot,.marks circle.mk-tip{stroke:none}
-.marks circle.off{fill:var(--mk-off)} .marks circle.on{fill:var(--mk-on)}
+.marks circle.off{fill:var(--mk-off)} .marks circle.on{fill:var(--mk-on)} .marks circle.doff{fill:var(--mk-doff)} .marks circle.don{fill:var(--mk-don)}
 .mk-line{stroke-width:2.25}
 .mk-axis{stroke-width:1.75}
 .mk-ref{stroke:var(--mk-ink);stroke-width:1.1;stroke-dasharray:4 4}
@@ -145,7 +148,7 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .mk-ground{stroke:var(--mk-ink);stroke-width:1.2;opacity:.85}
 .mk-ring{stroke:var(--mk-ink);stroke-width:1.7}
 .mk-arc{stroke:var(--mk-ink);stroke-width:1.25}
-.marks .off{stroke:var(--mk-off)} .marks .on{stroke:var(--mk-on)}
+.marks .off{stroke:var(--mk-off)} .marks .on{stroke:var(--mk-on)} .marks .doff{stroke:var(--mk-doff)} .marks .don{stroke:var(--mk-don)}
 .mk-lab{position:absolute;transform:translate(-50%,-50%);background:var(--chip-bg);color:var(--chip-ink);font:500 12px/1.35 var(--font-data);font-variant-numeric:tabular-nums;padding:1px 6px;border-radius:3px;white-space:nowrap;pointer-events:none}
 .mk-lab b{font-weight:500}
 .marks-off .marks,.marks-off .mk-lab{display:none}
@@ -221,12 +224,12 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .plot .ref{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:5 4}
 .plot .band{fill:var(--band)}
 .plot .tick{fill:var(--muted);font:11px var(--font-body);font-variant-numeric:tabular-nums}
-.plot .note{fill:var(--muted);font:11px var(--font-body)}
+.plot .note{fill:var(--muted);font:11px var(--font-body);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}      /* a halo keeps notes readable where a line runs under them */
 .plot .ln{fill:none;stroke-width:1.75;stroke-linejoin:round;stroke-linecap:round}
 .plot.tall .ln{stroke-width:2}
-.plot .ln.off{stroke:var(--off)} .plot .ln.on{stroke:var(--on)}
+.plot .ln.off{stroke:var(--off)} .plot .ln.on{stroke:var(--on)} .plot .ln.doff{stroke:var(--doff)} .plot .ln.don{stroke:var(--don)}
 .plot .pt{stroke:var(--surface);stroke-width:2}
-.plot .pt.off{fill:var(--off)} .plot .pt.on{fill:var(--on)}
+.plot .pt.off{fill:var(--off)} .plot .pt.on{fill:var(--on)} .plot .pt.doff{fill:var(--doff)} .plot .pt.don{fill:var(--don)}
 .ph,.cx{position:absolute;left:0;width:0;border-left:1px solid var(--ink);pointer-events:none;will-change:transform}
 .cx{border-left:1px dashed var(--muted)}
 .ph::before{content:"";position:absolute;left:-4.5px;top:-5px;border:4px solid transparent;border-top:6px solid var(--ink)}
@@ -242,6 +245,30 @@ tbody th{font-weight:500}
 tbody th small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
 tr.grp th{font-size:13.5px;font-weight:600;color:var(--ink);background:var(--grid);padding:9px 10px;border-bottom:0}
 tr.grp:not(:first-child) th{border-top:14px solid var(--plane)}
+
+/* ---------- comparison of two to four runs from both experiments ---------- */
+.cmp{margin-top:40px;padding-top:30px;border-top:1px solid var(--rule)}
+.cmp .sec-head{margin-bottom:14px}
+.h-sub{font-family:var(--font-display);font-stretch:108%;font-weight:650;font-size:clamp(1.2rem,2.1vw,1.5rem);line-height:1.2;letter-spacing:-.006em}
+:lang(ko) .h-sub{font-stretch:100%;letter-spacing:-.012em}
+.cmp-pick{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.cmp-pick .pick-l{transition:color .2s}
+.cmp-pick .pick-l.warn{color:var(--em-2)}                  /* a press that would leave fewer than two */
+.cmp-runs{display:flex;flex-wrap:wrap;gap:6px}
+.run-btn{display:inline-flex;align-items:center;border:1px solid var(--rule);border-radius:6px;background:var(--surface);padding:6px 11px 6px 9px;font-size:13px;line-height:1.35;color:var(--muted);cursor:pointer;white-space:nowrap;text-align:left}
+.run-btn .dot{flex:none;width:10px;height:10px;box-shadow:inset 0 0 0 1.5px var(--axis);background:transparent}
+.run-btn[aria-pressed="true"]{color:var(--ink);border-color:var(--ink-2)}
+.run-btn[aria-pressed="true"] .dot{box-shadow:none}
+.run-btn[aria-pressed="true"] .dot.off{background:var(--off)} .run-btn[aria-pressed="true"] .dot.on{background:var(--on)}
+.run-btn[aria-pressed="true"] .dot.doff{background:var(--doff)} .run-btn[aria-pressed="true"] .dot.don{background:var(--don)}
+.cmp-clips{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:10px;margin-top:14px}
+.cclip[hidden]{display:none}
+.cclip .frame{cursor:pointer}
+.cclip figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin-top:6px;font-size:12.5px;line-height:1.35;color:var(--ink-2);min-width:0}
+.cclip figcaption .dot{margin-right:0;flex:none;align-self:center}
+.cclip figcaption b{margin-left:auto;font-family:var(--font-data);font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cmp-foot{display:flex;justify-content:flex-end;margin-top:12px}
+@media (max-width:900px){.cmp-clips{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* ---------- rig ---------- */
 .rig{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start}
@@ -360,6 +387,13 @@ footer{height:96px}      /* room for the fixed play bar */
   thead th{font-size:11.5px}
   thead th.n{white-space:normal}
   tbody th small{font-size:11.5px}
+  /* comparison: the four run buttons in two columns, the clips two to a row */
+  .cmp{margin-top:32px;padding-top:24px}
+  .cmp-runs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .run-btn{white-space:normal;font-size:12.5px;padding:6px 8px}
+  .cmp-clips{gap:8px}
+  .cclip figcaption{font-size:11.5px;gap:1px 6px}
+  .cclip figcaption b{font-size:12px}
 }
 @media (max-width:370px){
   /* very narrow phones: the play row and the button groups still fit */
@@ -413,6 +447,8 @@ tbody th small{text-wrap:balance}
   <figure class="head-fig">
     <video id="v-hero" muted loop playsinline autoplay preload="metadata" poster="media/concept.jpg?v=04bbb109" src="media/concept.mp4?v=ac9b94fe" aria-label="Concept animation: a launch platform holding its elevation on a ship in waves" data-i18n-aria="hero.aria"></video>
   </figure>
+  <script>/* inside the page's own frame the header is hidden: drop its loop before the browser fetches it */
+  if (/[?&]embed=1(&|$)/.test(location.search) && window.parent !== window) { (function (h) { h.removeAttribute('autoplay'); h.preload = 'none'; h.removeAttribute('poster'); h.removeAttribute('src'); })(document.getElementById('v-hero')); }</script>
   </div>
   <dl class="stats">
     <div class="stat lead">
@@ -472,6 +508,10 @@ tbody th small{text-wrap:balance}
         <figcaption class="vals"><span><span class="vk"><i>θ</i><span data-i18n="key.th">elevation</span></span><b data-v="th">–</b></span><span><span class="vk"><i>φ</i><span data-i18n="key.deck">base angle</span></span><b data-v="deck">–</b></span></figcaption>
       </figure>
     </div>
+    <script>/* the frame of the added-disturbance section shows those runs: switch the clips before the browser fetches the others */
+    if (/[?&]embed=1(&|$)/.test(location.search) && /[?&]exp=dis(&|$)/.test(location.search) && window.parent !== window) {
+      ['v-off', 'v-on'].forEach(function (id) { var v = document.getElementById(id); v.setAttribute('poster', v.getAttribute('data-dis-poster')); v.setAttribute('src', v.getAttribute('data-dis-src')); });
+    }</script>
 
     <ul class="key" id="marks-key">
       <li><i class="kl"></i><span data-i18n="key.tgt">Target elevation, 45°</span></li>
@@ -645,10 +685,108 @@ tbody th small{text-wrap:balance}
     <div class="sec-head">
       <div>
         <h2 data-i18n="dis.title">Added disturbance</h2>
-        <p class="sub" data-i18n-html="dis.sub">On top of the cam disturbance, <em class="hl">a 9 g mass was added at the end of the axis for the whole run.</em></p>
+        <p class="sub" data-i18n-html="dis.sub">On top of the cam disturbance, and to simulate the missile loading system, <em class="hl">a 9&nbsp;g mass was added at the end of the axis for the whole run.</em></p>
       </div>
     </div>
     <iframe class="embed-frame" id="dis-frame" scrolling="no" title="Clips and results of the run with the added disturbance" data-i18n-aria="dis.frame" loading="lazy"></iframe>
+
+    <div class="cmp" id="cmp">
+      <div class="sec-head">
+        <div>
+          <h3 class="h-sub" data-i18n="cmp.title">Compare runs</h3>
+        </div>
+      </div>
+      <div class="cmp-pick">
+        <span class="pick-l" data-cmp-pick data-i18n="cmp.pick">Runs to compare, 2 to 4</span>
+        <div class="cmp-runs" role="group" aria-label="Runs to compare" data-i18n-aria="cmp.aria">
+          <button type="button" class="run-btn" data-run="off" aria-pressed="true"><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span></button>
+          <button type="button" class="run-btn" data-run="on" aria-pressed="true"><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span></button>
+          <button type="button" class="run-btn" data-run="doff" aria-pressed="true"><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span></button>
+          <button type="button" class="run-btn" data-run="don" aria-pressed="true"><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span></button>
+        </div>
+      </div>
+
+      <div class="cmp-clips">
+        <figure class="cclip" data-run="off">
+          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off.jpg?v=de3a1503" data-src="media/dob_off.mp4?v=37da02fc" aria-label="DOB_OFF" data-i18n-aria="cmp.off"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+          <figcaption><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-v="th">–</b></figcaption>
+        </figure>
+        <figure class="cclip" data-run="on">
+          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on.jpg?v=ca712ed6" data-src="media/dob_on.mp4?v=80b69f18" aria-label="DOB_ON" data-i18n-aria="cmp.on"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+          <figcaption><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-v="th">–</b></figcaption>
+        </figure>
+        <figure class="cclip" data-run="doff">
+          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off_dis.jpg?v=2eb6e410" data-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="DOB_OFF_DIS" data-i18n-aria="cmp.doff"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+          <figcaption><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span><b data-v="th">–</b></figcaption>
+        </figure>
+        <figure class="cclip" data-run="don">
+          <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on_dis.jpg?v=7e4bc917" data-src="media/dob_on_dis.mp4?v=7b05c5c4" aria-label="DOB_ON_DIS" data-i18n-aria="cmp.don"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+          <figcaption><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span><b data-v="th">–</b></figcaption>
+        </figure>
+      </div>
+
+      <div class="transport">
+        <button class="play" type="button" data-cplay aria-pressed="false" aria-label="Play the compared clips">
+          <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+          <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 2.5h3.2v11H3.5zM9.3 2.5h3.2v11H9.3z"/></svg>
+        </button>
+        <output class="clock" data-cclock>t = 9.00 s</output>
+        <div class="rail">
+          <div class="bands"><i></i></div>
+          <input class="scrub" id="cmp-scrub" type="range" min="-0.4" max="15.4" step="0.01" value="9" aria-label="Time in the run, seconds" data-i18n-aria="scrub.aria">
+          <div class="ticks" aria-hidden="true">
+            <span style="left:2.53%">0</span><span style="left:34.18%" class="l">5 s<em data-i18n="rail.cam"> · cam starts</em></span><span style="left:65.82%">10</span><span style="left:97.47%">15</span>
+          </div>
+        </div>
+        <div class="seg mono" role="group" aria-label="Playback speed" data-i18n-aria="speed.aria">
+          <button type="button" data-crate="0.25" aria-pressed="false">0.25×</button>
+          <button type="button" data-crate="0.5" aria-pressed="false">0.5×</button>
+          <button type="button" data-crate="1" aria-pressed="true">1×</button>
+        </div>
+      </div>
+
+      <div class="pick">
+        <div class="pick-g" data-cpick="clips">
+          <span class="pick-l" data-i18n="pick.clips">In the clips</span>
+          <div class="seg" role="group" aria-label="Signals measured in the clips" data-i18n-aria="pick.clips.aria">
+            <button type="button" data-csig="tiltv" aria-pressed="true" data-i18n="sig.tiltv">Tilt error</button>
+            <button type="button" data-csig="deckv" aria-pressed="false" data-i18n="sig.deckv">Base φ</button>
+          </div>
+        </div>
+        <div class="pick-g">
+          <span class="pick-l" data-i18n="pick.logs">Logged runs</span>
+          <div class="seg" role="group" aria-label="Signals from the logged runs" data-i18n-aria="pick.logs.aria">
+            <button type="button" data-csig="theta" aria-pressed="false" data-i18n="sig.theta">Angle θ</button>
+            <button type="button" data-csig="err" aria-pressed="false" data-i18n="sig.err">Error</button>
+            <button type="button" data-csig="deck" aria-pressed="false" data-i18n="sig.deck">Base φ</button>
+            <button type="button" data-csig="dh" aria-pressed="false" data-i18n="sig.dh">Observer d̂</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <figure class="chart" data-chart="cmp">
+          <div class="chart-head">
+            <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong><span data-unit>deg</span></div>
+            <div class="legend">
+              <span data-leg="off"><i class="k off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-val="off">–</b></span>
+              <span data-leg="on"><i class="k on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-val="on">–</b></span>
+              <span data-leg="doff"><i class="k doff"></i><span data-i18n="cmp.doff">DOB_OFF_DIS</span><b data-val="doff">–</b></span>
+              <span data-leg="don"><i class="k don"></i><span data-i18n="cmp.don">DOB_ON_DIS</span><b data-val="don">–</b></span>
+              <span data-leg="ref" hidden><i class="k ref"></i><span data-i18n="leg.target">Target 45°</span></span>
+            </div>
+          </div>
+          <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
+        </figure>
+      </div>
+      <div class="cmp-foot">
+        <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria">
+          <button type="button" data-cview="full" aria-pressed="true" data-i18n="view.full">Full run</button>
+          <button type="button" data-cview="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
+          <button type="button" data-cview="dist" aria-pressed="false" data-i18n="view.dist">Disturbance, 5–15 s</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -661,7 +799,7 @@ tbody th small{text-wrap:balance}
     </div>
     <div class="rig">
       <figure class="photo">
-        <img src="media/dob_on.jpg?v=ca712ed6" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
+        <img src="media/dob_on.jpg?v=ca712ed6" loading="lazy" alt="The test rig: white printed frame, pivoting base, cam disc under the base, tilted payload plate on top" data-i18n-alt="rig.alt" width="960" height="720">
         <span class="pin" style="left:51%;top:13%">1</span>
         <span class="pin" style="left:54%;top:24%">2</span>
         <span class="pin" style="left:33%;top:35%">3</span>
@@ -710,7 +848,7 @@ tbody th small{text-wrap:balance}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=0acc95c5"></script>
+<script src="i18n.js?v=f1290974"></script>
 <script>
 (function () {
   'use strict';
@@ -726,11 +864,13 @@ tbody th small{text-wrap:balance}
   if (!R) return;
   var TR = (EXP === 'dis' ? window.ISP_TRACK_DIS : window.ISP_TRACK) || null;        // per-frame tracking of the two clips
   if (EMBED) document.documentElement.classList.add('embed');
-  if (EXP === 'dis') {
+  if (EXP === 'dis') {                             // normally done already by the small script after the clips; setting src again would reload
     ['#v-off', '#v-on'].forEach(function (sel) {
       var v = document.querySelector(sel);
-      v.setAttribute('poster', v.getAttribute('data-dis-poster'));
-      v.setAttribute('src', v.getAttribute('data-dis-src'));
+      if (v.getAttribute('src') !== v.getAttribute('data-dis-src')) {
+        v.setAttribute('poster', v.getAttribute('data-dis-poster'));
+        v.setAttribute('src', v.getAttribute('data-dis-src'));
+      }
     });
   }
 
@@ -763,19 +903,25 @@ tbody th small{text-wrap:balance}
   function signed(v, dp) { var s = Math.abs(v).toFixed(dp); return (+s === 0 ? '' : v < 0 ? MINUS : '+') + s; }
 
   /* ---------- derived channels ---------- */
-  ['off', 'on'].forEach(function (k) {
-    var r = R[k], a = idx(3), b = idx(5), m = 0, i;
-    r.err = r.th.map(function (v) { return v - REF; });
-    for (i = a; i <= b; i++) m += r.enc[i];
-    m /= (b - a + 1);
-    r.encz = r.enc.map(function (v) { return v - m; });
-    r.tiltv = TR ? TR[k].tilt100 : [];      // measured in the clip, on the log's 100 Hz grid; null where the plate was not locked
-    r.deckv = TR ? TR[k].deck100 : [];
-    // The base angle is shown from the middle of its stroke (about -4 to +4 deg). r.deck, from the lowest level, still drives the 3D model.
-    var sw = stats(r.deck, T_DIST + 0.5, T_END), vmid = TR ? TR[k].info.deckSwing / 2 : 0;
-    r.deckc = r.deck.map(function (v) { return v - (sw.min + sw.max) / 2; });
-    r.deckvc = r.deckv.map(function (v) { return v - vmid; });
-  });
+  // The same for both experiments (the comparison at the end of the page draws runs of both); both are logged on one grid.
+  function derive(RR, TT) {
+    if (!RR || RR.derived) return;
+    RR.derived = true;
+    ['off', 'on'].forEach(function (k) {
+      var r = RR[k], a = idx(3), b = idx(5), m = 0, i;
+      r.err = r.th.map(function (v) { return v - REF; });
+      for (i = a; i <= b; i++) m += r.enc[i];
+      m /= (b - a + 1);
+      r.encz = r.enc.map(function (v) { return v - m; });
+      r.tiltv = TT ? TT[k].tilt100 : [];      // measured in the clip, on the log's 100 Hz grid; null where the plate was not locked
+      r.deckv = TT ? TT[k].deck100 : [];
+      // The base angle is shown from the middle of its stroke (about -4 to +4 deg). r.deck, from the lowest level, still drives the 3D model.
+      var sw = stats(r.deck, T_DIST + 0.5, T_END), vmid = TT ? TT[k].info.deckSwing / 2 : 0;
+      r.deckc = r.deck.map(function (v) { return v - (sw.min + sw.max) / 2; });
+      r.deckvc = r.deckv.map(function (v) { return v - vmid; });
+    });
+  }
+  derive(R, TR);
 
   /* ---------- metrics ---------- */
   function stats(d, t0, t1) {
@@ -895,8 +1041,12 @@ tbody th small{text-wrap:balance}
   function tickText(v, step) { var dp = step >= 1 ? 0 : step >= 0.1 ? 1 : step >= 0.01 ? 2 : 3; if (step === 2.5) dp = 1; return num(v, dp); }
 
   var charts = [], chartSeq = 0, mainChart = null;
-  function Chart(host) {
-    var id = host.getAttribute('data-chart'), isMain = id === 'main', cfg = null, uid = 'cp' + (++chartSeq);
+  // ctx: the clock the chart follows (st), where a run's channels are (data), which runs to draw (runs, default the channel's own),
+  // and what a press on the chart does (seek, cursors). The charts of the top runs share MAINCTX; the comparison has its own.
+  var MAINCTX = { st: S, data: function (k) { return R[k]; }, seek: function (v) { seek(v); }, cursors: function () { cursors(); } };
+  function Chart(host, ctx) {
+    ctx = ctx || MAINCTX;
+    var id = host.getAttribute('data-chart'), picks = id === 'main' || id === 'cmp', cfg = null, uid = 'cp' + (++chartSeq), st = ctx.st, runs = [];
     var plot = $('.plot', host), svg = $('svg', plot), ph = $('.ph', plot), cx = $('.cx', plot), lab = $('.cx-lab', plot);
     var valEls = {}, dots = {}, legEls = {}, titleEl = $('[data-title]', host), unitEl = $('[data-unit]', host);
     $$('[data-val]', host).forEach(function (el) { valEls[el.getAttribute('data-val')] = el; });
@@ -907,17 +1057,18 @@ tbody th small{text-wrap:balance}
       var base = CH[name], key;
       cfg = {}; cur = name;
       for (key in base) cfg[key] = base[key];
-      if (isMain) {                                   // the chart under the clips shows whichever signal is picked
+      runs = ctx.runs ? ctx.runs(cfg) : cfg.runs;
+      if (picks) {                                    // the charts under the clips show whichever signal is picked
         cfg.xLabels = true; cfg.bandLabel = true;
         titleEl.textContent = t('ch.' + name + '.t'); unitEl.textContent = t('ch.' + name + '.u');
-        legEls.off.hidden = cfg.runs.indexOf('off') < 0; legEls.on.hidden = cfg.runs.indexOf('on') < 0; legEls.ref.hidden = cfg.ref == null;
+        Object.keys(legEls).forEach(function (k) { legEls[k].hidden = k === 'ref' ? cfg.ref == null : runs.indexOf(k) < 0; });
         svg.setAttribute('aria-label', t('ch.' + name + '.t'));
       }
       mg.b = cfg.xLabels ? 24 : 8;
     }
-    setSignal(isMain ? (TR ? 'tiltv' : 'theta') : id);
+    setSignal(picks ? (TR ? 'tiltv' : 'theta') : id);
     self.setSignal = function (name) { setSignal(name); self.render(); self.cursor(); };
-    self.relabel = function () { if (isMain) setSignal(cur); self.render(); self.cursor(); };       // after a language change
+    self.relabel = function () { if (picks) setSignal(cur); self.render(); self.cursor(); };       // after a language change, or other runs picked
     function X(t) { return mg.l + (t - x0) / (x1 - x0) * (W - mg.l - mg.r); }
     function Y(v) { return H - mg.b - (v - y0) / (y1 - y0) * (H - mg.t - mg.b); }
     function Tinv(px) { return x0 + (px - mg.l) / (W - mg.l - mg.r) * (x1 - x0); }
@@ -926,10 +1077,10 @@ tbody th small{text-wrap:balance}
     self.render = function () {
       W = plot.clientWidth; H = plot.clientHeight;
       if (!W || !H) return;
-      x0 = S.view[0]; x1 = S.view[1];
+      x0 = st.view[0]; x1 = st.view[1];
       var offScale = cfg.robust && x0 < 2 && x1 > T_DIST;
       var a = idx(offScale ? 2 : x0), b = idx(x1), lo = Infinity, hi = -Infinity, i, s = '';
-      cfg.runs.forEach(function (k) { var d = R[k][cfg.key], v; for (i = a; i <= b; i++) { v = d[i]; if (v == null) continue; if (v < lo) lo = v; if (v > hi) hi = v; } });
+      runs.forEach(function (k) { var d = ctx.data(k)[cfg.key], v; for (i = a; i <= b; i++) { v = d[i]; if (v == null) continue; if (v < lo) lo = v; if (v > hi) hi = v; } });
       (cfg.include || []).forEach(function (v) { if (v < lo) lo = v; if (v > hi) hi = v; });
       if (lo === Infinity) { lo = 0; hi = 1; }
       var pad = (hi - lo) * 0.09 || 1; y0 = lo - pad; y1 = hi + pad;
@@ -954,8 +1105,8 @@ tbody th small{text-wrap:balance}
       if (cfg.zero && y0 < 0 && y1 > 0) s += '<line class="base" x1="' + left + '" x2="' + right + '" y1="' + f1(Y(0)) + '" y2="' + f1(Y(0)) + '"/>';
       if (cfg.ref != null) s += '<line class="ref" x1="' + left + '" x2="' + right + '" y1="' + f1(Y(cfg.ref)) + '" y2="' + f1(Y(cfg.ref)) + '"/>';
       s += '<clipPath id="' + uid + '"><rect x="' + left + '" y="' + top + '" width="' + (right - left) + '" height="' + (bot - top) + '"/></clipPath><g clip-path="url(#' + uid + ')">';
-      cfg.runs.forEach(function (k) {
-        var d = R[k][cfg.key], p = '', pen = false, i0 = Math.max(0, idx(x0) - 1), i1 = Math.min(N - 1, idx(x1) + 1);
+      runs.forEach(function (k) {
+        var d = ctx.data(k)[cfg.key], p = '', pen = false, i0 = Math.max(0, idx(x0) - 1), i1 = Math.min(N - 1, idx(x1) + 1);
         for (i = i0; i <= i1; i++) {
           if (d[i] == null) { pen = false; continue; }        // gap: the plate was not locked in the video here
           p += (pen ? 'L' : 'M') + f1(X((i + 1) * DT)) + ' ' + f1(Y(d[i]));
@@ -965,20 +1116,21 @@ tbody th small{text-wrap:balance}
       });
       s += '</g>';
       if (offScale) s += '<text class="note" x="' + f1(Math.max(left + 7, X(0.62))) + '" y="' + (cfg.robust === 'top' ? top + 13 : bot - 8) + '">' + t('note.offscale') + '</text>';
-      cfg.runs.forEach(function (k) { s += '<circle class="pt ' + k + '" data-pt="' + k + '" r="4.5"/>'; });
+      if (!runs.length && ctx.empty) s += '<text class="note" x="' + f1((left + right) / 2) + '" y="' + f1((top + bot) / 2) + '" text-anchor="middle">' + t(ctx.empty) + '</text>';      // e.g. d̂ with no observer-on run picked
+      runs.forEach(function (k) { s += '<circle class="pt ' + k + '" data-pt="' + k + '" r="4.5"/>'; });
       svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
       svg.innerHTML = s;
       dots = {};
-      cfg.runs.forEach(function (k) { dots[k] = $('[data-pt="' + k + '"]', svg); });
+      runs.forEach(function (k) { dots[k] = $('[data-pt="' + k + '"]', svg); });
       ph.style.top = cx.style.top = top + 'px';
       ph.style.height = cx.style.height = (bot - top) + 'px';
     };
 
     self.cursor = function () {
       if (!W) return;
-      var tc = S.hover != null ? S.hover : S.t, i = idx(tc), show = tc >= x0 - 1e-6 && tc <= x1 + 1e-6 && tc >= DT / 2 && tc <= T_END;
-      cfg.runs.forEach(function (k) {
-        var v = R[k][cfg.key][i], dot = dots[k];
+      var tc = st.hover != null ? st.hover : st.t, i = idx(tc), show = tc >= x0 - 1e-6 && tc <= x1 + 1e-6 && tc >= DT / 2 && tc <= T_END;
+      runs.forEach(function (k) {
+        var v = ctx.data(k)[cfg.key][i], dot = dots[k];
         if (v == null) { if (valEls[k]) valEls[k].textContent = '–'; if (dot) dot.style.display = 'none'; return; }
         if (valEls[k]) valEls[k].textContent = cfg.signed ? signed(v, cfg.dp) : num(v, cfg.dp);
         if (dot) {
@@ -987,15 +1139,15 @@ tbody th small{text-wrap:balance}
           if (ok) { dot.setAttribute('cx', f1(X((i + 1) * DT))); dot.setAttribute('cy', f1(yy)); }
         }
       });
-      var pin = S.t >= x0 && S.t <= x1;
+      var pin = st.t >= x0 && st.t <= x1;
       ph.hidden = !pin;
-      if (pin) ph.style.transform = 'translateX(' + f1(X(S.t)) + 'px)';
-      var hin = S.hover != null && S.hover >= x0 && S.hover <= x1;
+      if (pin) ph.style.transform = 'translateX(' + f1(X(st.t)) + 'px)';
+      var hin = st.hover != null && st.hover >= x0 && st.hover <= x1;
       cx.hidden = !hin;
-      if (hin) cx.style.transform = 'translateX(' + f1(X(S.hover)) + 'px)';
-      var showLab = hin && S.hoverChart === self;
+      if (hin) cx.style.transform = 'translateX(' + f1(X(st.hover)) + 'px)';
+      var showLab = hin && st.hoverChart === self;
       lab.hidden = !showLab;
-      if (showLab) { lab.textContent = 't = ' + S.hover.toFixed(2) + ' s'; lab.style.left = f1(clamp(X(S.hover), mg.l + 40, W - mg.r - 40)) + 'px'; }
+      if (showLab) { lab.textContent = 't = ' + st.hover.toFixed(2) + ' s'; lab.style.left = f1(clamp(X(st.hover), mg.l + 40, W - mg.r - 40)) + 'px'; }
     };
 
     function timeAt(e) { var r = plot.getBoundingClientRect(); return clamp(Tinv(e.clientX - r.left), Math.max(x0, 0), Math.min(x1, T_END)); }
@@ -1003,17 +1155,17 @@ tbody th small{text-wrap:balance}
       if (e.button) return;
       dragging = true;
       try { plot.setPointerCapture(e.pointerId); } catch (err) {}
-      seek(timeAt(e));
+      ctx.seek(timeAt(e));
     });
     plot.addEventListener('pointermove', function (e) {
       var t = timeAt(e);
-      if (dragging) seek(t);
-      S.hover = t; S.hoverChart = self; cursors();
+      if (dragging) ctx.seek(t);
+      st.hover = t; st.hoverChart = self; ctx.cursors();
     });
     function end() { dragging = false; }
     plot.addEventListener('pointerup', end);
     plot.addEventListener('pointercancel', end);
-    plot.addEventListener('pointerleave', function () { if (!dragging) { S.hover = null; S.hoverChart = null; cursors(); } });
+    plot.addEventListener('pointerleave', function () { if (!dragging) { st.hover = null; st.hoverChart = null; ctx.cursors(); } });
 
     if (window.ResizeObserver) new ResizeObserver(function () { self.render(); self.cursor(); }).observe(plot);
     return self;
@@ -1034,20 +1186,33 @@ tbody th small{text-wrap:balance}
     drawMarks();
     if (replay) replay.update(i);
   }
-  function setVideoTime(t) {
-    if (!vidReady) return;
+  function moveClip(v, t) {
     var ct = clamp(t + LEAD, 0, R.clipDur - 0.05);
     // A seek to where the clip already is still throws away what a phone has buffered, and playback then hangs after
     // pause -> play. So a clip is moved only when it is more than half a frame away.
-    vids.forEach(function (v) { if (Math.abs(v.currentTime - ct) > 0.017) { try { v.currentTime = ct; } catch (err) {} } });
+    if (Math.abs(v.currentTime - ct) > 0.017) { try { v.currentTime = ct; } catch (err) {} }
+  }
+  function setVideoTime(t) {
+    if (!vidReady) return;
+    vids.forEach(function (v) { moveClip(v, t); });
   }
   function seek(t) { S.t = clamp(t, T_MIN, T_MAX); setVideoTime(S.t); paint(); }
   function setPlaying(on) {
     S.playing = on;
     playBtns.forEach(function (b) { b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', t(on ? 'play.pause' : 'play.play')); });
   }
+  // One set of clips plays at a time: the top pair, the pair in the added-disturbance frame, or the comparison.
+  // Starting one stops the others, so a phone is not decoding six videos at once.
+  function others(from) {
+    if (EMBED) { try { window.parent.postMessage({ isp: 'playing' }, location.origin); } catch (err) {} return; }
+    if (from !== 'main' && S.playing) pause();
+    if (from !== 'cmp' && cmp && cmp.playing()) cmp.pause();
+    var df = document.getElementById('dis-frame');
+    if (df && df.contentWindow) { try { df.contentWindow.postMessage({ isp: 'pause' }, location.origin); } catch (err) {} }
+  }
   function play() {
     if (S.t >= T_MAX - 0.1) S.t = T_MIN;
+    others('main');
     setPlaying(true);
     $$('.frame.need-tap').forEach(function (f) { f.classList.remove('need-tap'); });
     if (vidFailed) {                                    // a press retries a load that failed
@@ -1069,20 +1234,20 @@ tbody th small{text-wrap:balance}
     $$('.frame[data-toggle]').forEach(function (f) { f.classList.add('need-tap'); });
     paint();
   }
-  // The first clip is the clock. The second follows it by playing slightly slower or faster; it is only
+  // The first clip is the clock. The others follow it by playing slightly slower or faster; one is only
   // re-seeked when far off, and never while a seek is still running, because seeks take long on phones.
-  var lastJump = 0;
-  function syncPair(ts) {
-    if (vOn.seeking || vOff.seeking || vOn.readyState < 2) return;
-    var d = vOn.currentTime - vOff.currentTime, rate = S.rate;         // d > 0: the second clip is ahead
+  function follow(v, m, base, ts) {
+    if (v.seeking || m.seeking || v.readyState < 2) return;
+    var d = v.currentTime - m.currentTime, rate = base;               // d > 0: the follower is ahead
     if (Math.abs(d) > 0.4) {
-      if (ts - lastJump > 1000) { lastJump = ts; try { vOn.currentTime = vOff.currentTime; } catch (err) {} }
+      if (ts - (v.ispJump || 0) > 1000) { v.ispJump = ts; try { v.currentTime = m.currentTime; } catch (err) {} }
     } else if (Math.abs(d) > 0.02) {
-      rate = Math.round(S.rate * clamp(1 - d * 1.5, 0.75, 1.25) * 20) / 20;
+      rate = Math.round(base * clamp(1 - d * 1.5, 0.75, 1.25) * 20) / 20;
     }
-    if (vOn.playbackRate !== rate) vOn.playbackRate = rate;
-    if (vOn.paused && !vOn.ended) { var p = vOn.play(); if (p && p.catch) p.catch(function () {}); }
+    if (v.playbackRate !== rate) v.playbackRate = rate;
+    if (v.paused && !v.ended) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
   }
+  function syncPair(ts) { follow(vOn, vOff, S.rate, ts); }
   function pause() { setPlaying(false); vids.forEach(function (v) { v.pause(); }); if (vidReady && !vidFailed) { S.t = vOff.currentTime - LEAD; setVideoTime(S.t); } paint(); }
   function toggle() { if (S.playing) pause(); else play(); }
 
@@ -1102,6 +1267,7 @@ tbody th small{text-wrap:balance}
       }
       paint();
     }
+    if (cmp) cmp.tick(ts);
     last = ts;
     requestAnimationFrame(frame);
   }
@@ -1159,11 +1325,17 @@ tbody th small{text-wrap:balance}
     var ct = vidReady && !vidFailed && shown[k] != null ? shown[k] : S.t + LEAD;
     return clamp(Math.round(ct * TR.fps), 0, TR[k].deck.length - 1);
   }
-  function Marks(svg, k) {
-    var T = TR[k], NS = 'http://www.w3.org/2000/svg', n = T.deck.length, RECENT = Math.round(1.5 * TR.fps), D2R = Math.PI / 180;
+  // o (optional, for the comparison clips): set = that experiment's tracking, cls = colour class, frame() = the clip frame shown,
+  // upp() = picture units per screen pixel, small() = phone-size marks, read = null for no readouts in the chips and dock.
+  function Marks(svg, k, o) {
+    o = o || {};
+    var TS = o.set || TR, cls = o.cls || k, zoom = o.zoom || Z, rd = o.read === undefined ? read[k] : o.read;
+    var frameNow = o.frame || function () { return clipFrame(k); }, upp = o.upp || function () { return UPP; };
+    var isSmall = o.small || function () { return !!(phone && phone.matches); };
+    var T = TS[k], NS = 'http://www.w3.org/2000/svg', n = T.deck.length, RECENT = Math.round(1.5 * TS.fps), D2R = Math.PI / 180;
     var host = svg.parentNode, labTh = $('[data-lab="th"]', host), labDeck = $('[data-lab="deck"]', host);
     var fig = host.parentNode, vTh = $('[data-v="th"]', fig), vDeck = $('[data-v="deck"]', fig);      // the same values as text under the clip (phones)
-    function el(name, cls) { var e = document.createElementNS(NS, name); e.setAttribute('class', cls); svg.appendChild(e); return e; }
+    function el(name, c) { var e = document.createElementNS(NS, name); e.setAttribute('class', c); svg.appendChild(e); return e; }
     function r1(v) { return v.toFixed(1); }
     function dir(deg) { var a = deg * D2R; return [Math.cos(a), -Math.sin(a)]; }          // screen y points down
     function seg(e, x1, y1, x2, y2) { e.setAttribute('x1', r1(x1)); e.setAttribute('y1', r1(y1)); e.setAttribute('x2', r1(x2)); e.setAttribute('y2', r1(y2)); }
@@ -1171,11 +1343,14 @@ tbody th small{text-wrap:balance}
       e.setAttribute('d', 'M' + r1(cx + ax * r) + ' ' + r1(cy + ay * r) + 'A' + r + ' ' + r + ' 0 0 ' + sweep + ' ' + r1(cx + bx * r) + ' ' + r1(cy + by * r));
     }
     [labTh, labDeck].forEach(function (lab) {      // symbol and value apart, so a phone can show the symbol alone
+      if (!lab) return;
       lab.textContent = ''; lab.appendChild(document.createElement('b')); lab.appendChild(document.createElement('span'));
     });
+    function text(e, v) { if (e) e.textContent = v; }
     function place(lab, x, y, sym, val) {
-      var px = (x / TR.w - Z.u) * Z.s, py = (y / TR.h - Z.v) * Z.s;      // through the zoom
-      if (Z.s > 1 && (px < 0.09 || px > 0.91 || py < 0.05 || py > 0.95)) { lab.hidden = true; return; }      // no half labels at the edge of a zoomed clip
+      if (!lab) return;                            // the comparison clips have no labels on the picture
+      var px = (x / TS.w - zoom.u) * zoom.s, py = (y / TS.h - zoom.v) * zoom.s;      // through the zoom
+      if (zoom.s > 1 && (px < 0.09 || px > 0.91 || py < 0.05 || py > 0.95)) { lab.hidden = true; return; }      // no half labels at the edge of a zoomed clip
       lab.hidden = false; lab.firstChild.textContent = sym; lab.lastChild.textContent = ' ' + val;
       lab.style.left = (px * 100).toFixed(2) + '%'; lab.style.top = (py * 100).toFixed(2) + '%';
     }
@@ -1183,20 +1358,20 @@ tbody th small{text-wrap:balance}
 
     // Reference line: fixed in the picture, through the hinge pin, along the direction the base has at the middle of its stroke.
     // It does not move when the base rocks. The base angle is measured from it (about -4 to +4 deg).
-    var hx = TR.hinge[0], hy = TR.hinge[1], MID = T.info.deckSwing / 2;
+    var hx = TS.hinge[0], hy = TS.hinge[1], MID = T.info.deckSwing / 2;
     var g0x = T.mx[0] - hx, g0y = T.my[0] - hy, a0 = -(T.deck[0] - MID) * D2R;
     var gX = g0x * Math.cos(a0) + g0y * Math.sin(a0), gY = -g0x * Math.sin(a0) + g0y * Math.cos(a0), gLen = Math.sqrt(gX * gX + gY * gY);
     gX /= gLen; gY /= gLen;
     var ground = el('line', 'mk-ground');
     seg(ground, hx - gX * 70, hy - gY * 70, hx + gX * (gLen + 110), hy + gY * (gLen + 110));
-    var deckLine = el('line', 'mk-line ' + k), deckArc = el('path', 'mk-arc');
+    var deckLine = el('line', 'mk-line ' + cls), deckArc = el('path', 'mk-arc');
 
     // Launcher: the plate's axis, square to its tracked edge, drawn from where it meets the reference line up past the plate.
     // The dashed line from the same point is the 45 deg target (the direction the axis had at the hold). The two lines are equally
     // long, so the gap between their far ends is the tilt error; a ring around the target's end shows where to look.
     var A0 = (T.info.upper45 != null ? T.info.upper45 : T.info.holdUpper) + 90, dT = dir(A0), EXT = 110, RING = 32;      // axis direction at theta = 45
-    var tgtLine = el('line', 'mk-tgt'), axisLine = el('line', 'mk-line ' + k), thArc = el('path', 'mk-arc'), ring = el('circle', 'mk-ring'), tip = el('circle', 'mk-tip ' + k);
-    var plateLine = el('line', 'mk-axis ' + k), aim = [tgtLine, axisLine, thArc, ring, tip], focus = null;
+    var tgtLine = el('line', 'mk-tgt'), axisLine = el('line', 'mk-line ' + cls), thArc = el('path', 'mk-arc'), ring = el('circle', 'mk-ring'), tip = el('circle', 'mk-tip ' + cls);
+    var plateLine = el('line', 'mk-axis ' + cls), aim = [tgtLine, axisLine, thArc, ring, tip], focus = null;
 
     // the three tracked points and the paths they have drawn
     var dots = [[T.mx, T.my], [T.cx, T.cy], [T.tx, T.ty]].map(function (xy) {
@@ -1205,15 +1380,15 @@ tbody th small{text-wrap:balance}
         pts.push(xy[0][i] == null ? '' : xy[0][i] + ',' + xy[1][i]);
         if (xy[0][i] != null) { if (first < 0) first = i; last = i; }
       }
-      return { x: xy[0], y: xy[1], pts: pts, first: first, last: last, path: el('polyline', 'mk-path ' + k), recent: el('polyline', 'mk-recent ' + k) };
+      return { x: xy[0], y: xy[1], pts: pts, first: first, last: last, path: el('polyline', 'mk-path ' + cls), recent: el('polyline', 'mk-recent ' + cls) };
     });
-    dots.forEach(function (d) { d.bg = el('circle', 'mk-dotbg'); d.dot = el('circle', 'mk-dot ' + k); });     // dots sit above everything
-    function disc(e, x, y, px) { e.setAttribute('cx', x); e.setAttribute('cy', y); e.setAttribute('r', (px * UPP).toFixed(2)); }      // px: radius on screen
+    dots.forEach(function (d) { d.bg = el('circle', 'mk-dotbg'); d.dot = el('circle', 'mk-dot ' + cls); });     // dots sit above everything
+    function disc(e, x, y, px) { e.setAttribute('cx', x); e.setAttribute('cy', y); e.setAttribute('r', (px * upp()).toFixed(2)); }      // px: radius on screen
 
     return {
       focus: function () { return focus; },          // centre of the ring, for the zoom button
       update: function () {
-        var f = clipFrame(k), tilt = T.tilt[f], deck = T.deck[f] - MID, small = !!(phone && phone.matches);
+        var f = frameNow(), tilt = T.tilt[f], deck = T.deck[f] - MID, small = isSmall();
         dots.forEach(function (d) {
           var on = f >= d.first && f <= d.last;
           show([d.path, d.recent, d.bg, d.dot], on);
@@ -1228,13 +1403,13 @@ tbody th small{text-wrap:balance}
         seg(deckLine, hx, hy, mx, my);
         arc(deckArc, hx, hy, Math.round(len * 0.9), gX, gY, vx / len, vy / len, deck >= 0 ? 0 : 1);
         place(labDeck, mx + (small ? 30 : 52), my - (small ? 34 : 22), t('lab.deck'), num(deck, 1) + '°');
-        vDeck.textContent = num(deck, 1) + '°';
+        text(vDeck, num(deck, 1) + '°');
 
         // launcher angle: 45 deg at the hold, plus the rotation measured since
         focus = null;
         if (T.cx[f] == null || tilt == null) {
-          show(aim, false); show([plateLine], false); labTh.hidden = true;
-          vTh.textContent = '–';
+          show(aim, false); show([plateLine], false); if (labTh) labTh.hidden = true;
+          text(vTh, '–');
         } else {
           var cx = T.cx[f], cy = T.cy[f], tx = T.tx[f], ty = T.ty[f], mpx = (cx + tx) / 2, mpy = (cy + ty) / 2;
           var dA = dir(A0 - tilt), den = dA[0] * gY - dA[1] * gX;                     // theta rises as the plate turns clockwise on screen
@@ -1255,11 +1430,13 @@ tbody th small{text-wrap:balance}
             place(labTh, Qx + RING + (small ? 16 : 46), Qy - 6, 'θ', num(REF + tilt, 1) + '°');      // the angle is read at the top, right of the ring (the run's name tag sits top left)
             focus = [Qx, Qy];
           }
-          vTh.textContent = num(REF + tilt, 1) + '°';
+          text(vTh, num(REF + tilt, 1) + '°');
         }
-        var txt = tilt == null ? '–' : signed(tilt, 2) + '°';
-        read[k].tilt.textContent = txt; read[k].d.textContent = txt;
-        read[k].deck.textContent = num(deck, 1) + '°';
+        if (rd) {
+          var txt = tilt == null ? '–' : signed(tilt, 2) + '°';
+          rd.tilt.textContent = txt; rd.d.textContent = txt;
+          rd.deck.textContent = num(deck, 1) + '°';
+        }
       }
     };
   }
@@ -1638,6 +1815,214 @@ tbody th small{text-wrap:balance}
     return { update: update };
   }
 
+  /* ---------- comparison: two to four runs from both experiments, on one clock ---------- */
+  // The clips play together (the first picked clip is the clock, the others follow it as in the top pair) and the chart
+  // overlays the picked runs. Clips load only once the section is near and the run is picked.
+  var cmp = null;
+  function Compare() {
+    var root = $('#cmp'), RB = window.ISP_RUNS, RD = window.ISP_RUNS_DIS;
+    if (!root) return null;
+    if (EMBED || !RB || !RD) { root.hidden = true; return null; }
+    var TB = window.ISP_TRACK || null, TD = window.ISP_TRACK_DIS || null;
+    derive(RB, TB); derive(RD, TD);
+    var IDS = ['off', 'on', 'doff', 'don'];
+    var RUN = { off: { r: RB.off, ts: TB, k: 'off' }, on: { r: RB.on, ts: TB, k: 'on' }, doff: { r: RD.off, ts: TD, k: 'off' }, don: { r: RD.on, ts: TD, k: 'on' } };
+    var C = { t: 9.0, hover: null, hoverChart: null, view: [0, T_END], playing: false, rate: 1 };
+    var sel = IDS.slice(), near = false, cw = 0;
+    var clips = $('.cmp-clips', root), figs = {}, vid = {}, shownAt = {}, mk = {};
+    var playB = $('[data-cplay]', root), clock = $('[data-cclock]', root), scrub = $('#cmp-scrub'), pickLab = $('[data-cmp-pick]', root), warnT = 0;
+    IDS.forEach(function (id) { figs[id] = $('.cclip[data-run="' + id + '"]', clips); vid[id] = $('video', figs[id]); shownAt[id] = null; });
+
+    function live(v) { return v.readyState >= 1 && !!v.getAttribute('src') && !v.ispFailed; }
+    function picked() { return sel.map(function (id) { return vid[id]; }); }
+    // The clock is the first picked clip that has loaded and not failed, so one slow or broken file does not stop the rest.
+    function master() { for (var n = 0; n < sel.length; n++) if (live(vid[sel[n]])) return vid[sel[n]]; return null; }
+    function allFailed() { return sel.every(function (id) { return vid[id].ispFailed; }); }
+    function load(id) {                               // poster and file both wait, so the page and its frame fetch neither early
+      var v = vid[id];
+      if (v.getAttribute('src')) return;
+      v.setAttribute('poster', v.getAttribute('data-poster'));
+      v.preload = 'auto';
+      v.setAttribute('src', v.getAttribute('data-src'));
+      try { v.load(); } catch (err) {}
+    }
+    function setTime(v, t) { if (live(v)) moveClip(v, t); }
+    function startClip(v) { v.playbackRate = C.rate; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+    IDS.forEach(function (id) {
+      var v = vid[id];
+      v.addEventListener('loadedmetadata', function () {
+        setTime(v, C.t);
+        if (C.playing && sel.indexOf(id) >= 0) startClip(v);
+      });
+      v.addEventListener('error', function () { v.ispFailed = true; });
+    });
+
+    // tracking marks, the same drawing as on the top clips, without labels on the picture (the angle is under each clip)
+    function measure() {
+      var f = sel.length ? $('.frame', figs[sel[0]]) : null;
+      cw = f ? f.clientWidth : 0;
+    }
+    function frameOf(id) {
+      var T = RUN[id].ts, v = vid[id], ct = live(v) && shownAt[id] != null ? shownAt[id] : C.t + LEAD;
+      return clamp(Math.round(ct * T.fps), 0, T[RUN[id].k].deck.length - 1);
+    }
+    IDS.forEach(function (id) {
+      var ts = RUN[id].ts, v = vid[id];
+      if (!ts) return;
+      mk[id] = Marks($('.marks', figs[id]), RUN[id].k, {
+        set: ts, cls: id, zoom: { s: 1, u: 0, v: 0 }, read: null,
+        frame: function () { return frameOf(id); },
+        upp: function () { return cw ? ts.w / cw : 1; },
+        small: function () { return cw < 420; }
+      });
+      if (v.requestVideoFrameCallback) {
+        var cb = function (now, meta) { shownAt[id] = meta.mediaTime; if (sel.indexOf(id) >= 0) mk[id].update(); v.requestVideoFrameCallback(cb); };
+        v.requestVideoFrameCallback(cb);
+      }
+    });
+    function drawMarksC() { sel.forEach(function (id) { if (mk[id]) mk[id].update(); }); }
+
+    // chart: the picked runs that have the channel (d̂ exists only where the observer was on)
+    var chart = Chart($('[data-chart="cmp"]', root), {
+      st: C,
+      data: function (id) { return RUN[id].r; },
+      runs: function (cfg) { return sel.filter(function (id) { return cfg.runs.indexOf(RUN[id].k) >= 0; }); },
+      empty: 'cmp.nodh',                             // the only channel some runs lack is d̂ (observer off)
+      seek: function (v) { seekC(v); },
+      cursors: function () { chart.cursor(); }
+    });
+
+    function setPlayingC(on) {
+      C.playing = on;
+      playB.setAttribute('aria-pressed', on ? 'true' : 'false');
+      playB.setAttribute('aria-label', t(on ? 'cmp.pause' : 'cmp.play'));
+    }
+    function paintC() {
+      chart.cursor();
+      clock.textContent = 't = ' + num(C.t, 2) + ' s';
+      if (document.activeElement !== scrub || C.playing) scrub.value = C.t.toFixed(2);
+      drawMarksC();
+    }
+    function seekC(v) { C.t = clamp(v, T_MIN, T_MAX); picked().forEach(function (c) { setTime(c, C.t); }); paintC(); }
+    function playC() {
+      if (C.t >= T_MAX - 0.1) C.t = T_MIN;
+      others('cmp');
+      setPlayingC(true);
+      near = true;
+      sel.forEach(function (id) {                     // a press retries a clip whose load failed
+        var v = vid[id];
+        if (v.ispFailed) { v.ispFailed = false; try { v.load(); } catch (err) {} }
+        load(id);
+      });
+      picked().forEach(function (v) { setTime(v, C.t); startClip(v); });
+    }
+    function pauseC() {
+      setPlayingC(false);
+      IDS.forEach(function (id) { vid[id].pause(); });
+      var m = master();
+      if (m && live(m)) { C.t = m.currentTime - LEAD; picked().forEach(function (v) { setTime(v, C.t); }); }
+      paintC();
+    }
+    var lastTs = 0;
+    function tick(ts) {
+      var step = lastTs ? Math.min(0.1, (ts - lastTs) / 1000) : 0;
+      lastTs = ts;
+      if (!C.playing) return;
+      var m = master();
+      if (m && !m.paused) {
+        C.t = m.currentTime - LEAD;
+        sel.forEach(function (id) { if (vid[id] !== m && live(vid[id])) follow(vid[id], m, C.rate, ts); });
+      } else if (!m && allFailed()) {
+        C.t += step * C.rate;                             // no clip at all: the clock runs alone, as for the top pair
+      }                                                   // otherwise the clips are still loading, and the clock waits for them
+      if (C.t >= T_MAX - 0.03 || (m && m.ended)) {        // loop, as the top pair does
+        C.t = T_MIN;
+        picked().forEach(function (v) { setTime(v, C.t); startClip(v); });
+      }
+      paintC();
+    }
+
+    // picking runs: two at least, four at most
+    var runBtns = $$('.cmp-runs [data-run]', root);
+    function applySel() {
+      runBtns.forEach(function (b) { b.setAttribute('aria-pressed', sel.indexOf(b.getAttribute('data-run')) >= 0 ? 'true' : 'false'); });
+      IDS.forEach(function (id) {
+        var on = sel.indexOf(id) >= 0, v = vid[id];
+        figs[id].hidden = !on;
+        if (!on) { v.pause(); return; }
+        if (near) load(id);
+        setTime(v, C.t);
+        if (C.playing && live(v)) startClip(v);
+      });
+      clips.style.setProperty('--n', sel.length);
+      measure();
+      chart.relabel();
+      paintC();
+    }
+    runBtns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-run'), at = sel.indexOf(id);
+        if (at >= 0 && sel.length <= 2) {            // would leave one: the "2 to 4" label flashes instead
+          pickLab.classList.add('warn'); clearTimeout(warnT);
+          warnT = setTimeout(function () { pickLab.classList.remove('warn'); }, 1400);
+          return;
+        }
+        if (at >= 0) sel.splice(at, 1); else sel.push(id);
+        sel.sort(function (a, b2) { return IDS.indexOf(a) - IDS.indexOf(b2); });
+        applySel();
+      });
+    });
+
+    playB.addEventListener('click', function () { if (C.playing) pauseC(); else playC(); });
+    IDS.forEach(function (id) { $('.frame', figs[id]).addEventListener('click', function () { if (C.playing) pauseC(); else playC(); }); });
+    scrub.addEventListener('input', function () { seekC(parseFloat(scrub.value)); });
+    $$('[data-crate]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        C.rate = parseFloat(b.getAttribute('data-crate'));
+        IDS.forEach(function (id) { vid[id].playbackRate = C.rate; });
+        $$('[data-crate]', root).forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      });
+    });
+    $$('[data-cview]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        var name = b.getAttribute('data-cview');
+        C.view = VIEWS[name];
+        $$('[data-cview]', root).forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+        chart.render(); paintC();
+      });
+    });
+    $$('[data-csig]', root).forEach(function (b) {
+      b.addEventListener('click', function () {
+        chart.setSignal(b.getAttribute('data-csig'));
+        $$('[data-csig]', root).forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+      });
+    });
+    if (!TB || !TD) {                                 // without tracking for both, the clip signals and the angle under each clip go
+      $$('[data-cpick="clips"]', root).forEach(function (g) { g.hidden = true; });
+      $$('[data-csig]', root).forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-csig') === 'theta' ? 'true' : 'false'); });
+      chart.setSignal('theta');
+    }
+
+    if (window.ResizeObserver) new ResizeObserver(function () { measure(); drawMarksC(); }).observe(clips);
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es) {        // fetch the clips a little before they come on screen
+        if (es[0].isIntersecting && !near) { near = true; sel.forEach(load); }
+      }, { rootMargin: '600px 0px' }).observe(root);
+      new IntersectionObserver(function (es) {        // and stop them once they are off screen
+        if (!es[0].isIntersecting && C.playing) pauseC();
+      }).observe(root);
+    } else { near = true; sel.forEach(load); }
+
+    applySel();
+    setPlayingC(false);
+    return {
+      tick: tick,
+      pause: pauseC,
+      playing: function () { return C.playing; },
+      relabel: function () { chart.relabel(); setPlayingC(C.playing); paintC(); }
+    };
+  }
+
   /* ---------- language switch ---------- */
   function applyStatic() {
     [['data-i18n', function (el) { return el.textContent; }, function (el, v) { el.textContent = v; }],
@@ -1680,6 +2065,7 @@ tbody th small{text-wrap:balance}
     paintRate();
     applyZoom();
     charts.forEach(function (c) { c.relabel(); });
+    if (cmp) cmp.relabel();
     paint();
     if (announce) { try { location.hash = LANG; } catch (err) {} }               // #ko / #en makes the choice a shareable link
     var df = !EMBED && document.getElementById('dis-frame');                       // the framed section follows the page's language
@@ -1721,10 +2107,14 @@ tbody th small{text-wrap:balance}
   }
 
   /* ---------- boot ---------- */
-  $$('[data-chart]').forEach(function (el) { var c = Chart(el); charts.push(c); if (el.getAttribute('data-chart') === 'main') mainChart = c; });
+  $$('[data-chart]').forEach(function (el) {
+    if (el.getAttribute('data-chart') === 'cmp') return;      // the comparison builds its own chart
+    var c = Chart(el); charts.push(c); if (el.getAttribute('data-chart') === 'main') mainChart = c;
+  });
   charts.forEach(function (c) { c.render(); });
   applyStatic();                                   // before anything else rewrites tagged text
   replay = EMBED ? null : Replay();                // the frame shows no 3D view
+  cmp = Compare();                                 // nor the comparison
   setLang(LANG, false);
   ready();
   if (!reduced && !EMBED) { S.t = T_MIN; play(); }   // does not wait for the clips to load; see play(). The framed copy waits for a press.
@@ -1740,15 +2130,18 @@ tbody th small{text-wrap:balance}
     if (window.ResizeObserver) new ResizeObserver(report).observe(document.documentElement);
     window.addEventListener('load', report); report();
     window.addEventListener('message', function (e) {
-      if (e.origin === location.origin && e.data && e.data.isp === 'lang' && e.data.lang !== LANG) setLang(e.data.lang, false);
+      if (e.origin !== location.origin || !e.data) return;
+      if (e.data.isp === 'lang' && e.data.lang !== LANG) setLang(e.data.lang, false);
+      else if (e.data.isp === 'pause' && S.playing) pause();       // other clips on the page started
     });
   } else {
     var disFrame = $('#dis-frame');
     if (disFrame) {
       disFrame.src = location.pathname + '?exp=dis&embed=1#' + LANG;      // an absolute path, so the /ko/ page's <base> does not move it
       window.addEventListener('message', function (e) {
-        if (e.origin !== location.origin || e.source !== disFrame.contentWindow || !e.data || e.data.isp !== 'height') return;
-        disFrame.style.height = e.data.h + 'px';
+        if (e.origin !== location.origin || e.source !== disFrame.contentWindow || !e.data) return;
+        if (e.data.isp === 'height') disFrame.style.height = e.data.h + 'px';
+        else if (e.data.isp === 'playing') { if (S.playing) pause(); if (cmp && cmp.playing()) cmp.pause(); }   // the framed pair started
       });
     }
   }
