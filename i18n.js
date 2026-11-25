@@ -40,7 +40,7 @@ window.ISP_I18N = {
     'm.vrms.n': 'Tracking RMSE',
     'm.vmax.n': 'Largest error',
     'm.vdeck.n': 'φ peak to peak',
-    'm.vdiff.n': 'RMS difference from log',
+    'm.vdiff.n': 'Diff. from log, RMS',
     'unit.pts': ' pp',
     'tbl.metric': 'Metric',
     'tbl.change': 'Change',

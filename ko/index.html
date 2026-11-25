@@ -259,12 +259,6 @@ thead tr.sets th.set{text-align:center;padding-right:0;font-size:13px;font-weigh
 #metrics-key em{display:inline-block;margin-bottom:2px}
 /* when the table is wider than the screen it slides sideways, and the metric names stay put */
 .tbl-wrap tbody th[scope="row"],.tbl-wrap thead tr.sets th:first-child{position:sticky;left:0;z-index:1;background:var(--plane)}
-/* phones: each metric's name on its own line, its six numbers on the line under it across the whole width */
-table.stack tr.lab th{padding:11px 0 0;border-bottom:0;font-size:12.5px;font-weight:500;color:var(--ink)}
-table.stack tr.val td{padding-top:3px;font-size:13px}
-table.stack td.n,table.stack th.n{padding-left:4px}
-table.stack td.gs,table.stack th.gs{padding-left:8px}
-table.stack thead th.n{white-space:nowrap}
 .tbl-wrap.more-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 
 /* ---------- comparison of two to four runs from both experiments ---------- */
@@ -400,11 +394,11 @@ footer{height:96px}      /* room for the fixed play bar */
   .how li{grid-template-columns:1fr;gap:2px}
   /* the table fits the screen instead of scrolling sideways */
   table{min-width:0;font-size:12.5px}
-  th,td{padding:8px 6px 8px 0}
-  td.n,th.n{padding-left:5px;font-size:11.5px}
-  thead th{font-size:11px}
-  td.gs,th.gs{padding-left:6px}
-  thead th.n{white-space:normal}
+  th,td{padding:8px 4px 8px 0}
+  td.n,th.n{padding-left:6px;font-size:12px}
+  thead th{font-size:11.5px}
+  td.gs,th.gs{padding-left:7px}
+  thead th.n{white-space:nowrap}
   tbody th small{font-size:11.5px}
   /* comparison: the four run buttons in two columns, the clips two to a row */
   .cmp-runs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
@@ -446,9 +440,9 @@ html{overflow-anchor:none}
       <a href="#runs" data-i18n="nav.runs">Runs</a>
       <a href="#signals" data-i18n="nav.signals">Signals</a>
       <a href="#replay" data-i18n="nav.replay">3D replay</a>
-      <a href="#metrics" data-i18n="nav.metrics">Metrics</a>
       <a href="#dis" data-i18n="nav.dis">Disturbance+</a>
       <a href="#cmp" data-i18n="nav.cmp">Side by side</a>
+      <a href="#metrics" data-i18n="nav.metrics">Metrics</a>
       <a href="#rig" data-i18n="nav.rig">Rig</a>
     </div>
     <div class="seg lang" role="group" aria-label="Language" data-i18n-aria="lang.aria">
@@ -683,23 +677,6 @@ html{overflow-anchor:none}
   </div>
 </section>
 
-<section id="metrics">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <h2 data-i18n="metrics.title">The numbers</h2>
-        <p class="sub" id="metrics-key" hidden></p>
-      </div>
-    </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead id="metrics-head"></thead>
-        <tbody id="metrics-body"></tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
 <section id="dis">
   <div class="wrap">
     <div class="sec-head">
@@ -812,6 +789,23 @@ html{overflow-anchor:none}
   </div>
 </section>
 
+<section id="metrics">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2 data-i18n="metrics.title">The numbers</h2>
+        <p class="sub" id="metrics-key" hidden></p>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead id="metrics-head"></thead>
+        <tbody id="metrics-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <section id="rig">
   <div class="wrap">
     <div class="sec-head">
@@ -870,7 +864,7 @@ html{overflow-anchor:none}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=c4d276ba"></script>
+<script src="i18n.js?v=ac828b85"></script>
 <script>
 (function () {
   'use strict';
@@ -1020,24 +1014,20 @@ html{overflow-anchor:none}
       { id: 'vdiff', clip: function (S, k) { return S.TR ? clipVsLog(S.R[k]) : null; }, dp: 2, u: '°', plain: true }
     );
   }
-  // On a phone the metric's name goes on its own line above its numbers, so the six number columns get the whole width
-  // (side by side, the names broke into three lines and the numbers ran together).
+  // On a phone the column heads are OFF / ON (the experiment's name is over them): "DOB_OFF" did not fit and broke in two.
   var stackTbl = window.matchMedia ? window.matchMedia('(max-width:640px)') : null;
   function renderMetrics() {                       // everything here is text, so it is rebuilt when the language changes
-    var body = $('#metrics-body'), head = $('#metrics-head'), stack = !!(stackTbl && stackTbl.matches);
-    var cols = (stack ? 0 : 1) + 3 * TSETS.length;
+    var body = $('#metrics-body'), head = $('#metrics-head'), short = !!(stackTbl && stackTbl.matches);
+    var cols = 1 + 3 * TSETS.length;
     function cellEl(tag, txt, cls, span) { var c = document.createElement(tag); if (cls) c.className = cls; if (span) c.colSpan = span; c.textContent = txt; return c; }
-    head.parentNode.classList.toggle('stack', stack);
-    // header: the experiments over their columns, then DOB_OFF / DOB_ON (OFF / ON on a phone) / change under each
+    // header: the experiments over their columns, then DOB_OFF / DOB_ON / change under each
     head.textContent = '';
-    var h1 = document.createElement('tr'), h2 = document.createElement('tr');
-    h1.className = 'sets';
-    if (!stack) { var first = cellEl('th', t('tbl.metric')); first.rowSpan = 2; first.scope = 'col'; h1.appendChild(first); }
-    TSETS.forEach(function (S, si) {
-      var lead = stack && !si ? 'n' : 'n gs';       // a rule before each experiment, except at the table's left edge
-      var g = cellEl('th', t(S.name), lead + ' set', 3); g.scope = 'colgroup'; h1.appendChild(g);
-      [stack ? 'OFF' : 'DOB_OFF', stack ? 'ON' : 'DOB_ON', t('tbl.change')].forEach(function (txt, n) {
-        var c = cellEl('th', txt, n ? 'n' : lead); c.scope = 'col'; h2.appendChild(c);
+    var h1 = document.createElement('tr'), h2 = document.createElement('tr'), first = cellEl('th', t('tbl.metric'));
+    h1.className = 'sets'; first.rowSpan = 2; first.scope = 'col'; h1.appendChild(first);
+    TSETS.forEach(function (S) {
+      var g = cellEl('th', t(S.name), 'n gs set', 3); g.scope = 'colgroup'; h1.appendChild(g);
+      [short ? 'OFF' : 'DOB_OFF', short ? 'ON' : 'DOB_ON', t('tbl.change')].forEach(function (txt, n) {
+        var c = cellEl('th', txt, n ? 'n' : 'n gs'); c.scope = 'col'; h2.appendChild(c);
       });
     });
     head.appendChild(h1); head.appendChild(h2);
@@ -1051,15 +1041,11 @@ html{overflow-anchor:none}
         return;
       }
       th.textContent = unitName(t('m.' + row.id + '.n'), row.u);
-      if (stack) {                                   // name row, then the numbers row
-        var lab = document.createElement('tr');
-        lab.className = 'lab'; th.colSpan = cols; th.scope = 'colgroup'; lab.appendChild(th); body.appendChild(lab);
-        tr.className = 'val';
-      } else { th.scope = 'row'; tr.appendChild(th); }
-      TSETS.forEach(function (S, si) {
+      th.scope = 'row'; tr.appendChild(th);
+      TSETS.forEach(function (S) {
         var a = row.clip ? row.clip(S, 'off') : S.M.off[row.id], b = row.clip ? row.clip(S, 'on') : S.M.on[row.id];
         var chg = row.plain || a == null || b == null ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b);
-        [cell(a, row), cell(b, row), chg].forEach(function (txt, n) { tr.appendChild(cellEl('td', txt, n || (stack && !si) ? 'n' : 'n gs')); });
+        [cell(a, row), cell(b, row), chg].forEach(function (txt, n) { tr.appendChild(cellEl('td', txt, n ? 'n' : 'n gs')); });
       });
       body.appendChild(tr);
     });
@@ -1076,7 +1062,7 @@ html{overflow-anchor:none}
     });
     if (keyEl) { keyEl.hidden = !lines.length; keyEl.innerHTML = lines.join('<br>'); }
 
-    if (!renderMetrics.watching && stackTbl) {      // turning a phone or resizing across the width rebuilds the table in the other layout
+    if (!renderMetrics.watching && stackTbl) {      // turning a phone or resizing across the width rebuilds the heads
       renderMetrics.watching = true;
       var relayout = function () { renderMetrics(); if (linkRow) rowFades(); };
       if (stackTbl.addEventListener) stackTbl.addEventListener('change', relayout); else if (stackTbl.addListener) stackTbl.addListener(relayout);
