@@ -384,8 +384,8 @@ footer{height:96px}      /* room for the fixed play bar */
   .mk-axis{stroke-width:1.5}
   .transport{grid-template-columns:auto 1fr auto}
   .transport .rail{grid-column:1/-1;grid-row:2}
-  .dock .err{display:none}
-  .dock .wrap{grid-template-columns:auto auto minmax(0,1fr)}
+  .dock{display:none!important}      /* phones: no play bar following down the page (each section has its own controls) */
+  footer{height:24px}
   .legend b{min-width:5.5ch}
   .stage{aspect-ratio:4/3}
   .stage-hint{font-size:11px;right:8px;left:8px;text-align:right}
@@ -2288,19 +2288,22 @@ html{overflow-anchor:none}
     // the bar at the bottom plays the clips at the top; it is hidden while those are on screen, above them,
     // and while the added-disturbance section (which has its own controls) is on screen
     var dock = $('#dock'), tr = $('#transport'), disSec = $('#dis'), cmpSec = $('#cmp'), trShown = true, trBelow = true, disShown = false, cmpShown = false;
-    var repSec = $('#replay'), repShown = false;
+    var stageEl = $('#stage'), repShown = false;
     var setDock = function () { dock.hidden = trShown || trBelow || disShown || cmpShown || repShown; };      // the 3D section has its own bar
     new IntersectionObserver(function (es) {
       var en = es[0];
       trShown = en.isIntersecting; trBelow = en.boundingClientRect.top > 0; setDock();
     }).observe(tr);
-    if (disSec) new IntersectionObserver(function (es) { disShown = es[0].isIntersecting; setDock(); }).observe(disSec);
-    if (cmpSec) new IntersectionObserver(function (es) { cmpShown = es[0].isIntersecting; setDock(); }).observe(cmpSec);      // the comparison has its own controls too
-    if (repSec) new IntersectionObserver(function (es) {
-      repShown = es[0].isIntersecting; setDock();
+    if (disSec) new IntersectionObserver(function (es) { disShown = es[es.length - 1].isIntersecting; setDock(); }).observe(disSec);
+    if (cmpSec) new IntersectionObserver(function (es) { cmpShown = es[es.length - 1].isIntersecting; setDock(); }).observe(cmpSec);      // the comparison has its own controls too
+    // The 3D model counts as on screen when at least 40 % of it is: then the bottom bar gives way to its own bar and it
+    // starts by itself. (Any edge of the section peeking in hid the bar while the signals above were being read.)
+    if (stageEl) new IntersectionObserver(function (es) {
+      var en = es[es.length - 1], r = en.isIntersecting ? en.intersectionRatio : 0;
+      repShown = r >= 0.4; setDock();
       if (repShown && !R3.playing && !R3.held && !reduced) { if (R3.t >= T_MAX - 0.1) R3.t = T_MIN; setPlay3d(true); }
-      else if (!repShown && R3.playing) setPlay3d(false);
-    }).observe(repSec);
+      else if (!r && R3.playing) setPlay3d(false);
+    }, { threshold: [0, 0.4] }).observe(stageEl);
   }
 
   /* ---------- boot ---------- */
