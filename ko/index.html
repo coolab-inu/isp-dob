@@ -393,10 +393,11 @@ footer{height:96px}      /* room for the fixed play bar */
   .dial{grid-template-columns:1fr;padding:10px 12px}
   .how li{grid-template-columns:1fr;gap:2px}
   /* the table fits the screen instead of scrolling sideways */
-  table{min-width:0;font-size:13px}
-  th,td{padding:8px 8px 8px 0}
-  td.n,th.n{padding-left:8px;font-size:12px}
-  thead th{font-size:11.5px}
+  table{min-width:0;font-size:12.5px}
+  th,td{padding:8px 6px 8px 0}
+  td.n,th.n{padding-left:5px;font-size:11.5px}
+  thead th{font-size:11px}
+  td.gs,th.gs{padding-left:6px}
   thead th.n{white-space:normal}
   tbody th small{font-size:11.5px}
   /* comparison: the four run buttons in two columns, the clips two to a row */
@@ -863,7 +864,7 @@ html{overflow-anchor:none}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=360d32b2"></script>
+<script src="i18n.js?v=ab06653a"></script>
 <script>
 (function () {
   'use strict';
@@ -988,7 +989,8 @@ html{overflow-anchor:none}
   }
 
   function pct(a, b) { if (a == null || b == null || !a) return '–'; var p = (b - a) / a * 100; return signed(p, 0) + '%'; }
-  function cell(v, row) { return v == null || isNaN(v) ? '–' : num(v, row.dp) + row.u; }
+  function cell(v, row) { return v == null || isNaN(v) ? '–' : num(v, row.dp); }      // the unit is in the row's name, so the six number columns fit a phone
+  function unitName(name, u) { return /\)$/.test(name) ? name.replace(/\)$/, ', ' + u + ')') : name + ' (' + u + ')'; }
   function clipVsLog(r) {                          // the clips and the logs are the same runs: RMS of (tilt seen in the clip - logged error)
     var a = idx(5.5), b = idx(14.9), s = 0, n = 0, i, d;
     for (i = a; i <= b; i++) { if (r.tiltv[i] == null) continue; d = r.tiltv[i] - r.err[i]; s += d * d; n++; }
@@ -996,10 +998,10 @@ html{overflow-anchor:none}
   }
   var ROWS = [
     { grp: 'tbl.g1' },
-    { id: 'rise', dp: 2, u: ' s' }, { id: 'overshoot', dp: 2, u: '°' }, { id: 'settle', dp: 2, u: ' s' }, { id: 'rest', dp: 3, u: '°' },
+    { id: 'rise', dp: 2, u: 's' }, { id: 'overshoot', dp: 2, u: '°' }, { id: 'settle', dp: 2, u: 's' }, { id: 'rest', dp: 3, u: '°' },
     { grp: 'tbl.g2' },
     { id: 'rms', dp: 3, u: '°' }, { id: 'max', dp: 2, u: '°' }, { id: 'p2p', dp: 2, u: '°' }, { id: 'deckpp', dp: 2, u: '°' },
-    { id: 'rpm', dp: 0, u: ' rpm' }, { id: 'iq', dp: 3, u: ' A' }, { id: 'lim', dp: 1, u: '%', pts: true }
+    { id: 'rpm', dp: 0, u: 'rpm' }, { id: 'iq', dp: 3, u: 'A' }, { id: 'lim', dp: 1, u: '%', pts: true }
   ];
   // rows measured in the clips (video tracking), per experiment set S and run k
   if (TSETS.some(function (S) { return S.TR; })) {
@@ -1021,7 +1023,11 @@ html{overflow-anchor:none}
     h1.className = 'sets'; first.rowSpan = 2; first.scope = 'col'; h1.appendChild(first);
     TSETS.forEach(function (S) {
       var g = cellEl('th', t(S.name), 'n gs', 3); g.scope = 'colgroup'; h1.appendChild(g);
-      ['DOB_OFF', 'DOB_ON', t('tbl.change')].forEach(function (txt, n) { var c = cellEl('th', txt, n ? 'n' : 'n gs'); c.scope = 'col'; h2.appendChild(c); });
+      ['DOB_OFF', 'DOB_ON', t('tbl.change')].forEach(function (txt, n) {
+        var c = cellEl('th', txt, n ? 'n' : 'n gs'); c.scope = 'col';
+        if (n < 2) c.innerHTML = txt.replace('_', '_<wbr>');      // DOB_ / OFF on two lines where the column is narrow
+        h2.appendChild(c);
+      });
     });
     head.appendChild(h1); head.appendChild(h2);
     body.textContent = '';
@@ -1031,7 +1037,7 @@ html{overflow-anchor:none}
         tr.className = 'grp'; th.colSpan = cols; th.scope = 'colgroup';
         th.appendChild(cellEl('span', t(row.grp))); tr.appendChild(th);
       } else {
-        th.scope = 'row'; th.textContent = t('m.' + row.id + '.n');
+        th.scope = 'row'; th.textContent = unitName(t('m.' + row.id + '.n'), row.u);
         tr.appendChild(th);
         TSETS.forEach(function (S) {
           var a = row.clip ? row.clip(S, 'off') : S.M.off[row.id], b = row.clip ? row.clip(S, 'on') : S.M.on[row.id];
