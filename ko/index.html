@@ -65,8 +65,12 @@ button{font:inherit;color:inherit}
 .brand img{height:34px;width:auto}
 .brand .lg-l{display:var(--lg-l)}
 .brand .lg-d{display:var(--lg-d)}
-.links{display:flex;gap:4px;overflow-x:auto;min-width:0;margin-left:auto;scrollbar-width:none}
+.links{display:flex;gap:4px;overflow-x:auto;min-width:0;margin-left:auto;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .links::-webkit-scrollbar{display:none}
+/* the links slide sideways when they do not fit; a fade on a side means more links that way */
+.links.more-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.links.more-l{-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px);mask-image:linear-gradient(90deg,transparent,#000 28px)}
+.links.more-l.more-r{-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
 .links a{font-size:13.5px;text-decoration:none;color:var(--ink-2);padding:6px 10px;border-radius:4px;white-space:nowrap}
 .links a:hover{color:var(--ink);background:var(--grid)}
 .links a[aria-current="true"]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--ink)}
@@ -128,6 +132,10 @@ h3{font-family:var(--font-body);font-weight:600;font-size:15px}
 .clips{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .frame{position:relative;aspect-ratio:6/5;max-width:100%;background:var(--video-bg);border-radius:6px;overflow:hidden;cursor:zoom-in;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .frame video{display:block;width:100%;height:100%;object-fit:cover;transform-origin:0 0}
+/* Until a clip has a frame of its own, the still of the same moment (its poster, 9.0 s) shows behind it instead of a black box:
+   a seek hides a video's poster, and a phone does not fetch the frame before playback. */
+.frame{background-size:cover;background-position:center;background-repeat:no-repeat}
+.frame video.wait{opacity:0}
 .chip{position:absolute;background:var(--chip-bg);color:var(--chip-ink);border-radius:4px;padding:4px 8px;font-size:12.5px;line-height:1.3;pointer-events:none}
 .chip.tag{left:10px;top:10px;font-weight:500}
 .chip.rate{right:10px;top:10px;font-family:var(--font-data);font-size:12px}
@@ -333,10 +341,11 @@ footer{height:96px}      /* room for the fixed play bar */
   .pick .seg button[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
 }
 @media (max-width:780px){
-  /* the nav goes to two rows: name and language on top, the six section links under them */
+  /* the nav goes to two rows: name and language on top, the section links under them, sliding sideways at their normal size */
   .nav .wrap{flex-wrap:wrap;padding-block:8px 4px;gap:4px 12px}
-  .links{order:3;flex-basis:100%;margin-left:0;justify-content:space-between;overflow-x:auto;scrollbar-width:none}      /* six links: they shrink with the screen, and scroll sideways rather than push the page wider */
-  .links a{padding:5px 2px;font-size:clamp(10.5px,3.3vw,13px)}
+  .links{order:3;flex-basis:100%;margin-left:0}
+  .links a{padding:5px 9px;font-size:13px}
+  .links a:first-child{padding-left:0}
   .seg.lang{margin-left:auto}
   section{scroll-margin-top:92px}
 }
@@ -396,7 +405,6 @@ footer{height:96px}      /* room for the fixed play bar */
   .seg button{padding:6px 8px;font-size:12.5px}
   .seg.mono button{padding:6px 7px;font-size:12px}
   .clock{font-size:13px;min-width:0}
-  .links a{padding:5px 1px}
 }
 /* Korean: break lines between words, and drop the wide tracking meant for Latin capitals */
 :lang(ko) body{word-break:keep-all;line-height:1.62}
@@ -411,6 +419,9 @@ tbody th small{text-wrap:balance}
 :lang(ko) .brand,:lang(ko) .eyebrow,:lang(ko) .stat .from,:lang(ko) .chip.rate,:lang(ko) .chip.read,:lang(ko) .mk-lab,:lang(ko) .zreset,
 :lang(ko) .pick-l,:lang(ko) .rail .ticks,:lang(ko) thead th.n,:lang(ko) tr.grp th,:lang(ko) .proto time,:lang(ko) .dock .err{font-family:var(--font-body);font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+/* The page keeps the reader's place itself when the added-disturbance frame changes height (Safari has no scroll
+   anchoring, and Chrome's would add to that correction). */
+html{overflow-anchor:none}
 </style>
 </head>
 <body>
@@ -423,6 +434,7 @@ tbody th small{text-wrap:balance}
       <a href="#replay" data-i18n="nav.replay">3D replay</a>
       <a href="#metrics" data-i18n="nav.metrics">Metrics</a>
       <a href="#dis" data-i18n="nav.dis">Disturbance+</a>
+      <a href="#cmp" data-i18n="nav.cmp">Side by side</a>
       <a href="#rig" data-i18n="nav.rig">Rig</a>
     </div>
     <div class="seg lang" role="group" aria-label="Language" data-i18n-aria="lang.aria">
@@ -691,7 +703,7 @@ tbody th small{text-wrap:balance}
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <h2 data-i18n="cmp.title">Compare runs</h2>
+        <h2 data-i18n="cmp.title">Side by side</h2>
       </div>
     </div>
     <div class="cmp-pick">
@@ -699,8 +711,8 @@ tbody th small{text-wrap:balance}
       <div class="cmp-runs" role="group" aria-label="Runs to compare" data-i18n-aria="cmp.aria">
         <button type="button" class="run-btn" data-run="off" aria-pressed="true"><i class="dot off"></i><span data-i18n="cmp.off">DOB_OFF</span></button>
         <button type="button" class="run-btn" data-run="on" aria-pressed="true"><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span></button>
-        <button type="button" class="run-btn" data-run="doff" aria-pressed="true"><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF + 9&nbsp;g</span></button>
-        <button type="button" class="run-btn" data-run="don" aria-pressed="true"><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON + 9&nbsp;g</span></button>
+        <button type="button" class="run-btn" data-run="doff" aria-pressed="true"><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF + disturbance</span></button>
+        <button type="button" class="run-btn" data-run="don" aria-pressed="true"><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON + disturbance</span></button>
       </div>
     </div>
 
@@ -714,12 +726,12 @@ tbody th small{text-wrap:balance}
         <figcaption><i class="dot on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-v="th">–</b></figcaption>
       </figure>
       <figure class="cclip" data-run="doff">
-        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off_dis.jpg?v=2eb6e410" data-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="DOB_OFF + 9&nbsp;g" data-i18n-aria="cmp.doff"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
-        <figcaption><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF + 9&nbsp;g</span><b data-v="th">–</b></figcaption>
+        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_off_dis.jpg?v=2eb6e410" data-src="media/dob_off_dis.mp4?v=796efbf8" aria-label="DOB_OFF + disturbance" data-i18n-aria="cmp.doff"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+        <figcaption><i class="dot doff"></i><span data-i18n="cmp.doff">DOB_OFF + disturbance</span><b data-v="th">–</b></figcaption>
       </figure>
       <figure class="cclip" data-run="don">
-        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on_dis.jpg?v=7e4bc917" data-src="media/dob_on_dis.mp4?v=7b05c5c4" aria-label="DOB_ON + 9&nbsp;g" data-i18n-aria="cmp.don"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
-        <figcaption><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON + 9&nbsp;g</span><b data-v="th">–</b></figcaption>
+        <div class="frame"><video muted playsinline preload="none" data-poster="media/dob_on_dis.jpg?v=7e4bc917" data-src="media/dob_on_dis.mp4?v=7b05c5c4" aria-label="DOB_ON + disturbance" data-i18n-aria="cmp.don"></video><svg class="marks" viewBox="0 0 960 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+        <figcaption><i class="dot don"></i><span data-i18n="cmp.don">DOB_ON + disturbance</span><b data-v="th">–</b></figcaption>
       </figure>
     </div>
 
@@ -769,8 +781,8 @@ tbody th small{text-wrap:balance}
           <div class="legend">
             <span data-leg="off"><i class="k off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-val="off">–</b></span>
             <span data-leg="on"><i class="k on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-val="on">–</b></span>
-            <span data-leg="doff"><i class="k doff"></i><span data-i18n="cmp.doff">DOB_OFF + 9&nbsp;g</span><b data-val="doff">–</b></span>
-            <span data-leg="don"><i class="k don"></i><span data-i18n="cmp.don">DOB_ON + 9&nbsp;g</span><b data-val="don">–</b></span>
+            <span data-leg="doff"><i class="k doff"></i><span data-i18n="cmp.doff">DOB_OFF + disturbance</span><b data-val="doff">–</b></span>
+            <span data-leg="don"><i class="k don"></i><span data-i18n="cmp.don">DOB_ON + disturbance</span><b data-val="don">–</b></span>
             <span data-leg="ref" hidden><i class="k ref"></i><span data-i18n="leg.target">Target 45°</span></span>
           </div>
         </div>
@@ -845,7 +857,7 @@ tbody th small{text-wrap:balance}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=af52b8a4"></script>
+<script src="i18n.js?v=321e5470"></script>
 <script>
 (function () {
   'use strict';
@@ -1289,6 +1301,15 @@ tbody th small{text-wrap:balance}
       charts.forEach(function (c) { c.render(); });
       paint();
     });
+  });
+
+  // every clip on the page: its poster sits behind it until the clip can show a frame (see .frame video.wait)
+  function showStill(v) { var p = v.getAttribute('poster'); if (p) v.parentNode.style.backgroundImage = 'url("' + p + '")'; }
+  $$('.frame video').forEach(function (v) {
+    var reveal = function () { if (v.readyState >= 2 && !v.seeking) v.classList.remove('wait'); };
+    v.classList.add('wait');
+    showStill(v);
+    ['loadeddata', 'seeked', 'playing', 'timeupdate'].forEach(function (ev) { v.addEventListener(ev, reveal); });
   });
 
   function ready() {
@@ -1835,10 +1856,16 @@ tbody th small{text-wrap:balance}
     // The clock is the first picked clip that has loaded and not failed, so one slow or broken file does not stop the rest.
     function master() { for (var n = 0; n < sel.length; n++) if (live(vid[sel[n]])) return vid[sel[n]]; return null; }
     function allFailed() { return sel.every(function (id) { return vid[id].ispFailed; }); }
+    function still(id) {                              // the poster, also laid behind the clip until it has a frame
+      var v = vid[id];
+      if (v.getAttribute('poster')) return;
+      v.setAttribute('poster', v.getAttribute('data-poster'));
+      showStill(v);
+    }
     function load(id) {                               // poster and file both wait, so the page and its frame fetch neither early
       var v = vid[id];
+      still(id);
       if (v.getAttribute('src')) return;
-      v.setAttribute('poster', v.getAttribute('data-poster'));
       v.preload = 'auto';
       v.setAttribute('src', v.getAttribute('data-src'));
       try { v.load(); } catch (err) {}
@@ -2002,13 +2029,19 @@ tbody th small{text-wrap:balance}
 
     if (window.ResizeObserver) new ResizeObserver(function () { measure(); drawMarksC(); }).observe(clips);
     if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es) {        // the four stills well ahead (they are small), so a jump from the menu finds them there
+        if (es[0].isIntersecting) IDS.forEach(still);
+      }, { rootMargin: '1600px 0px' }).observe(root);
       new IntersectionObserver(function (es) {        // fetch the clips a little before they come on screen
         if (es[0].isIntersecting && !near) { near = true; sel.forEach(load); }
       }, { rootMargin: '600px 0px' }).observe(root);
       new IntersectionObserver(function (es) {        // and stop them once they are off screen
         if (!es[0].isIntersecting && C.playing) pauseC();
       }).observe(root);
-    } else { near = true; sel.forEach(load); }
+    } else { near = true; IDS.forEach(still); sel.forEach(load); }
+    // and once the page itself has loaded, so a jump from the menu never lands on empty frames (four stills, about 200 KB)
+    var early = function () { setTimeout(function () { IDS.forEach(still); }, 800); };
+    if (document.readyState === 'complete') early(); else window.addEventListener('load', early);
 
     applySel();
     setPlayingC(false);
@@ -2063,6 +2096,7 @@ tbody th small{text-wrap:balance}
     applyZoom();
     charts.forEach(function (c) { c.relabel(); });
     if (cmp) cmp.relabel();
+    if (linkRow) rowFades();                       // the link names change width with the language
     paint();
     if (announce) { try { location.hash = LANG; } catch (err) {} }               // #ko / #en makes the choice a shareable link
     var df = !EMBED && document.getElementById('dis-frame');                       // the framed section follows the page's language
@@ -2075,20 +2109,41 @@ tbody th small{text-wrap:balance}
   });
 
   /* ---------- nav + dock ---------- */
-  var links = $$('#links a');
+  var links = $$('#links a'), linkRow = $('#links'), navJump = null;
+  // The link row slides sideways when it does not fit: fades mark the sides with more links, and the link of the
+  // section on screen is slid into view.
+  function rowFades() {
+    var max = linkRow.scrollWidth - linkRow.clientWidth;
+    linkRow.classList.toggle('more-l', max > 2 && linkRow.scrollLeft > 2);
+    linkRow.classList.toggle('more-r', max > 2 && linkRow.scrollLeft < max - 2);
+  }
+  function showLink(a) {
+    var max = linkRow.scrollWidth - linkRow.clientWidth;
+    if (max <= 2) return;
+    var x = clamp(a.offsetLeft - linkRow.offsetLeft - (linkRow.clientWidth - a.offsetWidth) / 2, 0, max);
+    try { linkRow.scrollTo({ left: x, behavior: reduced ? 'auto' : 'smooth' }); } catch (err) { linkRow.scrollLeft = x; }
+  }
+  linkRow.addEventListener('scroll', rowFades, { passive: true });
+  window.addEventListener('resize', rowFades);
+  rowFades();
   links.forEach(function (a) {
     a.addEventListener('click', function (e) {
       var el = document.getElementById(a.getAttribute('href').slice(1));
       if (!el) return;
       e.preventDefault();
       el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      navJump = { el: el, at: Date.now() };          // if the frame above grows on the way, the jump is redone (see the frame's height)
     });
   });
   if (window.IntersectionObserver) {
     var spy = new IntersectionObserver(function (es) {
       es.forEach(function (en) {
         if (!en.isIntersecting) return;
-        links.forEach(function (a) { a.setAttribute('aria-current', a.getAttribute('href') === '#' + en.target.id ? 'true' : 'false'); });
+        links.forEach(function (a) {
+          var here = a.getAttribute('href') === '#' + en.target.id;
+          if (here && a.getAttribute('aria-current') !== 'true') showLink(a);
+          a.setAttribute('aria-current', here ? 'true' : 'false');
+        });
       });
     }, { rootMargin: '-40% 0px -55% 0px' });
     $$('main section').forEach(function (s) { spy.observe(s); });
@@ -2138,7 +2193,16 @@ tbody th small{text-wrap:balance}
       disFrame.src = location.pathname + '?exp=dis&embed=1#' + LANG;      // an absolute path, so the /ko/ page's <base> does not move it
       window.addEventListener('message', function (e) {
         if (e.origin !== location.origin || e.source !== disFrame.contentWindow || !e.data) return;
-        if (e.data.isp === 'height') disFrame.style.height = e.data.h + 'px';
+        if (e.data.isp === 'height') {
+          // The frame loads late (lazily) and then grows to its content. Whoever is reading below it should not be pushed:
+          // a menu jump in progress to a section below is redone, and otherwise the page scrolls by the change.
+          var before = disFrame.getBoundingClientRect(), grow = e.data.h - before.height;
+          disFrame.style.height = e.data.h + 'px';
+          if (!grow) return;
+          var jump = navJump && Date.now() - navJump.at < 4000 && (disFrame.compareDocumentPosition(navJump.el) & 4) ? navJump.el : null;
+          if (jump) jump.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          else if (before.bottom < window.innerHeight * 0.4) window.scrollBy({ top: grow, left: 0, behavior: 'instant' });      // the reader is mostly below the frame
+        }
         else if (e.data.isp === 'playing') { if (S.playing) pause(); if (cmp && cmp.playing()) cmp.pause(); }   // the framed pair started
       });
     }
