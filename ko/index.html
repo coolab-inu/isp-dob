@@ -106,13 +106,12 @@ h1 .nb{white-space:nowrap}
 section{padding-block:38px;scroll-margin-top:56px}
 .embed-frame{display:block;width:100%;height:1300px;border:0;background:transparent}
 /* inside the frame (?embed=1): only the clips, their chart and the metrics */
-html.embed .nav,html.embed header.head,html.embed #signals,html.embed #replay,html.embed #dis,html.embed #cmp,html.embed #rig,html.embed footer,html.embed .dock{display:none!important}
+html.embed .nav,html.embed header.head,html.embed #signals,html.embed #replay,html.embed #metrics,html.embed #dis,html.embed #cmp,html.embed #rig,html.embed footer,html.embed .dock{display:none!important}
 html.embed #runs .sec-head h2,html.embed #runs .sec-head .sub{display:none}
 html.embed #runs .sec-head{justify-content:flex-end}
 html.embed section{padding-block:0 28px;border-top:0}
 html.embed,html.embed body{overflow:hidden}
 html.embed .wrap{max-width:none;padding-left:0;padding-right:0}      /* the page around the frame already has the margins */
-html.embed #metrics h2{font-size:1.2rem}
 section + section{border-top:1px solid var(--rule)}
 h2{font-family:var(--font-display);font-stretch:110%;font-weight:650;font-size:clamp(1.45rem,2.6vw,1.9rem);line-height:1.12;letter-spacing:-.008em;text-wrap:balance}
 .sub{color:var(--ink-2);max-width:66ch;margin-top:10px}
@@ -253,6 +252,14 @@ tbody th{font-weight:500}
 tbody th small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
 tr.grp th{font-size:13.5px;font-weight:600;color:var(--ink);background:var(--grid);padding:9px 10px;border-bottom:0}
 tr.grp:not(:first-child) th{border-top:14px solid var(--plane)}
+tr.grp th span{position:sticky;left:10px}                 /* the group name stays in view when the table slides sideways */
+/* two experiments side by side: a rule before each, and its name over its three columns */
+th.gs,td.gs{border-left:1px solid var(--rule)}
+thead tr.sets th.gs{text-align:center;padding-right:0;font-size:13px;font-weight:600;color:var(--ink);border-bottom-color:var(--rule)}
+#metrics-key em{display:inline-block;margin-bottom:2px}
+/* when the table is wider than the screen it slides sideways, and the metric names stay put */
+.tbl-wrap tbody th[scope="row"],.tbl-wrap thead tr.sets th:first-child{position:sticky;left:0;z-index:1;background:var(--plane)}
+.tbl-wrap.more-r{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 
 /* ---------- comparison of two to four runs from both experiments ---------- */
 .cmp-pick{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
@@ -579,8 +586,7 @@ html{overflow-anchor:none}
         <div class="plot tall"><svg role="img" aria-label="Selected signal over time" data-i18n-aria="chart.main.aria"></svg><div class="cx" hidden></div><div class="ph" hidden></div><div class="cx-lab" hidden></div></div>
       </figure>
     </div>
-    <div class="sec-head" style="margin:12px 0 0;align-items:flex-start">
-      <p class="cap" style="margin-top:0" data-i18n="runs.cap2">Signals marked “in the clips” are measured from the video. “Logged runs” are what the controller recorded in the same runs.</p>
+    <div class="sec-head" style="margin:12px 0 0;align-items:flex-start;justify-content:flex-end">
       <div class="seg" role="group" aria-label="Time window" data-i18n-aria="view.aria" data-views>
         <button type="button" data-view="full" aria-pressed="true" data-i18n="view.full">Full run</button>
         <button type="button" data-view="step" aria-pressed="false" data-i18n="view.step">Step, 0–2 s</button>
@@ -680,7 +686,7 @@ html{overflow-anchor:none}
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th scope="col" data-i18n="tbl.metric">Metric</th><th scope="col" class="n" data-i18n="run.off">Observer off</th><th scope="col" class="n" data-i18n="run.on">Observer on</th><th scope="col" class="n" data-i18n="tbl.change">Change</th></tr></thead>
+        <thead id="metrics-head"></thead>
         <tbody id="metrics-body"></tbody>
       </table>
     </div>
@@ -777,7 +783,7 @@ html{overflow-anchor:none}
     <div class="card" style="margin-top:12px">
       <figure class="chart" data-chart="cmp">
         <div class="chart-head">
-          <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong><span data-unit>deg</span></div>
+          <div class="chart-title"><strong data-title>Tilt error, measured in the clips</strong></div>
           <div class="legend">
             <span data-leg="off"><i class="k off"></i><span data-i18n="cmp.off">DOB_OFF</span><b data-val="off">–</b></span>
             <span data-leg="on"><i class="k on"></i><span data-i18n="cmp.on">DOB_ON</span><b data-val="on">–</b></span>
@@ -857,7 +863,7 @@ html{overflow-anchor:none}
 <script src="model.js?v=d9333bed"></script>
 <script src="track.js?v=14947aa6"></script>
 <script src="track_dis.js?v=94efab52"></script>
-<script src="i18n.js?v=321e5470"></script>
+<script src="i18n.js?v=360d32b2"></script>
 <script>
 (function () {
   'use strict';
@@ -956,20 +962,30 @@ html{overflow-anchor:none}
       settle: last < end ? (last + 1) * DT : null
     };
   }
-  var M = {};
-  ['off', 'on'].forEach(function (k) {
-    var r = R[k], sm = stepMetrics(r), e = stats(r.err, T_DIST, T_END), rest = stats(r.err, 3, T_DIST - DT), lim = 0, sat = 0, a = idx(T_DIST), i;
-    for (i = a; i < N; i++) lim += r.lim[i];
-    var thdMax = Math.max.apply(null, r.thd);
-    for (i = 0; i < N; i++) if (r.thd[i] === thdMax) sat++;
-    M[k] = {
-      start: sm.start, rise: sm.rise, overshoot: sm.overshoot, settle: sm.settle,
-      rest: rest.rms, rms: e.rms, max: e.maxabs, p2p: stats(r.th, T_DIST, T_END).p2p,
-      deckpp: stats(r.deck, T_DIST + 0.5, T_END).p2p, rpm: stats(r.rpm, T_DIST + 1, T_END).mean,
-      iq: stats(r.iq, T_DIST, T_END).rms, lim: lim / (N - a) * 100,
-      thdMax: thdMax, sat: sat
-    };
-  });
+  function metricsOf(RR) {
+    var out = {};
+    ['off', 'on'].forEach(function (k) {
+      var r = RR[k], sm = stepMetrics(r), e = stats(r.err, T_DIST, T_END), rest = stats(r.err, 3, T_DIST - DT), lim = 0, sat = 0, a = idx(T_DIST), i;
+      for (i = a; i < N; i++) lim += r.lim[i];
+      var thdMax = Math.max.apply(null, r.thd);
+      for (i = 0; i < N; i++) if (r.thd[i] === thdMax) sat++;
+      out[k] = {
+        start: sm.start, rise: sm.rise, overshoot: sm.overshoot, settle: sm.settle,
+        rest: rest.rms, rms: e.rms, max: e.maxabs, p2p: stats(r.th, T_DIST, T_END).p2p,
+        deckpp: stats(r.deck, T_DIST + 0.5, T_END).p2p, rpm: stats(r.rpm, T_DIST + 1, T_END).mean,
+        iq: stats(r.iq, T_DIST, T_END).rms, lim: lim / (N - a) * 100,
+        thdMax: thdMax, sat: sat
+      };
+    });
+    return out;
+  }
+  var M = metricsOf(R);
+  // The table holds both experiments side by side: cam disturbance, then the added disturbance (on the page itself, not in its frame).
+  var TSETS = [{ name: 'tbl.base', R: R, TR: TR, M: M }];
+  if (!EMBED && EXP === 'base' && window.ISP_RUNS_DIS) {
+    derive(window.ISP_RUNS_DIS, window.ISP_TRACK_DIS || null);
+    TSETS.push({ name: 'tbl.dis', R: window.ISP_RUNS_DIS, TR: window.ISP_TRACK_DIS || null, M: metricsOf(window.ISP_RUNS_DIS) });
+  }
 
   function pct(a, b) { if (a == null || b == null || !a) return '–'; var p = (b - a) / a * 100; return signed(p, 0) + '%'; }
   function cell(v, row) { return v == null || isNaN(v) ? '–' : num(v, row.dp) + row.u; }
@@ -985,44 +1001,58 @@ html{overflow-anchor:none}
     { id: 'rms', dp: 3, u: '°' }, { id: 'max', dp: 2, u: '°' }, { id: 'p2p', dp: 2, u: '°' }, { id: 'deckpp', dp: 2, u: '°' },
     { id: 'rpm', dp: 0, u: ' rpm' }, { id: 'iq', dp: 3, u: ' A' }, { id: 'lim', dp: 1, u: '%', pts: true }
   ];
-  if (TR) {
-    var vo = TR.off.info, vn = TR.on.info;
+  // rows measured in the clips (video tracking), per experiment set S and run k
+  if (TSETS.some(function (S) { return S.TR; })) {
+    var clipInfo = function (key) { return function (S, k) { return S.TR ? S.TR[k].info[key] : null; }; };
     ROWS.push(
       { grp: 'tbl.g3' },
-      { id: 'vrms', v: [vo.tiltRms, vn.tiltRms], dp: 2, u: '°' },
-      { id: 'vmax', v: [vo.tiltMax, vn.tiltMax], dp: 2, u: '°' },
-      { id: 'vdeck', v: [vo.deckSwing, vn.deckSwing], dp: 2, u: '°' },
-      { id: 'vdiff', v: [clipVsLog(R.off), clipVsLog(R.on)], dp: 2, u: '°', plain: true }
+      { id: 'vrms', clip: clipInfo('tiltRms'), dp: 2, u: '°' },
+      { id: 'vmax', clip: clipInfo('tiltMax'), dp: 2, u: '°' },
+      { id: 'vdeck', clip: clipInfo('deckSwing'), dp: 2, u: '°' },
+      { id: 'vdiff', clip: function (S, k) { return S.TR ? clipVsLog(S.R[k]) : null; }, dp: 2, u: '°', plain: true }
     );
   }
   function renderMetrics() {                       // everything here is text, so it is rebuilt when the language changes
-    var body = $('#metrics-body');
+    var body = $('#metrics-body'), head = $('#metrics-head'), cols = 1 + 3 * TSETS.length;
+    function cellEl(tag, txt, cls, span) { var c = document.createElement(tag); if (cls) c.className = cls; if (span) c.colSpan = span; c.textContent = txt; return c; }
+    // header: the experiments over their columns, then DOB_OFF / DOB_ON / change under each
+    head.textContent = '';
+    var h1 = document.createElement('tr'), h2 = document.createElement('tr'), first = cellEl('th', t('tbl.metric'));
+    h1.className = 'sets'; first.rowSpan = 2; first.scope = 'col'; h1.appendChild(first);
+    TSETS.forEach(function (S) {
+      var g = cellEl('th', t(S.name), 'n gs', 3); g.scope = 'colgroup'; h1.appendChild(g);
+      ['DOB_OFF', 'DOB_ON', t('tbl.change')].forEach(function (txt, n) { var c = cellEl('th', txt, n ? 'n' : 'n gs'); c.scope = 'col'; h2.appendChild(c); });
+    });
+    head.appendChild(h1); head.appendChild(h2);
     body.textContent = '';
     ROWS.forEach(function (row) {
       var tr = document.createElement('tr'), th = document.createElement('th');
       if (row.grp) {
-        tr.className = 'grp'; th.colSpan = 4; th.scope = 'colgroup'; th.textContent = t(row.grp); tr.appendChild(th);
+        tr.className = 'grp'; th.colSpan = cols; th.scope = 'colgroup';
+        th.appendChild(cellEl('span', t(row.grp))); tr.appendChild(th);
       } else {
-        var a = row.v ? row.v[0] : M.off[row.id], b = row.v ? row.v[1] : M.on[row.id];
         th.scope = 'row'; th.textContent = t('m.' + row.id + '.n');
         tr.appendChild(th);
-        [cell(a, row), cell(b, row), row.plain ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b)].forEach(function (txt) {
-          var td = document.createElement('td'); td.className = 'n'; td.textContent = txt; tr.appendChild(td);
+        TSETS.forEach(function (S) {
+          var a = row.clip ? row.clip(S, 'off') : S.M.off[row.id], b = row.clip ? row.clip(S, 'on') : S.M.on[row.id];
+          var chg = row.plain || a == null || b == null ? '–' : row.pts ? signed(b - a, 1) + t('unit.pts') : pct(a, b);
+          [cell(a, row), cell(b, row), chg].forEach(function (txt, n) { tr.appendChild(cellEl('td', txt, n ? 'n' : 'n gs')); });
         });
       }
       body.appendChild(tr);
     });
-    // the one-sentence result, from the same numbers as the table; shown only when both measurements agree that the error fell
-    var keyEl = $('#metrics-key'), kv = TR ? [TR.off.info.tiltRms, TR.on.info.tiltRms] : null;
-    if (keyEl) {
-      keyEl.hidden = !(kv && M.on.rms < M.off.rms && kv[1] < kv[0]);
-      if (!keyEl.hidden) {
-        keyEl.innerHTML = '<em class="hl r">' + t('metrics.key', {
-          a: num(M.off.rms, 2) + '°', b: num(M.on.rms, 2) + '°', c: pct(M.off.rms, M.on.rms),
-          d: num(kv[0], 2) + '°', e: num(kv[1], 2) + '°', f: pct(kv[0], kv[1])
-        }) + '</em>';
-      }
-    }
+    // the result in one sentence per experiment, from the same numbers as the table; each shown only when both
+    // measurements (logs and clips) agree that the error fell
+    var keyEl = $('#metrics-key'), lines = [];
+    TSETS.forEach(function (S, n) {
+      var kv = S.TR ? [S.TR.off.info.tiltRms, S.TR.on.info.tiltRms] : null;
+      if (!(kv && S.M.on.rms < S.M.off.rms && kv[1] < kv[0])) return;
+      lines.push('<em class="hl r">' + t(n ? 'metrics.key.dis' : 'metrics.key', {
+        a: num(S.M.off.rms, 2) + '°', b: num(S.M.on.rms, 2) + '°', c: pct(S.M.off.rms, S.M.on.rms),
+        d: num(kv[0], 2) + '°', e: num(kv[1], 2) + '°', f: pct(kv[0], kv[1])
+      }) + '</em>');
+    });
+    if (keyEl) { keyEl.hidden = !lines.length; keyEl.innerHTML = lines.join('<br>'); }
 
     $('#k-rms').textContent = pct(M.off.rms, M.on.rms);
     $('#k-rms-d').textContent = num(M.off.rms, 2) + '° → ' + num(M.on.rms, 2) + '°';
@@ -1069,7 +1099,7 @@ html{overflow-anchor:none}
       runs = ctx.runs ? ctx.runs(cfg) : cfg.runs;
       if (picks) {                                    // the charts under the clips show whichever signal is picked
         cfg.xLabels = true; cfg.bandLabel = true;
-        titleEl.textContent = t('ch.' + name + '.t'); unitEl.textContent = t('ch.' + name + '.u');
+        titleEl.textContent = t('ch.' + name + '.t'); if (unitEl) unitEl.textContent = t('ch.' + name + '.u');
         Object.keys(legEls).forEach(function (k) { legEls[k].hidden = k === 'ref' ? cfg.ref == null : runs.indexOf(k) < 0; });
         svg.setAttribute('aria-label', t('ch.' + name + '.t'));
       }
@@ -2112,11 +2142,13 @@ html{overflow-anchor:none}
   var links = $$('#links a'), linkRow = $('#links'), navJump = null;
   // The link row slides sideways when it does not fit: fades mark the sides with more links, and the link of the
   // section on screen is slid into view.
-  function rowFades() {
-    var max = linkRow.scrollWidth - linkRow.clientWidth;
-    linkRow.classList.toggle('more-l', max > 2 && linkRow.scrollLeft > 2);
-    linkRow.classList.toggle('more-r', max > 2 && linkRow.scrollLeft < max - 2);
+  function edgeFades(el) {
+    var max = el.scrollWidth - el.clientWidth;
+    el.classList.toggle('more-l', max > 2 && el.scrollLeft > 2);
+    el.classList.toggle('more-r', max > 2 && el.scrollLeft < max - 2);
   }
+  function rowFades() { edgeFades(linkRow); $$('.tbl-wrap').forEach(edgeFades); }      // the menu, and the table where it slides too
+  $$('.tbl-wrap').forEach(function (w) { w.addEventListener('scroll', function () { edgeFades(w); }, { passive: true }); });
   function showLink(a) {
     var max = linkRow.scrollWidth - linkRow.clientWidth;
     if (max <= 2) return;
