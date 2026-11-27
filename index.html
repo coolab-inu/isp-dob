@@ -69,11 +69,17 @@ button{font:inherit;color:inherit}
 h1{font-family:var(--font-display);font-stretch:112%;font-weight:700;font-size:clamp(1.35rem,3.3vw,2.5rem);line-height:1.1;letter-spacing:-.012em;text-wrap:balance;margin-top:14px;max-width:31ch}
 h1 .nb{white-space:nowrap}
 .lede{font-size:clamp(1.02rem,1.5vw,1.16rem);color:var(--ink-2);max-width:62ch;margin-top:18px}
-.head-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:22px 24px;align-items:center}
-/* the loop has no frame: its edges fade into the page, so it reads as part of the header and not as a pasted box */
-.head-fig{margin:-14px -2% -14px 0}
-.head-fig video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;filter:brightness(var(--hero-dim));
-  -webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 56%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 56%,transparent 100%)}
+/* banded header (user, 2026-11-27): the concept loop as a full-width band, the title over its lower part. Not ".band": the
+   charts' cam stretch is an SVG rect of that class. */
+.head.banded{padding-block:0 30px}
+.hero-band{position:relative;height:clamp(360px,44vw,580px);overflow:hidden;background:var(--video-bg)}
+.hero-band video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 58%;filter:brightness(.86) saturate(.95)}
+.hero-band::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,var(--plane) 0%,rgba(13,15,18,.86) 22%,rgba(13,15,18,.35) 52%,rgba(13,15,18,0) 72%,rgba(13,15,18,.45) 100%)}
+.band-text{position:absolute;left:0;right:0;bottom:22px;z-index:1}
+.band-text .eyebrow{color:var(--ink-2)}
+.band-text h1{max-width:28ch;text-shadow:0 1px 18px rgba(0,0,0,.45)}
+.head-body .lede{margin-top:14px}
 /* the sentences that must be read */
 .hl{display:inline-block;font-style:normal;font-weight:inherit;color:var(--em)}      /* colour only: a heavier weight clogged the Hangul strokes at text size */
 .hl.r{color:var(--em-2)}
@@ -323,8 +329,6 @@ footer{height:96px}      /* room for the fixed play bar */
 }
 @media (max-width:820px){
   .rig{grid-template-columns:1fr}
-  .head-top{grid-template-columns:1fr}
-  .head-fig{max-width:560px;margin:-6px auto -10px}
   /* signal buttons become separate pills that wrap, so none runs off the screen */
   .pick{gap:12px}
   .pick-g{flex-direction:column;align-items:flex-start;gap:6px;width:100%}
@@ -346,6 +350,12 @@ footer{height:96px}      /* room for the fixed play bar */
   /* phones: one text face for everything, numbers included (tabular figures keep them from jumping) */
   :root{--font-data:"IBM Plex Sans","IBM Plex Sans KR",system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
   .head{padding-block:30px 22px}
+  /* phones: the band is a 16:9 strip and the title goes under it, on the page's own background */
+  .head.banded{padding-block:0 22px}
+  .hero-band{height:auto;overflow:visible}
+  .hero-band video{position:relative;height:auto;aspect-ratio:16/9;-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
+  .hero-band::after{display:none}
+  .band-text{position:static;margin-top:-4px}
   /* clips one above the other at full width; the angles move from the picture to a line under it */
   .clips{grid-template-columns:1fr;gap:14px}
   .chip{font-size:11px;padding:3px 6px}
@@ -445,25 +455,29 @@ html{overflow-anchor:none}
   </div>
 </nav>
 
-<header class="head wrap">
-  <div class="head-top">
-  <div class="head-text rv">
-  <p class="eyebrow" data-i18n="head.eyebrow">Hardware validation · wave simulation platform</p>
-  <h1 data-i18n-html="head.title">Disturbance <span class="nb">Observer-based</span> Elevation Control System for a Launch Platform in a Wave Simulation Environment</h1>
-  <p class="lede" data-i18n-html="head.lede">The elevation axis steps to 45° and holds that angle while a cam rocks the base underneath it, imitating wave motion. Both runs use the same controller and the same cam speed. <em class="hl">Only the disturbance observer (DOB) changes.</em></p>
+<!-- The concept loop runs as a band across the whole width, with the title over its lower part (user, 2026-11-27);
+     on a phone the title sits under the band. -->
+<header class="head banded">
+  <div class="hero-band">
+    <video id="v-hero" muted loop playsinline autoplay preload="metadata" poster="media/concept.jpg?v=a473cc3c" src="media/concept.mp4?v=60ac4d92" aria-label="Concept animation: a launch platform holding its elevation on a ship in waves" data-i18n-aria="hero.aria"></video>
+    <script>/* inside the page's own frame the header is hidden: drop its loop before the browser fetches it */
+    if (/[?&]embed=1(&|$)/.test(location.search) && window.parent !== window) { (function (h) { h.removeAttribute('autoplay'); h.preload = 'none'; h.removeAttribute('poster'); h.removeAttribute('src'); })(document.getElementById('v-hero')); }</script>
+    <div class="band-text">
+      <div class="wrap rv">
+        <p class="eyebrow" data-i18n="head.eyebrow">Hardware validation · wave simulation platform</p>
+        <h1 data-i18n-html="head.title">Disturbance <span class="nb">Observer-based</span> Elevation Control System for a Launch Platform in a Wave Simulation Environment</h1>
+      </div>
+    </div>
   </div>
-  <figure class="head-fig rv">
-    <video id="v-hero" muted loop playsinline autoplay preload="metadata" poster="media/concept.jpg?v=04bbb109" src="media/concept.mp4?v=ac9b94fe" aria-label="Concept animation: a launch platform holding its elevation on a ship in waves" data-i18n-aria="hero.aria"></video>
-  </figure>
-  <script>/* inside the page's own frame the header is hidden: drop its loop before the browser fetches it */
-  if (/[?&]embed=1(&|$)/.test(location.search) && window.parent !== window) { (function (h) { h.removeAttribute('autoplay'); h.preload = 'none'; h.removeAttribute('poster'); h.removeAttribute('src'); })(document.getElementById('v-hero')); }</script>
-  </div>
+  <div class="wrap head-body">
+  <p class="lede rv" data-i18n-html="head.lede">The elevation axis steps to 45° and holds that angle while a cam rocks the base underneath it, imitating wave motion. Both runs use the same controller and the same cam speed. <em class="hl">Only the disturbance observer (DOB) changes.</em></p>
   <dl class="stats rv">
     <div class="stat lead">
       <dt data-i18n="stat.rms">RMS tracking error while the cam runs</dt>
       <dd><span class="fig" id="k-rms">−65%</span><span class="from" id="k-rms-d">0.81° → 0.28°</span></dd>
     </div>
   </dl>
+  </div>
 </header>
 
 <main>
